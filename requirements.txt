@@ -1,0 +1,15 @@
+# Versiones sin fijar a propósito: se fijarán (pip freeze) tras la primera ejecución local exitosa.
+numpy
+pandas
+scipy
+scikit-learn
+xgboost
+tensorflow
+opencv-python
+scikit-image
+pillow
+matplotlib
+seaborn
+jupyter
+streamlit
+kaggle
