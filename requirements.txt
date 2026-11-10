@@ -13,3 +13,5 @@ seaborn
 jupyter
 streamlit
 kaggle
+pytest
+nbformat
