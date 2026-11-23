@@ -31,6 +31,14 @@ from PIL import Image
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
 
+#: Umbrales elegidos tras la calibración sobre el dataset real
+#: (``02_comprension_datos/eda.ipynb``). Con hash de 256 bits, las fotos
+#: consecutivas (<= 3 s) tienen una distancia mediana de 8 y los pares al azar de la
+#: misma celda de 114; con ``max_hash_dist >= 10`` la clausura transitiva forma
+#: grupos gigantes (hasta 2 957 imágenes con 40) que rompen la estratificación.
+DEFAULT_GAP_SECONDS = 3.0
+DEFAULT_HASH_DIST = 5
+
 
 def packed_ahash(path: Path | str, size: int = 16) -> np.ndarray:
     """Hash perceptual promedio (aHash) de ``size*size`` bits, empaquetado en bytes.
