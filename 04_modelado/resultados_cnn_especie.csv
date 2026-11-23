@@ -1,0 +1,5 @@
+id,descripcion,tarea,F1_val,exactitud_val,EE_val,kappa_val,size,head,filtros,dense,dropout,l2,aumento,lr,solo_borde,parametros,epocas_corridas,mejor_epoca,F1_train,brecha_F1,loss_val,segundos,s_por_epoca
+RF_full,"Random Forest sobre color, región full",especie,0.9079338170811893,0.9274316109422492,0.0050567530597546515,0.9173571662864324,,,,,,,,,,,,,,,,,
+RF_border,"Random Forest sobre color, región border",especie,0.7997935910182771,0.8294072948328267,0.00733197897539525,0.7867046214863208,,,,,,,,,,,,,,,,,
+S1,Especie: GAP + Dropout 0.5 + aumento de datos,especie,0.790135093829926,0.8328267477203647,0.007273070305754551,0.8346893370888031,96.0,gap,32-64-128,128.0,0.5,0.0,True,0.001,False,110534.0,9.0,6.0,0.8623707919975286,0.07223569816760267,0.44328418374061584,307.3,34.1
+S2,CONTROL solo borde (especie): centro enmascarado,especie,0.6581514419160596,0.712386018237082,0.008823070478364354,0.6583617181660336,96.0,gap,32-64-128,128.0,0.5,0.0,True,0.001,True,110534.0,17.0,14.0,0.8034822875629916,0.145330845646932,0.8223838806152344,554.5,32.6
