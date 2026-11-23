@@ -41,7 +41,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 | Pieza | Evidencia | Estado |
 |---|---|---|
 | Tabla de alternativas (modelo, ventaja, límite, decisión) | `docs/estrategia_solucion.md` | ⬜ |
-| La elección se apoya en resultados (baseline vs. modelos) | `05_evaluacion/` | ⬜ |
+| La elección se apoya en resultados (baseline vs. modelos) | `04_modelado/modelos_clasicos.ipynb` y `04_modelado/resultados_modelos_clasicos.csv` (Buena vs. Mala en Kaggle, solo train y val; faltan *Regular*, la CNN y la evaluación en fotos propias) | 🟡 |
 
 ### 5. Fundamentos matemáticos aplicados
 **Outstanding exige:** todas las operaciones (normalización, métricas, función de pérdida, distancias, etc.) **justificadas teóricamente y conectadas con decisiones del proyecto**.
@@ -59,11 +59,11 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla comparativa de modelos en **train / val / test** | `05_evaluacion/` | ⬜ |
+| Tabla comparativa de modelos en **train / val / test** | train y val en `04_modelado/resultados_modelos_clasicos.csv` (F1 train, CV agrupada y val, brecha); el **test aún no se usa** (se usa una sola vez al final) | 🟡 |
 | Curvas de aprendizaje y de entrenamiento/validación de la CNN | `05_evaluacion/` | ⬜ |
-| Matriz de confusión por modelo y análisis de errores con imágenes | `05_evaluacion/` | ⬜ |
+| Matriz de confusión por modelo y análisis de errores con imágenes | matriz del mejor modelo en val en `04_modelado/figuras/modelos_clasicos.pdf`; falta el análisis de errores con imágenes | 🟡 |
 | Generalización a **fotos propias** (dominio distinto al dataset) | `05_evaluacion/` | ⬜ |
-| Incertidumbre: error estándar con n pequeño | `05_evaluacion/` | ⬜ |
+| Incertidumbre: error estándar con n pequeño | error estándar binomial en la tabla de val (`models_classic.evaluate`); falta aplicarlo a fotos propias | 🟡 |
 | Comparación con la literatura | informe + refs | ⬜ |
 
 ### 7. Conclusiones técnicas y coherencia
@@ -92,15 +92,15 @@ Estado a la fecha de esta versión; solo se marca ✅ con evidencia verificable.
 |---|---|---|
 | Alcance multifruta confirmado por el profesor | `docs/REQUISITOS_LINEAMIENTOS.md`, `docs/definicion_clases.md` | 🟡 (diseño y datos listos; modelos pendientes) |
 | Dataset de Kaggle usado y citado; licencia verificada | `data/README.md` (licencia **[VERIFICAR]** en la ficha de Kaggle) | 🟡 |
-| `Mixed`: segmentar cada fruta individual | — | ⬜ |
+| `Mixed`: segmentar cada fruta individual | `src/segmentation.py` (probada con formas sintéticas y revisada a ojo en fotos sobre superficie; **no mide bien fotos con mano**, que se detectan por contacto con el borde; `Mixed` trae varias frutas por foto y fondos de color: falta separar frutas individuales y validar) | 🟡 |
 | 30–50 imágenes propias anotadas (calidad y tamaño), por varias especies | 91 fotos de banano recibidas, sin `object_id` ni etiquetas; fotos de las otras 5 especies pendientes | 🟡 |
 | Mecanismo para compartir anotaciones con la clase | esquema en `data/README.md` §2–3 | 🟡 |
-| ≥ 2 modelos de ML tradicional con hiperparámetros por validación cruzada | — | ⬜ |
+| ≥ 2 modelos de ML tradicional con hiperparámetros por validación cruzada | `04_modelado/modelos_clasicos.ipynb`: regresión logística, SVM RBF y Random Forest con `GridSearchCV` y `StratifiedGroupKFold` (tarea binaria en Kaggle; se repite con *Regular*) | 🟡 |
 | ≥ 1 modelo de deep learning (CNN desde cero) | `src/cnn.py` (arquitectura y conteo de parámetros verificados; sin entrenar) | 🟡 |
-| Comparación con línea base | — | ⬜ |
+| Comparación con línea base | línea base mayoritaria (F1 0.388) y línea base "solo borde" en el mismo notebook | 🟡 |
 | CRISP-DM con evidencia: fase 2 (EDA ejecutado) | `02_comprension_datos/eda.ipynb` ejecutado con datos reales; falta medir la nitidez como parte de "calidad de imagen" | 🟡 |
 | CRISP-DM: fases 1, 3, 4, 5 y 6 | — | ⬜ |
-| **App Streamlit funcional: cargar imagen o capturar con cámara y mostrar calidad y tamaño** | — | ⬜ |
+| **App Streamlit funcional: cargar imagen o capturar con cámara y mostrar calidad y tamaño** | `06_despliegue/app.py` + `src/inference.py` + `tests/test_app.py`. Carga de imagen verificada en un navegador con fotos reales; el widget de cámara solo se monta al elegirla, pero **la captura real con cámara no se pudo verificar** (el navegador del entorno bloquea la cámara). Modelo provisional Buena/Mala; tamaño como longitud normalizada, sin clases por especie | 🟡 |
 | Diagrama de flujo CRISP-DM personalizado | — | ⬜ |
 | Informe ≤ 7 páginas IEEE y video ≤ 10 min | — | ⬜ |
 | Análisis ético y análisis inicial y final de impactos | `docs/etica_tabla.md`, `docs/impactos_matriz.md` (iniciales) | 🟡 |

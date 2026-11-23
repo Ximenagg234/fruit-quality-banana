@@ -36,6 +36,7 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 python -m venv .venv && source .venv/bin/activate   # en Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 # datos: ver data/README.md
+streamlit run 06_despliegue/app.py   # app (ver 06_despliegue/README.md)
 ```
 _(Las instrucciones por fase se completarán a medida que existan los notebooks.)_
 
