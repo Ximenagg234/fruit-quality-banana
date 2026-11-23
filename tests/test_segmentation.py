@@ -28,7 +28,23 @@ def test_ellipse_major_axis_is_recovered():
     g = sg.mask_geometry(mask)
     assert g["length_px"] == pytest.approx(160, rel=0.03)
     assert g["width_px"] == pytest.approx(60, rel=0.05)
-    assert g["ell"] == pytest.approx(160 / 300, rel=0.03)  # normalizado por el ancho de la imagen
+    assert g["ell"] == pytest.approx(160 / 200, rel=0.03)  # normalizado por el lado menor (alto = 200)
+
+
+def test_ell_is_orientation_invariant_and_can_exceed_one():
+    horizontal = _scene(shape=(200, 300), blobs=[(100, 150, 120, 30)])        # eje mayor 240 px en una foto 300x200
+    vertical = np.ascontiguousarray(np.transpose(horizontal, (1, 0, 2)))     # la misma foto girada: 200x300
+    e_h = sg.mask_geometry(sg.segment_fruit(horizontal))["ell"]
+    e_v = sg.mask_geometry(sg.segment_fruit(vertical))["ell"]
+    assert e_h == pytest.approx(e_v, rel=0.02) and e_h > 1.0                  # 240/200 = 1.2 > 1 sin ser un error
+
+
+def test_border_contact_detects_objects_entering_from_the_edge():
+    dentro = sg.mask_geometry(sg.segment_fruit(_scene(blobs=[(100, 150, 60, 40)])))
+    assert dentro["border_frac"] == 0.0
+    # un "brazo" que entra por el borde izquierdo: la elipse está centrada en el borde
+    brazo = sg.mask_geometry(sg.segment_fruit(_scene(blobs=[(100, 0, 90, 40)])))
+    assert brazo["border_frac"] > 0.02            # sin rellenar el borde antes de la morfología, esto daba 0
 
 
 def test_disk_gives_its_diameter():

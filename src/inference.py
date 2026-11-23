@@ -24,6 +24,10 @@ import segmentation as sg
 LOW_CONFIDENCE = 0.70
 #: La imagen se reduce a este lado máximo antes de segmentar (rapidez; no cambia ``ell``).
 SEGMENT_MAX_SIDE = 400
+#: Si más de esta fracción del borde de la imagen cae en la máscara, se avisa de una posible mano,
+#: brazo o fruta cortada. Calibrado en las fotos propias: 0.000 en 7 fotos sobre superficie y de
+#: 0.065 a 0.122 en 22 fotos con mano (revisión visual).
+HAND_BORDER_FRAC = 0.02
 
 
 def load_model(path: Path | str):

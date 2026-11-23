@@ -11,7 +11,7 @@ Se eligió la saturación como método por defecto tras compararla con la distan
 y con GrabCut en fotos reales sobre una superficie con luz desigual: la distancia incluía las
 manchas de luz y GrabCut se extendía a las sombras.
 
-El tamaño se mide con la longitud normalizada ``ell = 4 * sqrt(lambda_1) / W`` (ver
+El tamaño se mide con la longitud normalizada ``ell = 4 * sqrt(lambda_1) / min(H, W)`` (ver
 ``docs/formulacion_matematica.md`` §3.1): ``lambda_1`` es el mayor valor propio de la
 covarianza de las coordenadas de la máscara, así que ``4 * sqrt(lambda_1)`` es el eje
 mayor de una elipse (y el diámetro de un disco). Es una medida **relativa**: depende de la
@@ -73,8 +73,13 @@ def segment_fruit(img: np.ndarray, frame: int = 6, min_area_frac: float = 0.01,
     if score.max() - score.min() < MIN_CONTRAST[method]:      # sin contraste: no hay objeto
         return None
     mask = score > threshold_otsu(score)
+    # Se replica el borde antes de la morfología: sin esto, el cierre erosiona la máscara en los
+    # límites de la imagen y un objeto que toca el borde (p. ej. un brazo) dejaría de tocarlo.
+    pad = 4
+    mask = np.pad(mask, pad, mode="edge")
     mask = ndimage.binary_opening(mask, iterations=1)
     mask = ndimage.binary_closing(mask, iterations=2)
+    mask = mask[pad:-pad, pad:-pad]
     labels, n = ndimage.label(mask)
     if n == 0:
         return None
@@ -88,8 +93,12 @@ def mask_geometry(mask: np.ndarray) -> dict:
 
     Returns:
         ``area_frac`` (fracción de la imagen), ``length_px`` (``4*sqrt(lambda_1)``, eje
-        mayor), ``width_px`` (``4*sqrt(lambda_2)``, eje menor) y ``ell`` (longitud
-        normalizada por el ancho de la imagen).
+        mayor), ``width_px`` (``4*sqrt(lambda_2)``, eje menor), ``ell`` (longitud
+        normalizada por el **lado menor** de la imagen, de modo que no dependa de si la
+        foto es vertical u horizontal; puede superar 1 en una foto vertical con una fruta
+        larga) y ``border_frac`` (fracción de los píxeles del borde de la imagen que están
+        en la máscara: un valor alto delata una mano o un brazo que entra por el borde, o
+        una fruta cortada).
 
     Raises:
         ValueError: si la máscara tiene menos de 2 píxeles.
@@ -100,8 +109,9 @@ def mask_geometry(mask: np.ndarray) -> dict:
     cov = np.cov(np.vstack([xs, ys]), bias=True)           # (1/|P|) sum (p-c)(p-c)^T
     l2, l1 = np.linalg.eigvalsh(cov)                       # ascendentes: l1 es el mayor
     length, width = 4 * np.sqrt(max(l1, 0.0)), 4 * np.sqrt(max(l2, 0.0))
+    edge = np.concatenate([mask[0], mask[-1], mask[:, 0], mask[:, -1]])
     return {"area_frac": float(mask.mean()), "length_px": float(length), "width_px": float(width),
-            "ell": float(length / mask.shape[1])}
+            "ell": float(length / min(mask.shape)), "border_frac": float(edge.mean())}
 
 
 def size_class(ell: float, tau1: float, tau2: float) -> str:

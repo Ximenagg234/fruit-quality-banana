@@ -62,7 +62,7 @@ def test_low_confidence_flag(tiny_model):
 def test_measure_size_recovers_the_known_length():
     r = inf.measure_size(_fruit_image((220, 190, 30), blob=(150, 100, 80, 30)))
     assert r["length_px"] == pytest.approx(160, rel=0.04)
-    assert r["ell"] == pytest.approx(160 / 300, rel=0.04)
+    assert r["ell"] == pytest.approx(160 / 200, rel=0.04)        # lado menor = 200
     # la medida relativa no cambia si la misma foto viene con el doble de resolución
     grande = _fruit_image((220, 190, 30), size=(600, 400), blob=(300, 200, 160, 60))
     assert inf.measure_size(grande)["ell"] == pytest.approx(r["ell"], rel=0.05)
