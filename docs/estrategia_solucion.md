@@ -27,7 +27,7 @@ Resultado (`04_modelado/modelos_clasicos.ipynb`, F1 macro en val): mayoritaria 0
 
 | Alternativa | Ventaja | Límite | Decisión |
 |---|---|---|---|
-| Partición aleatoria por imagen | Trivial | Fotos del mismo objeto en train y test infla las métricas | Descartada. La diferencia exacta **[MEDIR]** (no se ha cuantificado) |
+| Partición aleatoria por imagen | Trivial | Fotos del mismo objeto en train y test infla las métricas | Descartada. **Medido** (`04_modelado/fuga_particion.ipynb`, mismo Random Forest, 5 semillas): F1 macro 0.987 con partición aleatoria frente a 0.960 agrupada (inflación ≈ 0.027, cota inferior); el 49.9 % de las imágenes de prueba tiene un casi-duplicado en entrenamiento |
 | Agrupar solo por marca de tiempo del nombre | Barato | Solo el 80.3 % de los nombres trae fecha; en *Good* banana solo el 10.2 % | Insuficiente |
 | Tiempo (≤ 3 s) + hash perceptual (≤ 5) + contador con hash (≤ 30), componentes conexos | Cubre todas las convenciones de nombre | Fuga residual por rotaciones o recortes que el hash no detecta | **Elegida**: 3 360 grupos, grupo máximo 182, test por celda entre 14.2 % y 15.3 % |
 
