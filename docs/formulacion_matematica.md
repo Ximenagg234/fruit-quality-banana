@@ -1,24 +1,25 @@
 # Formulación matemática del problema
 
-> **Estado: BORRADOR v1.** Cubre rúbrica 3 (formulación), 4 (estrategia) y 5 (fundamentos). Los puntos marcados **[DECIDIR]** dependen de decisiones del equipo o de resultados del EDA y NO deben presentarse como definitivos en el informe hasta resolverse. Las cifras de ejemplo marcadas **[VERIFICAR]** deben contrastarse con `model.summary()` o con el código antes de citarse.
+> **Estado: BORRADOR v2 (alcance multifruta).** Cubre rúbrica 3 (formulación), 4 (estrategia) y 5 (fundamentos). Los puntos marcados **[DECIDIR]** dependen de decisiones del equipo o de resultados del EDA y NO deben presentarse como definitivos en el informe hasta resolverse. Las cifras marcadas **[VERIFICAR]** deben contrastarse con el código antes de citarse; el conteo de parámetros de la CNN (§6) ya está verificado.
 
 ## 0. Notación
 
 | Símbolo | Significado |
 |---|---|
-| $x \in [0,1]^{H\times W\times 3}$ | imagen RGB de una banana, normalizada a $[0,1]$ |
+| $x \in [0,1]^{H\times W\times 3}$ | imagen RGB de una fruta, normalizada a $[0,1]$ |
+| $c \in \{1,\dots,C\}$ | especie (manzana, banano, guayaba, lima, naranja, granada; $C=6$) |
 | $H, W$ | alto y ancho tras redimensionar. **[DECIDIR]** propuesta inicial $H=W=128$ (costo en CPU); el dataset original es $256\times256$ |
 | $y \in \{1,2,3\}$ | clase de calidad: 1 = Buena, 2 = Regular, 3 = Mala (**ordinal**: $1<2<3$) |
 | $s \in \{S,M,L\}$ | clase de tamaño; $\ell \in \mathbb{R}_{\ge 0}$ longitud normalizada (§3) |
 | $K=3$ | número de clases de calidad |
-| $\mathcal{D}=\{(x_i,y_i,s_i,g_i)\}_{i=1}^{N}$ | conjunto de datos; $g_i$ = identificador de la banana física |
+| $\mathcal{D}=\{(x_i,c_i,y_i,s_i,g_i)\}_{i=1}^{N}$ | conjunto de datos; $g_i$ = identificador del objeto físico (§7) |
 | $f_\theta$ | clasificador con parámetros $\theta$ |
 | $p_\theta(k\mid x)$ | probabilidad que el modelo asigna a la clase $k$ |
 | $N_k$ | número de imágenes de entrenamiento de la clase $k$ |
 
 ## 1. Planteamiento y por qué es un problema complejo de ingeniería
 
-**Objetivo.** Construir un sistema $g:x\mapsto(\hat y,\hat s)$ que, dada una fotografía de una banana sobre fondo uniforme, devuelva su calidad $\hat y\in\{1,2,3\}$ y su tamaño $\hat s\in\{S,M,L\}$, y que **generalice a fotos tomadas por nosotros con celular**, no solo al conjunto de referencia.
+**Objetivo.** Construir un sistema $g:x\mapsto(\hat c,\hat y,\hat s)$ que, dada una fotografía de una fruta sobre fondo uniforme, devuelva su especie $\hat c$, su calidad $\hat y\in\{1,2,3\}$ y su tamaño $\hat s\in\{S,M,L\}$, y que **generalice a fotos tomadas por nosotros con celular**, no solo al conjunto de referencia. La especie se predice con un clasificador aparte porque el tamaño (§3.1) y las reglas de calidad (`docs/definicion_clases.md`) dependen de ella.
 
 **Riesgo esperado y riesgo empírico.** El modelo ideal minimiza el riesgo esperado
 
@@ -35,8 +36,9 @@ pero $P$ es desconocida; se minimiza el riesgo empírico regularizado sobre entr
 3. **Etiquetas ordinales:** confundir Buena con Mala es un error más grave que confundir Buena con Regular; la accuracy no lo refleja (se usa kappa ponderado, §8).
 4. **Desbalance:** la clase Regular tendrá muchas menos imágenes que Buena/Mala (se construye con fotos propias y segmentaciones de `mixed_quality`).
 5. **Cambio de dominio (*domain shift*):** $P_{\text{Kaggle}}(x,y)\neq P_{\text{propias}}(x,y)$ (iluminación, cámara, fondo). Se cuantifica con la brecha $\Delta=\text{F1}_{\text{test Kaggle}}-\text{F1}_{\text{fotos propias}}$.
-6. **Fuga de datos por dependencia:** el dataset muestra cada fruta desde 5 ángulos; imágenes de la misma banana no son independientes (§7).
-7. **Salida múltiple y restricción de cómputo:** dos salidas (calidad y tamaño) y despliegue en CPU **[DECIDIR]** con latencia objetivo < 1 s por imagen.
+6. **Fuga de datos por dependencia:** las imágenes se toman en ráfagas desde varios ángulos y parte del dataset parece contener versiones recortadas o en gris de una misma foto; imágenes del mismo objeto no son independientes (§7). *Medido en el EDA:* solo el 80.3 % de los nombres de archivo trae fecha, y las reglas de agrupación tienen fuga residual conocida.
+7. **Atajos y cambio de especie:** *medido en el EDA*, un modelo que solo ve el borde de la imagen separa *Good* de *Bad* con F1 macro de 0.76 a 0.96 según la especie, así que el fondo o la sesión de captura delatan la clase; además, la definición de "defecto" cambia con la especie (`docs/definicion_clases.md`), por lo que una frontera de decisión aprendida en una especie no se transfiere automáticamente a otra.
+8. **Salida múltiple y restricción de cómputo:** tres salidas (especie, calidad y tamaño) y despliegue en CPU **[DECIDIR]** con latencia objetivo < 1 s por imagen.
 
 ## 2. Formulación de la clasificación de calidad
 
@@ -61,10 +63,10 @@ $$
 
 ### 3.1 Longitud normalizada (salida de tamaño)
 
-Se segmenta la banana (máscara binaria $M\in\{0,1\}^{H\times W}$, p. ej. umbral de Otsu o en HSV sobre fondo uniforme). Sea $\mathcal{P}=\{p_j=(u_j,v_j)\}$ el conjunto de píxeles con $M=1$, $c$ su centroide y
+Se segmenta la fruta (máscara binaria $M\in\{0,1\}^{H\times W}$, p. ej. umbral de Otsu o en HSV sobre fondo uniforme). Sea $\mathcal{P}=\{p_j=(u_j,v_j)\}$ el conjunto de píxeles con $M=1$, $\bar p$ su centroide y
 
 $$
-\Sigma=\frac{1}{|\mathcal{P}|}\sum_{j}(p_j-c)(p_j-c)^\top,\qquad \lambda_1\ge\lambda_2\ \text{valores propios de }\Sigma .
+\Sigma=\frac{1}{|\mathcal{P}|}\sum_{j}(p_j-\bar p)(p_j-\bar p)^\top,\qquad \lambda_1\ge\lambda_2\ \text{valores propios de }\Sigma .
 $$
 
 Para una región elíptica uniforme con semieje mayor $a$, la varianza a lo largo de ese eje es $a^2/4$, luego la longitud del eje mayor es
@@ -73,16 +75,18 @@ $$
 L=4\sqrt{\lambda_1},\qquad \ell=\frac{L}{W}\quad(\text{longitud normalizada}).
 $$
 
-Las clases de tamaño se definen por **terciles calculados solo con el conjunto de entrenamiento**: $\hat s=S$ si $\ell<\tau_1$, $M$ si $\tau_1\le\ell<\tau_2$, $L$ si $\ell\ge\tau_2$, con $\tau_1,\tau_2$ los cuantiles $1/3$ y $2/3$ de $\ell$ en entrenamiento (evita filtrar información del test; mismo criterio que en el informe del Ingenio).
+La fórmula sirve para **cualquier forma**: en una elipse da el eje mayor y en un disco de radio $r$ la varianza a lo largo de cualquier eje es $r^2/4$, luego $L=4\sqrt{r^2/4}=2r$, el diámetro. Por eso una sola definición cubre al banano (alargado) y a la naranja o la granada (redondas).
 
-**Limitaciones que se declararán en el informe:** (i) $\ell$ depende de la distancia cámara–fruta; las fotos propias se toman a distancia fija o con objeto de referencia **[DECIDIR]**; (ii) la banana es curva y el eje mayor de PCA subestima ligeramente la longitud de arco.
+Las clases de tamaño se definen **por especie** con terciles **calculados solo con el conjunto de entrenamiento**: $\hat s=S$ si $\ell<\tau_1^{(c)}$, $M$ si $\tau_1^{(c)}\le\ell<\tau_2^{(c)}$, $L$ si $\ell\ge\tau_2^{(c)}$, con $\tau_1^{(c)},\tau_2^{(c)}$ los cuantiles $1/3$ y $2/3$ de $\ell$ de la especie $c$ en entrenamiento (evita filtrar información del test y no compara el tamaño de una manzana con el de un banano).
+
+**Limitaciones que se declararán en el informe:** (i) $\ell$ depende de la distancia cámara–fruta: las imágenes de Kaggle **no tienen escala**, así que allí el tamaño es solo relativo; en las fotos propias la regla o el objeto de referencia permiten medirlo en cm y **validar** $\ell$ **[DECIDIR]**; (ii) la banana es curva y el eje mayor de PCA subestima ligeramente la longitud de arco; (iii) una mano que sostiene la fruta o varias frutas en la foto alteran la máscara.
 
 ### 3.2 Fracción de mancha (criterio operacional de calidad)
 
-Sea $B\subset\text{HSV}$ la región de color marrón/negro (umbrales a calibrar en el EDA). Se define
+Sea $B_c\subset\text{HSV}$ la región de color de defecto de la especie $c$ (p. ej. marrón/negro en el banano; la definición de defecto cambia con la especie, ver `docs/definicion_clases.md` §2; umbrales a calibrar). Se define
 
 $$
-\rho(x)=\frac{\sum_{p\in\mathcal{P}}\mathbb{1}[x_p\in B]}{|\mathcal{P}|}\in[0,1].
+\rho(x)=\frac{\sum_{p\in\mathcal{P}}\mathbb{1}[x_p\in B_c]}{|\mathcal{P}|}\in[0,1].
 $$
 
 Regla de etiquetado propuesta (ver `docs/definicion_clases.md`): Buena si $\rho<0.10$; Regular si $0.10\le\rho\le0.40$; Mala si $\rho>0.40$ o hay moho/zona blanda. **Los umbrales 0.10 y 0.40 son una propuesta, no una norma [DECIDIR]**; $\rho$ permite validar objetivamente las etiquetas manuales y medir el acuerdo entre anotadores.
@@ -125,7 +129,7 @@ $$
 
 **Max-pooling** $2\times2$ con paso 2 reduce alto y ancho a la mitad y no tiene parámetros. **ReLU:** $\max(0,z)$.
 
-**Ejemplo ilustrativo [VERIFICAR con `model.summary()`]** — entrada $128\times128\times3$, tres bloques Conv($3\times3$, `same`)+MaxPool(2) con 32, 64, 128 filtros:
+**Ejemplo ilustrativo (conteos verificados contra `model.count_params()` de Keras en `tests/test_cnn.py`; implementación en `src/cnn.py`)** — entrada $128\times128\times3$, tres bloques Conv($3\times3$, `same`)+MaxPool(2) con 32, 64, 128 filtros:
 
 | Capa | Salida | Parámetros |
 |---|---|---|
@@ -141,10 +145,11 @@ Con `GlobalAveragePooling2D` en lugar de `Flatten`, la capa Dense(128) pasa a $1
 
 ## 7. Estrategia de validación (anti-fuga de datos)
 
-- **Partición por banana, no por imagen.** Sea $g_i$ la banana física de la imagen $i$. Train/val/test se construyen de modo que **ningún $g$ aparezca en dos particiones** (`GroupKFold`/`GroupShuffleSplit`), y estratificando por clase cuando es posible. Motivo: imágenes de una misma fruta (5 ángulos, 3 días) están fuertemente correlacionadas; separarlas al azar infla las métricas.
-  **[DECIDIR / VERIFICAR en EDA]** Si el dataset de Kaggle no trae identificador de fruta, se agrupará por similitud (p. ej. *hash* perceptual) y se documentará la limitación.
+- **Partición por objeto, no por imagen.** Sea $g_i$ el objeto físico de la imagen $i$. Train/val/test se construyen de modo que **ningún $g$ aparezca en dos particiones** y estratificando por **especie × calidad** (`StratifiedGroupKFold`, no visto en clase: se declara y cita). Motivo: imágenes del mismo objeto (ráfagas, ángulos) están fuertemente correlacionadas; separarlas al azar infla las métricas.
+- **Cómo se forman los grupos** (el dataset de Kaggle no trae identificador de objeto): dentro de cada celda especie × fuente, se unen las imágenes con marcas de tiempo separadas por $\le 3$ s, las de **hash perceptual** (aHash de 256 bits) a distancia de Hamming $\le 5$ y, para los nombres `IMG_NNNN` sin fecha, las de contador consecutivo con hash a distancia $\le 30$; los grupos son los componentes conexos. Los umbrales se **calibraron con datos** (`02_comprension_datos/eda.ipynb`): con umbrales de hash mayores la clausura transitiva forma grupos gigantes (hasta 4 732 imágenes) y la partición por celda se descuadra. Limitación declarada: rotaciones o recortes que el hash no detecta dejan **fuga residual**, mayor en *Good* apple, guava, banana y pomegranate.
 - **Selección de hiperparámetros:** $k$-fold agrupado ($k=5$) sobre entrenamiento con `GridSearchCV`; el conjunto de test se usa **una sola vez** al final.
-- **Tres conjuntos de evaluación:** (a) test del dataset de referencia, (b) fotos propias (dominio real), (c) frutas segmentadas de `mixed_quality`.
+- **Conjuntos de evaluación por dominio:** (a) test del dataset de referencia, (b) fotos propias (dominio real), (c) frutas segmentadas de `Mixed`.
+- **Línea base de atajo:** junto a cada modelo se reporta el rendimiento de un clasificador que **solo ve el borde de la imagen**; si el modelo no la supera con claridad, no se puede atribuir su rendimiento a la calidad de la fruta.
 
 ## 8. Métricas e incertidumbre
 
@@ -154,6 +159,7 @@ $$
 P_k=\frac{C_{kk}}{\sum_i C_{ik}},\quad R_k=\frac{C_{kk}}{\sum_j C_{kj}},\quad F1_k=\frac{2P_kR_k}{P_k+R_k},\quad F1_{\text{macro}}=\frac1K\sum_k F1_k .
 $$
 
+- **Métricas globales y por especie:** cada métrica se calcula sobre todo el conjunto y por separado para cada especie $c$ (un promedio global puede esconder una especie que falla; la granada, por ejemplo, domina el conteo de imágenes *Good*).
 - **F1 macro** (y no solo accuracy) porque hay desbalance: predecir siempre la clase mayoritaria da alta accuracy y F1 macro bajo (paradoja de la exactitud vista en clase).
 - **Kappa de Cohen ponderado cuadráticamente**, por la naturaleza ordinal:
 
@@ -167,8 +173,9 @@ donde $O$ son las frecuencias observadas y $E$ las esperadas por azar.
 
 ## 9. Preguntas abiertas que bloquean el cierre de este documento
 
-1. ¿El dataset de Kaggle trae identificador de fruta para agrupar? (EDA)
+1. ~~¿El dataset de Kaggle trae identificador de fruta?~~ **Resuelto en el EDA:** no lo trae; se infiere con tiempo + hash + contador (§7), con fuga residual declarada.
 2. ¿Qué modelos de ML tradicional se eligen finalmente (SVM y RF/XGBoost son los candidatos)?
-3. $H,W$ definitivos y si la CNN usa `Flatten` o `GlobalAveragePooling2D`.
-4. Umbrales de $\rho$ y tratamiento de la banana verde (propuesta: Buena).
-5. Referencia de escala para el tamaño en fotos propias.
+3. $H,W$ definitivos (medir una época de la CNN en CPU antes de decidir) y si la CNN usa `Flatten` o `GlobalAveragePooling2D`.
+4. Umbrales de $\rho$ por especie y tratamiento de la fruta verde (propuesta: Buena si no tiene defectos).
+5. Referencia de escala para el tamaño en fotos propias (regla en cuadro).
+6. Fuentes definitivas de la clase *Regular* (fotos propias, frutas de *Mixed* etiquetadas y, si se aprueba, un dataset adicional con nivel intermedio).
