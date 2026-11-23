@@ -14,11 +14,12 @@ https://www.kaggle.com/datasets/ryandpark/fruit-quality-classification
 (licencia por verificar en la ficha de Kaggle).
 
 Los nombres de archivo del dataset no siguen una sola convención: hay marcas de
-tiempo de cámara de celular (``IMG<AAAAMMDD><HHMMSS>[_NN]`` e
-``IMG_<AAAAMMDD>_<HHMMSS>[_N]``) y también contadores sin fecha (``IMG_NNNN``,
-``N_N``, ``N_N_N``). La idea de agrupar por cercanía temporal es una **hipótesis**
-de este proyecto (no viene documentada en el dataset) y solo aplica a los nombres
-con fecha; debe validarse visualmente (ver ``contact_sheet``).
+tiempo de cámara de celular (``IMG<AAAAMMDD><HHMMSS>[_NN]``,
+``IMG_<AAAAMMDD>_<HHMMSS>[_N]``, ``<AAAAMMDD>_<HHMMSS>[_NNNNN]``) y también
+contadores sin fecha (``IMG_NNNN``). La idea de agrupar por cercanía temporal es una
+**hipótesis** de este proyecto (no viene documentada en el dataset) y solo aplica a
+los nombres con fecha; se valida con la similitud de las imágenes consecutivas (ver
+``02_comprension_datos/eda.ipynb``) y visualmente (``contact_sheet``).
 """
 from __future__ import annotations
 
@@ -32,13 +33,27 @@ import pandas as pd
 from PIL import Image
 
 IMG_EXTS = {".jpg", ".jpeg", ".png"}
-# IMG20200729190220[_01]  |  IMG_20190910_175131[_1]
-_TS_RE = re.compile(r"^IMG_?(\d{8})_?(\d{6})(?:_(\d+))?$", re.IGNORECASE)
+# IMG20200729190220[_01]  |  IMG_20190910_175131[_1]  |  20190809_115439  |  20190820_143522_22896
+# (el prefijo IMG es opcional; el último número es un sufijo/contador de duplicado)
+_TS_RE = re.compile(r"^(?:IMG_?)?(\d{8})_?(\d{6})(?:_(\d+))?$", re.IGNORECASE)
+
+# IMG_0111  (contador de la cámara, sin fecha)
+_COUNTER_RE = re.compile(r"^IMG_(\d{3,5})$", re.IGNORECASE)
 
 #: Etiqueta débil según la carpeta de origen. ``Mixed`` no trae etiqueta por fruta.
 WEAK_LABELS = {"good": "Buena", "bad": "Mala", "mixed": None}
 INDEX_COLUMNS = ["path", "filename", "species", "source", "label_weak",
-                 "name_pattern", "timestamp", "dup_suffix"]
+                 "name_pattern", "timestamp", "dup_suffix", "counter"]
+
+
+def parse_counter(filename: str) -> Optional[int]:
+    """Contador de un nombre ``IMG_NNNN`` (sin fecha), o ``None`` si no tiene ese formato.
+
+    Hipótesis a validar: contadores consecutivos suelen ser fotos seguidas de la misma
+    escena, pero **no** del mismo objeto en todos los casos (ver el EDA).
+    """
+    match = _COUNTER_RE.match(Path(filename).stem)
+    return int(match.group(1)) if match else None
 
 
 def parse_timestamp(filename: str) -> tuple[Optional[datetime], int]:
@@ -117,7 +132,7 @@ def index_dataset(root: Path | str) -> pd.DataFrame:
         como aparece en la carpeta; en *Mixed* la lima figura como ``lemon``),
         ``source`` (``good``/``bad``/``mixed``), ``label_weak`` (``Buena``, ``Mala`` o
         ``None`` en *Mixed*), ``name_pattern``, ``timestamp`` (``NaT`` si el nombre no
-        trae fecha) y ``dup_suffix``.
+        trae fecha), ``dup_suffix`` y ``counter`` (solo nombres ``IMG_NNNN``).
 
     Raises:
         FileNotFoundError: si ``root`` no existe.
@@ -139,9 +154,11 @@ def index_dataset(root: Path | str) -> pd.DataFrame:
                 rows.append({"path": str(p), "filename": p.name, "species": species,
                              "source": source, "label_weak": WEAK_LABELS[source],
                              "name_pattern": name_pattern(p.name),
-                             "timestamp": ts, "dup_suffix": suffix})
+                             "timestamp": ts, "dup_suffix": suffix,
+                             "counter": parse_counter(p.name)})
     df = pd.DataFrame(rows, columns=INDEX_COLUMNS)
     df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["counter"] = df["counter"].astype("Int64")        # entero con valores ausentes
     return df
 
 

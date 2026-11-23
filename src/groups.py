@@ -38,6 +38,10 @@ from scipy.sparse.csgraph import connected_components
 #: grupos gigantes (hasta 2 957 imágenes con 40) que rompen la estratificación.
 DEFAULT_GAP_SECONDS = 3.0
 DEFAULT_HASH_DIST = 5
+#: Para nombres ``IMG_NNNN`` (sin fecha): contador consecutivo **y** hash <= 30. Con 20
+#: o 40 la partición sigue balanceada; es una decisión de compromiso entre fuga residual y
+#: sobre-unión (ver la tabla de sensibilidad del EDA).
+DEFAULT_COUNTER_HASH_DIST = 30
 
 
 def packed_ahash(path: Path | str, size: int = 16) -> np.ndarray:
@@ -100,21 +104,45 @@ def time_edges(timestamps: pd.Series, gap_seconds: float) -> tuple[np.ndarray, n
     return order[:-1][close], order[1:][close]
 
 
+def counter_edges(counters: pd.Series, packed: np.ndarray, max_gap: int = 1,
+                  max_dist: int = 20) -> tuple[np.ndarray, np.ndarray]:
+    """Pares de imágenes con contadores consecutivos **y** hash cercano.
+
+    Los contadores ``IMG_NNNN`` casi siempre son consecutivos (en banana *Good*, 997 de
+    999 pares), así que unirlos solo por contador encadenaría toda la celda en un único
+    grupo; por eso se exige además ``max_dist`` de distancia de Hamming. Las posiciones
+    devueltas son índices posicionales; los contadores ausentes no generan aristas.
+    """
+    c = pd.Series(counters).reset_index(drop=True)
+    order = c[c.notna()].astype("int64").sort_values(kind="stable").index.to_numpy()
+    if len(order) < 2:
+        return np.empty(0, dtype=np.int64), np.empty(0, dtype=np.int64)
+    vals = c.loc[order].astype("int64").to_numpy()
+    a, b = order[:-1], order[1:]
+    near = (np.diff(vals) <= max_gap) & (
+        np.bitwise_count(packed[a] ^ packed[b]).sum(axis=1) <= max_dist)
+    return a[near], b[near]
+
+
 def build_groups(df: pd.DataFrame, packed: Optional[np.ndarray] = None,
                  gap_seconds: Optional[float] = 3.0, max_hash_dist: Optional[int] = None,
                  cell_cols: tuple[str, ...] = ("species", "source"),
-                 prefix: str = "g") -> pd.DataFrame:
-    """Asigna ``group`` (objeto físico aproximado) combinando tiempo y hash.
+                 prefix: str = "g", counter_hash_dist: Optional[int] = None) -> pd.DataFrame:
+    """Asigna ``group`` (objeto físico aproximado) combinando tiempo, hash y contador.
 
     Args:
-        df: índice con ``timestamp`` y las columnas de ``cell_cols`` (p. ej. la salida
-            de ``data_utils.index_dataset``).
+        df: índice con ``timestamp`` (y ``counter`` si se usa ``counter_hash_dist``) y
+            las columnas de ``cell_cols`` (p. ej. la salida de
+            ``data_utils.index_dataset``).
         packed: hashes empaquetados alineados con las filas de ``df`` (de
             :func:`hash_matrix`); si es ``None`` no se usa el hash.
         gap_seconds: salto temporal máximo; ``None`` desactiva la señal de tiempo.
         max_hash_dist: distancia de Hamming máxima; ``None`` desactiva el hash.
         cell_cols: solo se unen imágenes de una misma celda.
         prefix: prefijo del identificador de grupo.
+        counter_hash_dist: si se da, une también imágenes de contador consecutivo con
+            distancia de hash <= este valor (ver :func:`counter_edges`); requiere
+            ``packed`` y la columna ``counter``.
 
     Returns:
         Copia de ``df`` (índice reiniciado) con ``group`` y ``group_size``.
@@ -131,6 +159,9 @@ def build_groups(df: pd.DataFrame, packed: Optional[np.ndarray] = None,
         if packed is not None and max_hash_dist is not None and len(idx) > 1:
             i, j = hash_edges(packed[idx], max_hash_dist)
             rows.append(idx[i]); cols.append(idx[j])
+        if counter_hash_dist is not None and packed is not None and len(idx) > 1:
+            i, j = counter_edges(df.loc[idx, "counter"], packed[idx], max_dist=counter_hash_dist)
+            rows.append(idx[i]); cols.append(idx[j])
     r, c = np.concatenate(rows), np.concatenate(cols)
     graph = coo_matrix((np.ones(len(r), dtype=np.int8), (r, c)), shape=(len(df), len(df)))
     _, labels = connected_components(graph, directed=False)
@@ -141,18 +172,24 @@ def build_groups(df: pd.DataFrame, packed: Optional[np.ndarray] = None,
 
 
 def grouping_sensitivity(df: pd.DataFrame, packed: Optional[np.ndarray],
-                         settings: Iterable[tuple[Optional[float], Optional[int]]],
+                         settings: Iterable[tuple],
                          cell_cols: tuple[str, ...] = ("species", "source")) -> pd.DataFrame:
-    """Efecto de cada ``(gap_seconds, max_hash_dist)`` en el número y tamaño de los grupos.
+    """Efecto de cada configuración en el número y tamaño de los grupos.
 
-    Un umbral demasiado laxo funde objetos distintos en grupos gigantes (``max_size``
-    alto, poca estratificación posible); uno demasiado estricto deja fuga de datos.
+    Cada elemento de ``settings`` es ``(gap_seconds, max_hash_dist)`` o
+    ``(gap_seconds, max_hash_dist, counter_hash_dist)``. Un umbral demasiado laxo funde
+    objetos distintos en grupos gigantes (``max_size`` alto, poca estratificación
+    posible); uno demasiado estricto deja fuga de datos.
     """
     rows = []
-    for gap, dist in settings:
-        g = build_groups(df, packed, gap_seconds=gap, max_hash_dist=dist, cell_cols=cell_cols)
+    for setting in settings:
+        gap, dist, *rest = setting
+        cdist = rest[0] if rest else None
+        g = build_groups(df, packed, gap_seconds=gap, max_hash_dist=dist, cell_cols=cell_cols,
+                         counter_hash_dist=cdist)
         sizes = g.groupby("group").size()
-        rows.append({"gap_seconds": gap, "max_hash_dist": dist, "n_groups": int(sizes.size),
+        rows.append({"gap_seconds": gap, "max_hash_dist": dist, "counter_hash_dist": cdist,
+                     "n_groups": int(sizes.size),
                      "mean_size": float(sizes.mean()), "max_size": int(sizes.max()),
                      "pct_imgs_in_multi": float((g["group_size"] > 1).mean() * 100)})
     return pd.DataFrame(rows)

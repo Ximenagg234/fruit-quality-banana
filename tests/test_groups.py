@@ -79,6 +79,29 @@ def test_build_groups_without_signals_gives_singletons_and_validates_input():
         gr.build_groups(df, np.zeros((5, 8), dtype=np.uint8))
 
 
+def test_counter_edges_require_consecutive_counter_and_close_hash():
+    base = _bits(4)
+    near = base.copy(); near[0] ^= 0b00000111           # 3 bits de diferencia
+    packed = np.vstack([base, near, _bits(9), _bits(9)])
+    counters = pd.Series([100, 101, 102, 150], dtype="Int64")
+    i, j = gr.counter_edges(counters, packed, max_gap=1, max_dist=5)
+    # (100,101): consecutivos y hash cercano -> sí; (101,102): consecutivos pero hash lejano -> no;
+    # (102,150): hash idéntico pero contadores lejanos -> no
+    assert set(zip(i.tolist(), j.tolist())) == {(0, 1)}
+    assert len(gr.counter_edges(pd.Series([pd.NA, pd.NA], dtype="Int64"), packed[:2])[0]) == 0
+
+
+def test_build_groups_uses_counter_only_when_asked():
+    df = _index([("apple", "good", pd.NaT)] * 3)
+    df["counter"] = pd.Series([10, 11, 12], dtype="Int64")
+    base = _bits(2)
+    near = base.copy(); near[0] ^= 0b00000011
+    packed = np.vstack([base, near, _bits(8)])
+    assert gr.build_groups(df, packed, gap_seconds=None, max_hash_dist=None)["group"].nunique() == 3
+    con = gr.build_groups(df, packed, gap_seconds=None, max_hash_dist=None, counter_hash_dist=5)
+    assert con["group"].nunique() == 2 and con["group_size"].max() == 2
+
+
 def test_grouping_sensitivity_is_monotonic_in_threshold():
     df = _index([("apple", "good", T0 + pd.Timedelta(seconds=s)) for s in (0, 2, 4, 20, 22, 60)])
     sens = gr.grouping_sensitivity(df, None, [(1, None), (3, None), (30, None)])

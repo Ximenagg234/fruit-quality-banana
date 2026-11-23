@@ -106,6 +106,21 @@ def test_parse_timestamp_second_camera_format():
         assert du.parse_timestamp(sin_fecha) == (None, 0)
 
 
+def test_parse_timestamp_without_img_prefix_and_with_counter_suffix():
+    ts, suf = du.parse_timestamp("20190809_115439.jpg")
+    assert (ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second) == (2019, 8, 9, 11, 54, 39)
+    assert suf == 0
+    ts, suf = du.parse_timestamp("20190820_143522_22896.jpg")
+    assert (ts.hour, ts.minute, ts.second) == (14, 35, 22) and suf == 22896
+
+
+def test_parse_counter_only_for_plain_img_counters():
+    assert du.parse_counter("IMG_0111.JPG") == 111
+    assert du.parse_counter("IMG_8131.jpg") == 8131
+    for otro in ("IMG_20190910_175131.jpg", "20190809_115439.jpg", "IMG20200729190220.jpg", "foto.jpg"):
+        assert du.parse_counter(otro) is None
+
+
 def test_name_pattern_counts_conventions():
     assert du.name_pattern("IMG_0111.JPG") == "IMG_N.jpg"
     assert du.name_pattern("IMG20200729190220_01.jpg") == "IMGN_N.jpg"
@@ -141,9 +156,12 @@ def test_index_dataset_species_source_and_weak_labels(tmp_path):
     assert df[df["source"] == "good"]["label_weak"].tolist() == ["Buena", "Buena"]
     assert df[df["source"] == "bad"]["label_weak"].tolist() == ["Mala"]
     assert df[df["source"] == "mixed"]["label_weak"].isna().all()
-    # solo los nombres con fecha traen timestamp
-    assert df.set_index("filename").loc["IMG_0111.JPG", "timestamp"] is pd.NaT
-    assert df.set_index("filename").loc["IMG_20190910_175131.jpg", "timestamp"].year == 2019
+    # solo los nombres con fecha traen timestamp; solo los IMG_NNNN traen contador
+    por_nombre = df.set_index("filename")
+    assert por_nombre.loc["IMG_0111.JPG", "timestamp"] is pd.NaT
+    assert por_nombre.loc["IMG_20190910_175131.jpg", "timestamp"].year == 2019
+    assert por_nombre.loc["IMG_0111.JPG", "counter"] == 111
+    assert pd.isna(por_nombre.loc["IMG_20190910_175131.jpg", "counter"])
 
 
 def test_index_dataset_missing_folder(tmp_path):
