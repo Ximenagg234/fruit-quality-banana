@@ -85,9 +85,12 @@ def test_map_validation(tmp_path):
     src = tmp_path / "src"
     src.mkdir()
     _photo_with_metadata(src / "x1.jpg")
-    _map(tmp_path / "sin_col.csv", [{"original": "x1.jpg"}])
-    with pytest.raises(ValueError, match="Faltan columnas"):
+    _map(tmp_path / "sin_col.csv", [{"image_id": "A.jpg"}])
+    with pytest.raises(ValueError, match="Faltan columnas"):                 # falta la columna original
         pp.load_photo_map(tmp_path / "sin_col.csv")
+    _map(tmp_path / "sin_id.csv", [{"original": "x1.jpg"}])
+    with pytest.raises(ValueError, match="image_id ni object_id"):           # no hay de dónde sacar el nombre final
+        pp.load_photo_map(tmp_path / "sin_id.csv")
     _map(tmp_path / "dup.csv", [{"original": "a.jpg", "image_id": "B.jpg"}, {"original": "b.jpg", "image_id": "B.jpg"}])
     with pytest.raises(ValueError, match="repetidos"):
         pp.load_photo_map(tmp_path / "dup.csv")
@@ -97,3 +100,25 @@ def test_map_validation(tmp_path):
     _map(tmp_path / "falta.csv", [{"original": "no_esta.jpg", "image_id": "C.jpg"}])
     with pytest.raises(FileNotFoundError):
         pp.prepare_folder(src, tmp_path / "falta.csv", tmp_path / "dst")
+
+
+def test_image_ids_are_generated_unique_and_existing_ones_respected(tmp_path):
+    mapa = pd.DataFrame({
+        "original": ["a.jpg", "b.jpg", "c.jpg", "d.jpg"],
+        "object_id": ["B01", "B01", "B01", "B02"],
+        "day": ["0", "0", "", ""],
+        "angle": ["top", "top", "", "side"],
+        "image_id": ["", "", "", "B02_a_mano.jpg"],
+    })
+    out = pp.fill_image_ids(mapa)
+    assert out["image_id"].tolist() == ["B01_d0_top.jpg", "B01_d0_top_2.jpg", "B01_d0_x.jpg", "B02_a_mano.jpg"]
+    assert out["image_id"].is_unique
+    sin_objeto = mapa.assign(object_id=["", "B01", "B01", "B02"])
+    with pytest.raises(ValueError, match="object_id"):
+        pp.fill_image_ids(sin_objeto)
+
+
+def test_photo_map_without_image_id_column_is_completed(tmp_path):
+    _map(tmp_path / "m.csv", [{"original": "x1.jpg", "object_id": "A01", "angle": "top"},
+                              {"original": "x2.jpg", "object_id": "A01", "angle": "top"}])
+    assert pp.load_photo_map(tmp_path / "m.csv")["image_id"].tolist() == ["A01_d0_top.jpg", "A01_d0_top_2.jpg"]
