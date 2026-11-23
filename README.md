@@ -5,9 +5,9 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 ## Equipo
 | Integrante | GitHub | Rol principal |
 |---|---|---|
-| Ximena Gómez Gómez | @Ximenagg234 | _por definir_ |
-| Natalia Delgado | _por definir_ | _por definir_ |
-| Juan Pablo Bello | _por definir_ | _por definir_ |
+| Ximena Gómez Gómez | @Ximenagg234 | Integra el repositorio; datos, modelos y app |
+| Natalia Delgado | @ndelgadoar | Informe y referencias; etiquetado |
+| Juan Pablo Bello | _por confirmar_ | Diagrama, video y revisión; etiquetado |
 
 ## Estructura (por fases de CRISP-DM)
 | Carpeta | Contenido |
@@ -26,6 +26,7 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 
 ## Documentos clave
 - [Formulación matemática](docs/formulacion_matematica.md)
+- [Reparto del trabajo y flujo de colaboración](docs/REPARTO_TRABAJO.md)
 - [Definición de clases y protocolo de fotos](docs/definicion_clases.md)
 - [EDA multifruta (ejecutado)](02_comprension_datos/eda.ipynb)
 - [Trazabilidad de la rúbrica](docs/RUBRICA_TRAZABILIDAD.md)
