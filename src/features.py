@@ -25,11 +25,25 @@ from PIL import Image
 COLOR_FEATURES = ["r_mean", "g_mean", "b_mean", "r_std", "g_std", "b_std", "sat_mean", "val_mean"]
 
 
+def thumb_from_image(im: Image.Image, size: int = 64) -> np.ndarray:
+    """Miniatura RGB ``(size, size, 3)`` en ``uint8`` de una imagen ya abierta (sin conservar la proporción)."""
+    return np.asarray(im.convert("RGB").resize((size, size), Image.LANCZOS), dtype=np.uint8)
+
+
 def load_thumb(path: Path | str, size: int = 64) -> np.ndarray:
-    """Miniatura RGB ``(size, size, 3)`` en ``uint8``, sin conservar la proporción."""
+    """Miniatura RGB ``(size, size, 3)`` en ``uint8`` de un archivo, sin conservar la proporción."""
     with Image.open(path) as im:
         im.draft("RGB", (size * 4, size * 4))       # acelera JPEG grandes
-        return np.asarray(im.convert("RGB").resize((size, size), Image.LANCZOS), dtype=np.uint8)
+        return thumb_from_image(im, size)
+
+
+def color_features(thumbs: np.ndarray, region: str = "full") -> np.ndarray:
+    """Vector de 136 características de color: histograma HSV 8x4x4 (128) + estadísticos (8).
+
+    Es **la misma** combinación con la que se entrenan los modelos clásicos
+    (``04_modelado/modelos_clasicos.ipynb``) y la que usa la app al predecir.
+    """
+    return np.hstack([hsv_histogram(thumbs, region=region), color_stats(thumbs, region=region)])
 
 
 def thumbs_matrix(paths: Iterable[Path | str], size: int = 64, workers: int = 8) -> np.ndarray:
@@ -59,6 +73,36 @@ def region_mask(size: int, region: str, frame: int = 8) -> np.ndarray:
     inner = np.zeros((size, size), dtype=bool)
     inner[frame:size - frame, frame:size - frame] = True
     return ~inner if region == "border" else inner
+
+
+def hsv_histogram(thumbs: np.ndarray, bins: tuple[int, int, int] = (8, 4, 4), region: str = "full",
+                  frame: int = 8, chunk: int = 2000) -> np.ndarray:
+    """Histograma conjunto de color HSV normalizado (suma 1) por imagen.
+
+    El tono es circular, por eso se usa en histograma y no como media. Con
+    ``bins=(8, 4, 4)`` hay 128 características por imagen.
+
+    Args:
+        thumbs: arreglo ``(n, s, s, 3)`` ``uint8``.
+        bins: número de intervalos de tono, saturación y valor.
+        region: ``'full'``, ``'border'`` o ``'center'`` (ver :func:`region_mask`).
+
+    Returns:
+        Arreglo ``(n, bins[0] * bins[1] * bins[2])`` de ``float64``; cada fila suma 1.
+    """
+    n, size = thumbs.shape[0], thumbs.shape[1]
+    mask = region_mask(size, region, frame)
+    nb = int(np.prod(bins))
+    out = np.empty((n, nb), dtype=np.float64)
+    for start in range(0, n, chunk):
+        px = thumbs[start:start + chunk][:, mask, :].astype(np.float64) / 255.0     # (b, m, 3)
+        hsv = rgb_to_hsv(px)
+        idx = [np.minimum((hsv[..., k] * bins[k]).astype(np.int64), bins[k] - 1) for k in range(3)]
+        flat = (idx[0] * bins[1] + idx[1]) * bins[2] + idx[2]                        # (b, m)
+        b = flat.shape[0]
+        counts = np.bincount((flat + np.arange(b)[:, None] * nb).ravel(), minlength=b * nb)
+        out[start:start + chunk] = counts.reshape(b, nb) / flat.shape[1]
+    return out
 
 
 def color_stats(thumbs: np.ndarray, region: str = "full", frame: int = 8, chunk: int = 2000) -> np.ndarray:

@@ -72,8 +72,10 @@ $$
 Para una región elíptica uniforme con semieje mayor $a$, la varianza a lo largo de ese eje es $a^2/4$, luego la longitud del eje mayor es
 
 $$
-L=4\sqrt{\lambda_1},\qquad \ell=\frac{L}{W}\quad(\text{longitud normalizada}).
+L=4\sqrt{\lambda_1},\qquad \ell=\frac{L}{\min(H,W)}\quad(\text{longitud normalizada}).
 $$
+
+Se normaliza por el **lado menor** de la imagen, $\min(H,W)$, y no por el ancho, para que $\ell$ no cambie si la foto es vertical u horizontal (con el mismo celular y la misma distancia, el lado menor abarca el mismo campo de visión en ambas orientaciones). Por eso $\ell$ **puede superar 1** en una foto vertical con una fruta larga sin que haya ningún error. Además de $\ell$ se calcula la fracción $b$ del borde de la imagen que cae dentro de la máscara: un $b$ alto ($>0.02$) delata una mano o un brazo que entra por el borde, o una fruta cortada, y la medida no se considera fiable (umbral calibrado en las fotos propias: $b=0$ en 7 fotos sobre superficie y $0.065$–$0.122$ en 22 fotos con mano, por revisión visual).
 
 La fórmula sirve para **cualquier forma**: en una elipse da el eje mayor y en un disco de radio $r$ la varianza a lo largo de cualquier eje es $r^2/4$, luego $L=4\sqrt{r^2/4}=2r$, el diámetro. Por eso una sola definición cubre al banano (alargado) y a la naranja o la granada (redondas).
 
