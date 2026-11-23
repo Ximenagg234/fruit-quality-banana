@@ -45,19 +45,11 @@ def estimate_background(img: np.ndarray, frame: int = 6) -> np.ndarray:
 MIN_CONTRAST = {"saturation": 0.15, "distance": 10.0}
 
 
-def segment_fruit(img: np.ndarray, frame: int = 6, min_area_frac: float = 0.01,
-                  method: str = "saturation") -> Optional[np.ndarray]:
-    """Máscara booleana ``(h, w)`` de la fruta, o ``None`` si no se encuentra un objeto.
+def foreground_mask(img: np.ndarray, frame: int = 6, method: str = "saturation") -> Optional[np.ndarray]:
+    """Máscara booleana de **todo** el primer plano (puede tener varios objetos), o ``None`` si no hay contraste.
 
-    Args:
-        img: imagen RGB ``uint8`` ``(h, w, 3)``.
-        frame: ancho del marco que se usa para estimar el fondo (método ``distance``).
-        min_area_frac: fracción mínima de la imagen que debe ocupar el objeto.
-        method: ``'saturation'`` (por defecto) binariza la saturación HSV con Otsu: sirve
-            con fondos neutros (blanco o gris) aunque haya sombras y luz desigual, porque
-            una sombra es gris y la fruta es saturada. ``'distance'`` binariza la distancia
-            al color del fondo: sirve con un fondo liso de color (cian, morado), pero falla
-            con iluminación desigual (toma las manchas de luz como fruta).
+    Es la parte común de :func:`segment_fruit` (que se queda con un solo objeto) y de la
+    segmentación por instancias de ``mixed.py``. Ver :func:`segment_fruit` para ``method``.
 
     Raises:
         ValueError: si ``img`` no es RGB o ``method`` no existe.
@@ -79,7 +71,29 @@ def segment_fruit(img: np.ndarray, frame: int = 6, min_area_frac: float = 0.01,
     mask = np.pad(mask, pad, mode="edge")
     mask = ndimage.binary_opening(mask, iterations=1)
     mask = ndimage.binary_closing(mask, iterations=2)
-    mask = mask[pad:-pad, pad:-pad]
+    return mask[pad:-pad, pad:-pad]
+
+
+def segment_fruit(img: np.ndarray, frame: int = 6, min_area_frac: float = 0.01,
+                  method: str = "saturation") -> Optional[np.ndarray]:
+    """Máscara booleana ``(h, w)`` de la fruta, o ``None`` si no se encuentra un objeto.
+
+    Args:
+        img: imagen RGB ``uint8`` ``(h, w, 3)``.
+        frame: ancho del marco que se usa para estimar el fondo (método ``distance``).
+        min_area_frac: fracción mínima de la imagen que debe ocupar el objeto.
+        method: ``'saturation'`` (por defecto) binariza la saturación HSV con Otsu: sirve
+            con fondos neutros (blanco o gris) aunque haya sombras y luz desigual, porque
+            una sombra es gris y la fruta es saturada. ``'distance'`` binariza la distancia
+            al color del fondo: sirve con un fondo liso de color (cian, morado), pero falla
+            con iluminación desigual (toma las manchas de luz como fruta).
+
+    Raises:
+        ValueError: si ``img`` no es RGB o ``method`` no existe.
+    """
+    mask = foreground_mask(img, frame, method)
+    if mask is None:
+        return None
     labels, n = ndimage.label(mask)
     if n == 0:
         return None
