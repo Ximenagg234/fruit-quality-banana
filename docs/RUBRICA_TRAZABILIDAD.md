@@ -13,8 +13,8 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla dilema → principio del código de ética → decisión/medida | `docs/etica_tabla.md` (borrador v1, 8 filas con estado por medida) → informe, sección Ética | 🟡 |
-| Las medidas están realmente implementadas (no solo declaradas): p. ej. fotos sin rostros, sesgo del dataset medido en EDA | enlaces a notebooks/código | ⬜ |
+| Tabla dilema → principio del código de ética → decisión/medida | `docs/etica_tabla.md` (borrador v1.1 multifruta, 8 filas con estado por medida; E8 pendiente de decisión de la autora) → informe, sección Ética | 🟡 |
+| Las medidas están realmente implementadas (no solo declaradas): p. ej. fotos sin rostros, sesgo del dataset medido en EDA | Sesgo de fondo medido: `02_comprension_datos/eda.ipynb` §7 (F1 macro del borde solo: 0.76–0.96). Faltan `prepare_photos.py`, visto bueno de las personas que aparecen en las fotos y la app que no guarda imágenes | 🟡 |
 | Código de ética citado con referencia IEEE (IEEE/ACM) | `report/refs.bib` | ⬜ |
 
 ### 2. Impactos social, económico, ambiental y global (PI2)
@@ -22,7 +22,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Matriz 4 dimensiones × (impacto positivo, riesgo, mitigación) | `docs/impactos_matriz.md` (borrador v1, análisis inicial; faltan datos [MEDIR]) → informe | 🟡 |
+| Matriz 4 dimensiones × (impacto positivo, riesgo, mitigación) | `docs/impactos_matriz.md` (borrador v2 multifruta, análisis inicial; faltan datos [MEDIR]) → informe | 🟡 |
 | Dimensión ambiental con **dato medido** (energía/tiempo de entrenamiento e inferencia, hardware) | `05_evaluacion/` | ⬜ |
 | Análisis inicial (en avance) **y** análisis final (lineamientos §6 piden ambos) | informe | ⬜ |
 
@@ -31,7 +31,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Variables, espacios, función objetivo, restricciones | `docs/formulacion_matematica.md` (borrador listo, ver §1–§3) | 🟡 |
+| Variables, espacios, función objetivo, restricciones | `docs/formulacion_matematica.md` (borrador v2 multifruta: especie, tamaño por especie, grupos; ver §0–§3 y §7) | 🟡 |
 | Argumento de complejidad | `docs/formulacion_matematica.md` §1 | 🟡 |
 | Pseudocódigo/esquema formal del pipeline | informe | ⬜ |
 
@@ -50,7 +50,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 |---|---|---|
 | Normalización de píxeles y estandarización de características (solo con estadísticos de train) | `docs/formulacion_matematica.md` §4 | 🟡 |
 | Funciones de pérdida (entropía cruzada ponderada, hinge, Gini) | §5 | 🟡 |
-| Convolución, pooling, tamaño de salida y número de parámetros de la CNN, **calculados y verificados contra `model.summary()`** | §6 + notebook | 🟡 |
+| Convolución, pooling, tamaño de salida y número de parámetros de la CNN, **calculados y verificados contra Keras** | `docs/formulacion_matematica.md` §6; `src/cnn.py` y `tests/test_cnn.py` (la fórmula coincide con `count_params()`: 4 288 067 con `Flatten` y 110 147 con GAP en el ejemplo de 128×128, y casos de 96 px con 6 clases) | ✅ |
 | Métricas (F1 macro, kappa ponderado, error estándar binomial) | §8 | 🟡 |
 | Medición de tamaño (PCA de la máscara) | §3 | 🟡 |
 
@@ -84,6 +84,26 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 | Diagrama CRISP-DM **personalizado** | `docs/diagrama_crispdm.svg` | ⬜ |
 | Referencias IEEE; todo lo de terceros citado | `report/refs.bib` | ⬜ |
 | Código con docstrings y comentarios, repo ordenado por fases | todo el repo | ⬜ |
+
+## Requisitos duros del enunciado (no negociables)
+Estado a la fecha de esta versión; solo se marca ✅ con evidencia verificable.
+
+| Requisito (lineamientos) | Evidencia | Estado |
+|---|---|---|
+| Alcance multifruta confirmado por el profesor | `docs/REQUISITOS_LINEAMIENTOS.md`, `docs/definicion_clases.md` | 🟡 (diseño y datos listos; modelos pendientes) |
+| Dataset de Kaggle usado y citado; licencia verificada | `data/README.md` (licencia **[VERIFICAR]** en la ficha de Kaggle) | 🟡 |
+| `Mixed`: segmentar cada fruta individual | — | ⬜ |
+| 30–50 imágenes propias anotadas (calidad y tamaño), por varias especies | 91 fotos de banano recibidas, sin `object_id` ni etiquetas; fotos de las otras 5 especies pendientes | 🟡 |
+| Mecanismo para compartir anotaciones con la clase | esquema en `data/README.md` §2–3 | 🟡 |
+| ≥ 2 modelos de ML tradicional con hiperparámetros por validación cruzada | — | ⬜ |
+| ≥ 1 modelo de deep learning (CNN desde cero) | `src/cnn.py` (arquitectura y conteo de parámetros verificados; sin entrenar) | 🟡 |
+| Comparación con línea base | — | ⬜ |
+| CRISP-DM con evidencia: fase 2 (EDA ejecutado) | `02_comprension_datos/eda.ipynb` ejecutado con datos reales; falta medir la nitidez como parte de "calidad de imagen" | 🟡 |
+| CRISP-DM: fases 1, 3, 4, 5 y 6 | — | ⬜ |
+| **App Streamlit funcional: cargar imagen o capturar con cámara y mostrar calidad y tamaño** | — | ⬜ |
+| Diagrama de flujo CRISP-DM personalizado | — | ⬜ |
+| Informe ≤ 7 páginas IEEE y video ≤ 10 min | — | ⬜ |
+| Análisis ético y análisis inicial y final de impactos | `docs/etica_tabla.md`, `docs/impactos_matriz.md` (iniciales) | 🟡 |
 
 ## Auditoría final (antes de entregar)
 1. Recorrer los 8 criterios y marcar contra el texto literal del nivel 4.

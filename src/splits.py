@@ -1,14 +1,26 @@
-"""Particiones train/val/test **por grupo** (banana física) para evitar fuga de datos.
+"""Particiones train/val/test **por grupo** (objeto físico) para evitar fuga de datos.
 
-Imágenes de una misma banana (distintos ángulos, mismo instante) están fuertemente
+Imágenes de un mismo objeto (distintos ángulos, mismo instante) están fuertemente
 correlacionadas; si se reparten al azar entre train y test, las métricas salen
-infladas. Aquí toda la banana va a una sola partición. Ver
-``docs/formulacion_matematica.md`` §7.
+infladas. Aquí todo el objeto va a una sola partición. Con varias especies se
+estratifica por ``especie x clase`` (columna ``strata_col``) para que cada partición
+conserve todas las especies y calidades. Ver ``docs/formulacion_matematica.md`` §7 y
+``src/groups.py`` (cómo se forman los grupos).
+
+``StratifiedGroupKFold`` **no se vio en clase** (sí ``StratifiedKFold``): se declara
+y se cita en el informe.
 """
 from __future__ import annotations
 
+from typing import Optional, Sequence
+
 import pandas as pd
 from sklearn.model_selection import StratifiedGroupKFold
+
+
+def make_strata(df: pd.DataFrame, cols: Sequence[str]) -> pd.Series:
+    """Etiqueta combinada (p. ej. ``'banana|Buena'``) para estratificar por varias columnas."""
+    return df[list(cols)].astype(str).agg("|".join, axis=1)
 
 
 def assert_no_group_overlap(a: pd.DataFrame, b: pd.DataFrame, group_col: str = "group") -> None:
@@ -18,18 +30,22 @@ def assert_no_group_overlap(a: pd.DataFrame, b: pd.DataFrame, group_col: str = "
 
 
 def grouped_split(df: pd.DataFrame, label_col: str = "label", group_col: str = "group",
-                  test_size: float = 0.2, seed: int = 42) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Divide ``df`` en (train, test) sin compartir grupos y estratificando por clase.
+                  test_size: float = 0.2, seed: int = 42,
+                  strata_col: Optional[str] = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Divide ``df`` en (train, test) sin compartir grupos y estratificando.
 
-    Usa ``StratifiedGroupKFold`` con ``round(1/test_size)`` pliegues y toma el primero
-    como test, por lo que la proporción de test es aproximada (los grupos no se parten).
+    Estratifica por ``strata_col`` si se da (p. ej. especie x clase) y, si no, por
+    ``label_col``. Usa ``StratifiedGroupKFold`` con ``round(1/test_size)`` pliegues y
+    toma el primero como test, por lo que la proporción de test es aproximada (los
+    grupos no se parten).
 
     Raises:
         AssertionError: si por algún motivo un grupo queda en ambas particiones.
     """
     n_splits = max(2, int(round(1 / test_size)))
     sgkf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=seed)
-    train_idx, test_idx = next(sgkf.split(df, df[label_col], df[group_col]))
+    y = df[strata_col or label_col]
+    train_idx, test_idx = next(sgkf.split(df, y, df[group_col]))
     train, test = df.iloc[train_idx].reset_index(drop=True), df.iloc[test_idx].reset_index(drop=True)
     assert_no_group_overlap(train, test, group_col)
     return train, test
@@ -37,11 +53,12 @@ def grouped_split(df: pd.DataFrame, label_col: str = "label", group_col: str = "
 
 def grouped_train_val_test(df: pd.DataFrame, label_col: str = "label", group_col: str = "group",
                            val_size: float = 0.15, test_size: float = 0.15,
-                           seed: int = 42) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+                           seed: int = 42, strata_col: Optional[str] = None
+                           ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Partición (train, val, test) por grupo; ``val_size`` es la fracción sobre el total."""
-    train_val, test = grouped_split(df, label_col, group_col, test_size, seed)
+    train_val, test = grouped_split(df, label_col, group_col, test_size, seed, strata_col)
     rel_val = val_size / (1 - test_size)
-    train, val = grouped_split(train_val, label_col, group_col, rel_val, seed + 1)
+    train, val = grouped_split(train_val, label_col, group_col, rel_val, seed + 1, strata_col)
     assert_no_group_overlap(train, val, group_col)
     assert_no_group_overlap(val, test, group_col)
     return train, val, test

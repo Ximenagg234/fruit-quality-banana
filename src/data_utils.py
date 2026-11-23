@@ -1,20 +1,25 @@
-"""Utilidades de datos para el proyecto *fruit-quality-banana*.
+"""Utilidades de datos para el proyecto de clasificación de calidad de frutas.
 
 Cubre la fase 2 de CRISP-DM (comprensión de los datos):
 
-* inventario de imágenes y lectura de la marca de tiempo del nombre de archivo,
-* agrupación de imágenes por banana física (para evitar fuga de datos),
+* índice multifruta del dataset (especie, fuente y etiqueta débil de cada imagen),
+* lectura de la marca de tiempo del nombre de archivo (dos formatos de cámara),
+* agrupación de imágenes por objeto físico (para evitar fuga de datos),
 * estadísticos de calidad de imagen,
 * detección de casi-duplicados con un hash perceptual,
 * hojas de contacto para validar visualmente los grupos.
 
-Dataset de referencia: *Fruit Quality Classification* (R. D. Park, Kaggle, CC0),
+Dataset de referencia: *Fruit Quality Classification* (R. D. Park, Kaggle),
 https://www.kaggle.com/datasets/ryandpark/fruit-quality-classification
+(licencia por verificar en la ficha de Kaggle).
 
-Los nombres de archivo del dataset siguen el patrón de la cámara del celular
-``IMG<AAAAMMDD><HHMMSS>[_NN].jpg``. La idea de agrupar por cercanía temporal es una
-**hipótesis** de este proyecto (no viene documentada en el dataset) y debe validarse
-visualmente (ver ``contact_sheet``).
+Los nombres de archivo del dataset no siguen una sola convención: hay marcas de
+tiempo de cámara de celular (``IMG<AAAAMMDD><HHMMSS>[_NN]``,
+``IMG_<AAAAMMDD>_<HHMMSS>[_N]``, ``<AAAAMMDD>_<HHMMSS>[_NNNNN]``) y también
+contadores sin fecha (``IMG_NNNN``). La idea de agrupar por cercanía temporal es una
+**hipótesis** de este proyecto (no viene documentada en el dataset) y solo aplica a
+los nombres con fecha; se valida con la similitud de las imágenes consecutivas (ver
+``02_comprension_datos/eda.ipynb``) y visualmente (``contact_sheet``).
 """
 from __future__ import annotations
 
@@ -28,18 +33,40 @@ import pandas as pd
 from PIL import Image
 
 IMG_EXTS = {".jpg", ".jpeg", ".png"}
-_TS_RE = re.compile(r"^IMG(\d{8})(\d{6})(?:_(\d+))?$", re.IGNORECASE)
+# IMG20200729190220[_01]  |  IMG_20190910_175131[_1]  |  20190809_115439  |  20190820_143522_22896
+# (el prefijo IMG es opcional; el último número es un sufijo/contador de duplicado)
+_TS_RE = re.compile(r"^(?:IMG_?)?(\d{8})_?(\d{6})(?:_(\d+))?$", re.IGNORECASE)
+
+# IMG_0111  (contador de la cámara, sin fecha)
+_COUNTER_RE = re.compile(r"^IMG_(\d{3,5})$", re.IGNORECASE)
+
+#: Etiqueta débil según la carpeta de origen. ``Mixed`` no trae etiqueta por fruta.
+WEAK_LABELS = {"good": "Buena", "bad": "Mala", "mixed": None}
+INDEX_COLUMNS = ["path", "filename", "species", "source", "label_weak",
+                 "name_pattern", "timestamp", "dup_suffix", "counter"]
+
+
+def parse_counter(filename: str) -> Optional[int]:
+    """Contador de un nombre ``IMG_NNNN`` (sin fecha), o ``None`` si no tiene ese formato.
+
+    Hipótesis a validar: contadores consecutivos suelen ser fotos seguidas de la misma
+    escena, pero **no** del mismo objeto en todos los casos (ver el EDA).
+    """
+    match = _COUNTER_RE.match(Path(filename).stem)
+    return int(match.group(1)) if match else None
 
 
 def parse_timestamp(filename: str) -> tuple[Optional[datetime], int]:
     """Extrae la fecha-hora y el sufijo de duplicado de un nombre de archivo.
 
     Args:
-        filename: nombre con o sin extensión, p. ej. ``IMG20200729190220_01.jpg``.
+        filename: nombre con o sin extensión, p. ej. ``IMG20200729190220_01.jpg`` o
+            ``IMG_20190910_175131_1.jpg``.
 
     Returns:
-        ``(timestamp, sufijo)``. ``timestamp`` es ``None`` si el nombre no sigue el
-        patrón; ``sufijo`` es 0 si no hay ``_NN`` (p. ej. ``_01`` -> 1).
+        ``(timestamp, sufijo)``. ``timestamp`` es ``None`` si el nombre no sigue
+        ninguno de los dos patrones con fecha (p. ej. ``IMG_0111.JPG``); ``sufijo``
+        es 0 si no hay ``_NN`` (p. ej. ``_01`` -> 1).
     """
     match = _TS_RE.match(Path(filename).stem)
     if not match:
@@ -69,6 +96,69 @@ def list_images(folder: Path | str) -> pd.DataFrame:
                          "timestamp": ts, "dup_suffix": suffix})
     df = pd.DataFrame(rows, columns=["path", "filename", "timestamp", "dup_suffix"])
     df["timestamp"] = pd.to_datetime(df["timestamp"])
+    return df
+
+
+def name_pattern(filename: str) -> str:
+    """Patrón de un nombre de archivo con los dígitos reemplazados por ``N``.
+
+    Sirve para contar cuántas convenciones de nombre (es decir, cuántas cámaras o
+    fuentes) hay en cada carpeta: ``IMG_0111.JPG`` -> ``IMG_N.jpg``.
+    """
+    p = Path(filename)
+    return re.sub(r"\d+", "N", p.stem) + p.suffix.lower()
+
+
+def _source_from_folder(folder_name: str) -> Optional[str]:
+    """``'Good Quality_Fruits'`` -> ``'good'``; ``None`` si no es una carpeta de calidad."""
+    first = folder_name.lower().split()[0]
+    return first if first in WEAK_LABELS else None
+
+
+def index_dataset(root: Path | str) -> pd.DataFrame:
+    """Índice de **todas** las imágenes del dataset (una fila por imagen).
+
+    Se espera la estructura original de Kaggle::
+
+        <root>/Good Quality_Fruits/<Fruta>_Good/*.jpg
+        <root>/Bad Quality_Fruits/<Fruta>_Bad/*.jpg
+        <root>/Mixed Qualit_Fruits/<Fruta>/*.jpg      ("Qualit" es el nombre original)
+
+    Args:
+        root: carpeta que contiene las tres carpetas de calidad.
+
+    Returns:
+        DataFrame con las columnas de ``INDEX_COLUMNS``: ``species`` (minúsculas, tal
+        como aparece en la carpeta; en *Mixed* la lima figura como ``lemon``),
+        ``source`` (``good``/``bad``/``mixed``), ``label_weak`` (``Buena``, ``Mala`` o
+        ``None`` en *Mixed*), ``name_pattern``, ``timestamp`` (``NaT`` si el nombre no
+        trae fecha), ``dup_suffix`` y ``counter`` (solo nombres ``IMG_NNNN``).
+
+    Raises:
+        FileNotFoundError: si ``root`` no existe.
+    """
+    root = Path(root)
+    if not root.is_dir():
+        raise FileNotFoundError(f"No existe la carpeta: {root}")
+    rows = []
+    for qdir in sorted(p for p in root.iterdir() if p.is_dir()):
+        source = _source_from_folder(qdir.name)
+        if source is None:
+            continue
+        for sdir in sorted(p for p in qdir.iterdir() if p.is_dir()):
+            species = re.sub(r"_(good|bad)$", "", sdir.name, flags=re.IGNORECASE).lower()
+            for p in sorted(sdir.iterdir()):
+                if p.suffix.lower() not in IMG_EXTS:
+                    continue
+                ts, suffix = parse_timestamp(p.name)
+                rows.append({"path": str(p), "filename": p.name, "species": species,
+                             "source": source, "label_weak": WEAK_LABELS[source],
+                             "name_pattern": name_pattern(p.name),
+                             "timestamp": ts, "dup_suffix": suffix,
+                             "counter": parse_counter(p.name)})
+    df = pd.DataFrame(rows, columns=INDEX_COLUMNS)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["counter"] = df["counter"].astype("Int64")        # entero con valores ausentes
     return df
 
 

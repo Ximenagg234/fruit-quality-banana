@@ -1,13 +1,15 @@
 # Checklist de los lineamientos del profesor (`0_Proyecto Final 26-2.pdf`)
 
-**Entrega: 24 de noviembre de 2026.** Grupo de 3 estudiantes.
+**Entrega: jueves 26 de noviembre de 2026, en la mañana.** Grupo de 3 estudiantes.
+
+**Alcance (confirmado por el profesor):** el sistema debe cubrir variedad de frutas (posiblemente también verduras), no una sola especie. Especies del dataset base: manzana, banano, guayaba, lima, naranja y granada.
 
 ## Entregables
 - [ ] Informe final, **máximo 7 páginas**, formato IEEE (plantilla del profesor o Overleaf IEEE)
 - [ ] Repositorio en GitHub con estructura por fases de CRISP-DM (este repo)
 - [ ] Enlace del repo + integrantes reportados en el documento compartido por el profesor
 - [ ] Diagrama de flujo **personalizado** de CRISP-DM
-- [ ] Interfaz gráfica (Streamlit): cargar imagen o usar cámara, mostrar predicción
+- [ ] Interfaz gráfica (Streamlit) **funcional**: cargar una imagen **o capturarla con la cámara** (§1.4 y §4.6) y mostrar la predicción de calidad y de tamaño
 - [ ] Video de **máximo 10 minutos** (contexto, técnicas, resultados, logros)
 
 ## Caso de estudio

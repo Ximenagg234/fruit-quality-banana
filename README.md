@@ -1,6 +1,6 @@
 # fruit-quality-banana
 
-Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación de **tamaño** de bananas a partir de imágenes estáticas, para el proyecto final de **Algoritmos y Programación III (2026-2)**, Universidad Icesi. Metodología: **CRISP-DM**.
+Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación de **tamaño** de frutas de varias especies (manzana, banano, guayaba, lima, naranja y granada) a partir de imágenes estáticas, con una app en Streamlit (carga de imagen o cámara), para el proyecto final de **Algoritmos y Programación III (2026-2)**, Universidad Icesi. Metodología: **CRISP-DM**.
 
 ## Equipo
 | Integrante | GitHub | Rol principal |
@@ -27,6 +27,7 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 ## Documentos clave
 - [Formulación matemática](docs/formulacion_matematica.md)
 - [Definición de clases y protocolo de fotos](docs/definicion_clases.md)
+- [EDA multifruta (ejecutado)](02_comprension_datos/eda.ipynb)
 - [Trazabilidad de la rúbrica](docs/RUBRICA_TRAZABILIDAD.md)
 - [Checklist de los lineamientos](docs/REQUISITOS_LINEAMIENTOS.md)
 
@@ -39,8 +40,8 @@ pip install -r requirements.txt
 _(Las instrucciones por fase se completarán a medida que existan los notebooks.)_
 
 ## Datos y referencias
-- Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (CC0). Ver [`data/README.md`](data/README.md).
+- Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (licencia por verificar en su ficha). Ver [`data/README.md`](data/README.md).
 - Todo código o dato de terceros se referencia explícitamente en el informe y en el archivo donde se usa.
 
 ## Estado
-Ver la matriz de trazabilidad para el avance por criterio de la rúbrica. **Entrega: 24 de noviembre de 2026.**
+Ver la matriz de trazabilidad para el avance por criterio de la rúbrica. **Entrega: jueves 26 de noviembre de 2026, en la mañana.**
