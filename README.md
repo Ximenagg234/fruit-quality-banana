@@ -6,8 +6,8 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 | Integrante | GitHub | Rol principal |
 |---|---|---|
 | Ximena Gómez Gómez | @Ximenagg234 | _por definir_ |
-| _integrante 2_ | _por definir_ | _por definir_ |
-| _integrante 3_ | _por definir_ | _por definir_ |
+| Natalia Delgado | _por definir_ | _por definir_ |
+| Juan Pablo Bello | _por definir_ | _por definir_ |
 
 ## Estructura (por fases de CRISP-DM)
 | Carpeta | Contenido |
