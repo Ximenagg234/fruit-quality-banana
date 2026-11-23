@@ -1,12 +1,18 @@
 # Fase 2 — Comprensión de los datos
 
-**Notebook:** `eda.ipynb` (se ejecuta desde esta carpeta: `jupyter lab` y abrirlo; usa `../src/data_utils.py`).
-**Datos esperados en:** `../data/raw/Dataset Fruit/` (ver `../data/README.md`). Se puede cambiar con la variable de entorno `FRUIT_DATA_ROOT`.
-**Genera:** figuras en `figures/` (PDF vectorial o PNG) y el índice `../data/processed/banana_index.csv` (ignorado por Git).
+**Notebook:** `eda.ipynb` (se ejecuta desde esta carpeta con Jupyter; usa los módulos de `../src/`).
+**Datos esperados en:** `../data/raw/Dataset Fruit/` (ver `../data/README.md`).
+**Genera:** figuras vectoriales en `figuras/` (PDF) y, en `../data/processed/` (ignorado por Git), el índice, los hashes, las miniaturas y la partición fija (semilla 42).
 
-**Qué hace:** inventario de imágenes de banana, agrupación por banana física a partir de la marca de tiempo del nombre de archivo (**hipótesis que se valida visualmente**), estadísticos de calidad de imagen, línea base trivial con color global (con partición por grupo), duplicados y revisión de `Mixed`.
+**Qué hace:**
+1. Inventario por especie y fuente (*Good*, *Bad*, *Mixed*) y desbalances.
+2. Convenciones de nombre de archivo y cobertura de marcas de tiempo.
+3. Tamaños de imagen y variabilidad de color.
+4. Agrupación por **objeto físico** (tiempo + hash perceptual + contador), con calibración de los umbrales sobre los datos reales y su sensibilidad.
+5. Partición train/val/test por grupo, estratificada por especie × calidad, sin solapes verificados.
+6. **Prueba del atajo:** un Random Forest que solo ve el borde de la imagen (fondo) frente a uno que ve el centro o la imagen completa; usa solo train y val.
 
-**Importante:** el notebook se sube **sin salidas**; tras ejecutarlo con los datos reales, completar la tabla de la sección 8 y subir las figuras de `figures/`.
+**Resultados y hallazgos:** al final del notebook (sección 8). El notebook se sube **con salidas**, ejecutado con los datos reales.
 
 **Alimenta rúbrica:** 1 (sesgos), 6, 8.
-Estado: 🟡 código listo, falta ejecutarlo con los datos reales
+Estado: 🟡 ejecutado; falta medir la nitidez como parte de "calidad de imagen".
