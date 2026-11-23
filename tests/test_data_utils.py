@@ -96,6 +96,61 @@ def test_grouped_split_has_no_leakage_and_keeps_classes():
     splits.assert_no_group_overlap(tr, te)
 
 
+def test_parse_timestamp_second_camera_format():
+    ts, suf = du.parse_timestamp("IMG_20190910_175131_1.jpg")
+    assert (ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second) == (2019, 9, 10, 17, 51, 31)
+    assert suf == 1
+    assert du.parse_timestamp("IMG_20190910_175131.jpg")[1] == 0
+    # contadores sin fecha: no se puede inferir un instante
+    for sin_fecha in ("IMG_0111.JPG", "123_45.jpg", "7_1_2.jpg"):
+        assert du.parse_timestamp(sin_fecha) == (None, 0)
+
+
+def test_name_pattern_counts_conventions():
+    assert du.name_pattern("IMG_0111.JPG") == "IMG_N.jpg"
+    assert du.name_pattern("IMG20200729190220_01.jpg") == "IMGN_N.jpg"
+    assert du.name_pattern("12_345_6.jpg") == "N_N_N.jpg"
+
+
+def _make_tree(root):
+    """Árbol mínimo con la estructura original de Kaggle (nombres reales de carpeta)."""
+    layout = {
+        "Good Quality_Fruits/Apple_Good": ["IMG_0111.JPG", "IMG_0112.JPG"],
+        "Bad Quality_Fruits/Banana_Bad": ["IMG_20190910_175131.jpg"],
+        "Mixed Qualit_Fruits/Lemon": ["IMG20200729183039.jpg"],
+        "Mixed Qualit_Fruits/Banana": ["IMG20200729183040.jpg", "leeme.txt"],
+        "Otra carpeta/Apple_Good": ["IMG_9999.JPG"],          # no es carpeta de calidad
+    }
+    for folder, names in layout.items():
+        (root / folder).mkdir(parents=True)
+        for n in names:
+            if n.endswith(".txt"):
+                (root / folder / n).write_text("no es imagen")
+            else:
+                Image.fromarray(np.zeros((8, 8, 3), dtype=np.uint8)).save(root / folder / n)
+
+
+def test_index_dataset_species_source_and_weak_labels(tmp_path):
+    _make_tree(tmp_path)
+    df = du.index_dataset(tmp_path)
+    assert list(df.columns) == du.INDEX_COLUMNS
+    assert len(df) == 5                                   # ignora .txt y la carpeta ajena
+    por_especie = df.groupby(["source", "species"]).size().to_dict()
+    assert por_especie == {("good", "apple"): 2, ("bad", "banana"): 1,
+                           ("mixed", "lemon"): 1, ("mixed", "banana"): 1}
+    assert df[df["source"] == "good"]["label_weak"].tolist() == ["Buena", "Buena"]
+    assert df[df["source"] == "bad"]["label_weak"].tolist() == ["Mala"]
+    assert df[df["source"] == "mixed"]["label_weak"].isna().all()
+    # solo los nombres con fecha traen timestamp
+    assert df.set_index("filename").loc["IMG_0111.JPG", "timestamp"] is pd.NaT
+    assert df.set_index("filename").loc["IMG_20190910_175131.jpg", "timestamp"].year == 2019
+
+
+def test_index_dataset_missing_folder(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        du.index_dataset(tmp_path / "no_existe")
+
+
 def test_overlap_is_detected():
     a = pd.DataFrame({"group": ["x", "y"]})
     b = pd.DataFrame({"group": ["y", "z"]})
