@@ -61,6 +61,36 @@ def region_mask(size: int, region: str, frame: int = 8) -> np.ndarray:
     return ~inner if region == "border" else inner
 
 
+def hsv_histogram(thumbs: np.ndarray, bins: tuple[int, int, int] = (8, 4, 4), region: str = "full",
+                  frame: int = 8, chunk: int = 2000) -> np.ndarray:
+    """Histograma conjunto de color HSV normalizado (suma 1) por imagen.
+
+    El tono es circular, por eso se usa en histograma y no como media. Con
+    ``bins=(8, 4, 4)`` hay 128 características por imagen.
+
+    Args:
+        thumbs: arreglo ``(n, s, s, 3)`` ``uint8``.
+        bins: número de intervalos de tono, saturación y valor.
+        region: ``'full'``, ``'border'`` o ``'center'`` (ver :func:`region_mask`).
+
+    Returns:
+        Arreglo ``(n, bins[0] * bins[1] * bins[2])`` de ``float64``; cada fila suma 1.
+    """
+    n, size = thumbs.shape[0], thumbs.shape[1]
+    mask = region_mask(size, region, frame)
+    nb = int(np.prod(bins))
+    out = np.empty((n, nb), dtype=np.float64)
+    for start in range(0, n, chunk):
+        px = thumbs[start:start + chunk][:, mask, :].astype(np.float64) / 255.0     # (b, m, 3)
+        hsv = rgb_to_hsv(px)
+        idx = [np.minimum((hsv[..., k] * bins[k]).astype(np.int64), bins[k] - 1) for k in range(3)]
+        flat = (idx[0] * bins[1] + idx[1]) * bins[2] + idx[2]                        # (b, m)
+        b = flat.shape[0]
+        counts = np.bincount((flat + np.arange(b)[:, None] * nb).ravel(), minlength=b * nb)
+        out[start:start + chunk] = counts.reshape(b, nb) / flat.shape[1]
+    return out
+
+
 def color_stats(thumbs: np.ndarray, region: str = "full", frame: int = 8, chunk: int = 2000) -> np.ndarray:
     """Ocho estadísticos de color por imagen en la región indicada.
 
