@@ -91,7 +91,7 @@ Estado a la fecha de esta versión; solo se marca ✅ con evidencia verificable.
 | Requisito (lineamientos) | Evidencia | Estado |
 |---|---|---|
 | Alcance multifruta confirmado por el profesor | `docs/REQUISITOS_LINEAMIENTOS.md`, `docs/definicion_clases.md` | 🟡 (diseño y datos listos; modelos pendientes) |
-| Dataset de Kaggle usado y citado; licencia verificada | `data/README.md` (licencia **[VERIFICAR]** en la ficha de Kaggle) | 🟡 |
+| Dataset de Kaggle usado y citado; licencia verificada | `data/README.md` (licencia CC0 verificada en la ficha; falta la referencia IEEE con la fecha exacta en `report/refs.bib`) | 🟡 |
 | `Mixed`: segmentar cada fruta individual | `src/segmentation.py` (probada con formas sintéticas y revisada a ojo en fotos sobre superficie; **no mide bien fotos con mano**, que se detectan por contacto con el borde; `Mixed` trae varias frutas por foto y fondos de color: falta separar frutas individuales y validar) | 🟡 |
 | 30–50 imágenes propias anotadas (calidad y tamaño), por varias especies | 91 fotos de banano recibidas, sin `object_id` ni etiquetas; fotos de las otras 5 especies pendientes | 🟡 |
 | Mecanismo para compartir anotaciones con la clase | esquema en `data/README.md` §2–3 | 🟡 |

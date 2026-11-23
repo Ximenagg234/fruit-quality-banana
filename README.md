@@ -5,9 +5,9 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 ## Equipo
 | Integrante | GitHub | Rol principal |
 |---|---|---|
-| Ximena Gómez Gómez | @Ximenagg234 | _por definir_ |
-| Natalia Delgado | _por definir_ | _por definir_ |
-| Juan Pablo Bello | _por definir_ | _por definir_ |
+| Ximena Gómez Gómez | @Ximenagg234 | Integra el repositorio; datos, modelos y app |
+| Natalia Delgado | @ndelgadoar | Informe y referencias; etiquetado |
+| Juan Pablo Bello | _por confirmar_ | Diagrama, video y revisión; etiquetado |
 
 ## Estructura (por fases de CRISP-DM)
 | Carpeta | Contenido |
@@ -26,6 +26,7 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 
 ## Documentos clave
 - [Formulación matemática](docs/formulacion_matematica.md)
+- [Reparto del trabajo y flujo de colaboración](docs/REPARTO_TRABAJO.md)
 - [Definición de clases y protocolo de fotos](docs/definicion_clases.md)
 - [EDA multifruta (ejecutado)](02_comprension_datos/eda.ipynb)
 - [Trazabilidad de la rúbrica](docs/RUBRICA_TRAZABILIDAD.md)
@@ -41,7 +42,7 @@ streamlit run 06_despliegue/app.py   # app (ver 06_despliegue/README.md)
 _(Las instrucciones por fase se completarán a medida que existan los notebooks.)_
 
 ## Datos y referencias
-- Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (licencia por verificar en su ficha). Ver [`data/README.md`](data/README.md).
+- Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (licencia CC0, dominio público, verificada en su ficha). Ver [`data/README.md`](data/README.md).
 - Todo código o dato de terceros se referencia explícitamente en el informe y en el archivo donde se usa.
 
 ## Estado
