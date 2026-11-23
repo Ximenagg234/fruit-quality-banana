@@ -3,8 +3,8 @@
 > **Estado: BORRADOR v2 (análisis inicial, alcance multifruta: manzana, banano, guayaba, lima, naranja y granada).** Las cifras de contexto están referenciadas; las celdas marcadas **[MEDIR]** son datos del propio proyecto que se completan tras ejecutar los experimentos y **no deben inventarse**. El análisis final se redacta cuando haya resultados.
 
 ## Contexto que justifica el problema (con fuente)
-- En 2022 el mundo desperdició **1.050 millones de toneladas de alimentos**, el **19 %** de los alimentos disponibles para los consumidores. UNEP, *Food Waste Index Report 2024* — https://wedocs.unep.org/bitstream/handle/20.500.11822/45275/Food-Waste-Index-2024-key-messages.pdf
-- Alrededor del **14 %** de los alimentos producidos se pierde entre la cosecha y la venta minorista (pérdidas poscosecha). FAO, *The State of Food and Agriculture 2019* (cifra leída en un resumen de CGIAR: https://cgiar.org/news-events/news/fao-sofa-report-2019-new-insights-into-food-loss-and-waste). **Verificar la cifra en el informe original de la FAO antes de citarla en el informe del proyecto.**
+- En 2022 el mundo desperdició **1.050 millones de toneladas de alimentos**, el **19 %** de los alimentos disponibles para los consumidores. UNEP, *Food Waste Index Report 2024 - Key Messages* (marzo de 2024) — https://wedocs.unep.org/handle/20.500.11822/45275. **[VERIFICAR]** las dos cifras abriendo el PDF a mano: desde el entorno de desarrollo se confirmó el título y la fecha en la ficha oficial, pero no el texto del documento.
+- Alrededor del **14 %** de los alimentos producidos, **en valor económico**, se pierde desde la poscosecha hasta el comercio minorista, **sin incluirlo**. **Verificado en el original:** FAO, *The State of Food and Agriculture 2019. Moving forward on food loss and waste reduction*, Roma, 2019 (https://openknowledge.fao.org/3/ca6030en/ca6030en.pdf; `report/refs.bib`, clave `fao2019sofa`).
 - Los lineamientos indican que la clasificación manual es lenta, subjetiva y propensa a errores, con pérdidas económicas, desperdicio y falta de estandarización.
 
 ## Matriz de impactos

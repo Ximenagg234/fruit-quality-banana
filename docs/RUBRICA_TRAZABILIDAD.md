@@ -15,7 +15,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 |---|---|---|
 | Tabla dilema → principio del código de ética → decisión/medida | `docs/etica_tabla.md` (borrador v1.1 multifruta, 8 filas con estado por medida; E8 pendiente de decisión de la autora) → informe, sección Ética | 🟡 |
 | Las medidas están realmente implementadas (no solo declaradas): p. ej. fotos sin rostros, sesgo del dataset medido en EDA | Sesgo de fondo medido: `02_comprension_datos/eda.ipynb` §7 (F1 macro del borde solo: 0.76–0.96). Faltan `prepare_photos.py`, visto bueno de las personas que aparecen en las fotos y la app que no guarda imágenes | 🟡 |
-| Código de ética citado con referencia IEEE (IEEE/ACM) | `report/refs.bib` | ⬜ |
+| Código de ética citado con referencia IEEE (IEEE/ACM) | `report/refs.bib` aún **no** trae los códigos de ética (se agregan cuando se verifiquen la versión 2018 de la ACM y la política 7.8 de IEEE) | ⬜ |
 
 ### 2. Impactos social, económico, ambiental y global (PI2)
 **Outstanding exige:** (a) las **4 dimensiones** con argumentos técnicos y éticos; (b) matriz o esquema claro; (c) estrategias de mitigación **concretas y justificadas**.
@@ -40,7 +40,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla de alternativas (modelo, ventaja, límite, decisión) | `docs/estrategia_solucion.md` | ⬜ |
+| Tabla de alternativas (modelo, ventaja, límite, decisión) | `docs/estrategia_solucion.md` (borrador: 8 decisiones con alternativas, límites y evidencia; la parte de la CNN y *Regular* queda **[MEDIR]**) | 🟡 |
 | La elección se apoya en resultados (baseline vs. modelos) | `04_modelado/modelos_clasicos.ipynb` y `04_modelado/resultados_modelos_clasicos.csv` (Buena vs. Mala en Kaggle, solo train y val; faltan *Regular*, la CNN y la evaluación en fotos propias) | 🟡 |
 
 ### 5. Fundamentos matemáticos aplicados
@@ -59,8 +59,8 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla comparativa de modelos en **train / val / test** | train y val en `04_modelado/resultados_modelos_clasicos.csv` (F1 train, CV agrupada y val, brecha); el **test aún no se usa** (se usa una sola vez al final) | 🟡 |
-| Curvas de aprendizaje y de entrenamiento/validación de la CNN | `05_evaluacion/` | ⬜ |
+| Tabla comparativa de modelos en **train / val / test** | train y val en `04_modelado/resultados_modelos_clasicos.csv` y `resultados_cnn_calidad.csv` (F1 train, F1 val, brecha, EE); el **test aún no se usa** (se usa una sola vez al final) | 🟡 |
+| Curvas de aprendizaje y de entrenamiento/validación de la CNN | `04_modelado/cnn_experimentos.ipynb` y `04_modelado/figuras/cnn_curvas_aprendizaje.pdf` (10 experimentos en Buena vs. Mala sobre Kaggle, con parada temprana); **falta** repetirlas con tres clases | 🟡 |
 | Matriz de confusión por modelo y análisis de errores con imágenes | matriz del mejor modelo en val en `04_modelado/figuras/modelos_clasicos.pdf`; falta el análisis de errores con imágenes | 🟡 |
 | Generalización a **fotos propias** (dominio distinto al dataset) | `05_evaluacion/` | ⬜ |
 | Incertidumbre: error estándar con n pequeño | error estándar binomial en la tabla de val (`models_classic.evaluate`); falta aplicarlo a fotos propias | 🟡 |
@@ -81,8 +81,8 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 |---|---|---|
 | ≤ 7 páginas, formato IEEE, plantilla del profesor | `report/main.tex` (PDF compilado) | ⬜ |
 | Figuras vectoriales (PDF/SVG), ejes con etiquetas y unidades | `report/figures/` | ⬜ |
-| Diagrama CRISP-DM **personalizado** | `docs/diagrama_crispdm.svg` | ⬜ |
-| Referencias IEEE; todo lo de terceros citado | `report/refs.bib` | ⬜ |
+| Diagrama CRISP-DM **personalizado** | `docs/diagrama_crispdm.pdf`, `.svg` y `.png` (borrador vectorial con el flujo real del proyecto y su bucle de iteración; Juan Pablo lo afina; se edita con `docs/generar_diagrama_crispdm.py`) | 🟡 |
+| Referencias IEEE; todo lo de terceros citado | `report/refs.bib`: 13 entradas verificadas contra Crossref, JMLR, arXiv y el original de la FAO. **Pendientes:** las dos cifras de UNEP, el año del dataset de Kaggle, los códigos de ética y la literatura sobre calidad de frutas | 🟡 |
 | Código con docstrings y comentarios, repo ordenado por fases | todo el repo | ⬜ |
 
 ## Requisitos duros del enunciado (no negociables)
@@ -92,11 +92,11 @@ Estado a la fecha de esta versión; solo se marca ✅ con evidencia verificable.
 |---|---|---|
 | Alcance multifruta confirmado por el profesor | `docs/REQUISITOS_LINEAMIENTOS.md`, `docs/definicion_clases.md` | 🟡 (diseño y datos listos; modelos pendientes) |
 | Dataset de Kaggle usado y citado; licencia verificada | `data/README.md` (licencia CC0 verificada en la ficha; falta la referencia IEEE con la fecha exacta en `report/refs.bib`) | 🟡 |
-| `Mixed`: segmentar cada fruta individual | `src/segmentation.py` (probada con formas sintéticas y revisada a ojo en fotos sobre superficie; **no mide bien fotos con mano**, que se detectan por contacto con el borde; `Mixed` trae varias frutas por foto y fondos de color: falta separar frutas individuales y validar) | 🟡 |
+| `Mixed`: segmentar cada fruta individual | `src/mixed.py` y `03_preparacion_datos/segmentar_mixed.py`: 1 074 fotos → 8 194 recortes (3 978 pasan los filtros de forma, color y borde); validación **visual**, sin verdad de terreno; el banano sobre vegetación y las franjas oscuras siguen siendo difíciles y se descartan al etiquetar | 🟡 |
 | 30–50 imágenes propias anotadas (calidad y tamaño), por varias especies | 91 fotos de banano recibidas, sin `object_id` ni etiquetas; fotos de las otras 5 especies pendientes | 🟡 |
-| Mecanismo para compartir anotaciones con la clase | esquema en `data/README.md` §2–3 | 🟡 |
+| Mecanismo para compartir anotaciones con la clase | esquema en `data/README.md` §2–3; herramienta de etiquetado independiente `03_preparacion_datos/etiquetador_mixed.py` y acuerdo entre anotadores `calcular_acuerdo.py` (con pruebas). **Falta definir con el profesor y los otros grupos dónde se comparten** | 🟡 |
 | ≥ 2 modelos de ML tradicional con hiperparámetros por validación cruzada | `04_modelado/modelos_clasicos.ipynb`: regresión logística, SVM RBF y Random Forest con `GridSearchCV` y `StratifiedGroupKFold` (tarea binaria en Kaggle; se repite con *Regular*) | 🟡 |
-| ≥ 1 modelo de deep learning (CNN desde cero) | `src/cnn.py` (arquitectura y conteo de parámetros verificados; sin entrenar) | 🟡 |
+| ≥ 1 modelo de deep learning (CNN desde cero) | `src/cnn.py`, `04_modelado/entrenar_cnn.py` y `cnn_experimentos.ipynb`: 10 experimentos entrenados y analizados (tabla al estilo de `02-CNN_resuelto`), con control "solo borde" y regla de 2 EE; **falta** la CNN de tres clases y evaluarla en fotos propias | 🟡 |
 | Comparación con línea base | línea base mayoritaria (F1 0.388) y línea base "solo borde" en el mismo notebook | 🟡 |
 | CRISP-DM con evidencia: fase 2 (EDA ejecutado) | `02_comprension_datos/eda.ipynb` ejecutado con datos reales; falta medir la nitidez como parte de "calidad de imagen" | 🟡 |
 | CRISP-DM: fases 1, 3, 4, 5 y 6 | — | ⬜ |

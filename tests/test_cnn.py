@@ -31,3 +31,23 @@ def test_analytic_count_matches_keras(size, n_classes, head):
     model = cnn.build_cnn(size, n_classes, head)
     assert model.count_params() == cnn.analytic_param_count(size, n_classes, head)
     assert model.output_shape == (None, n_classes)
+
+
+@pytest.mark.parametrize("head", ["flatten", "gap"])
+def test_augmentation_and_l2_do_not_change_the_parameter_count(head):
+    pytest.importorskip("tensorflow")
+    base = cnn.build_cnn(96, 2, head)
+    extra = cnn.build_cnn(96, 2, head, l2=1e-4, augment=True)
+    assert extra.count_params() == base.count_params() == cnn.analytic_param_count(96, 2, head)
+    nombres = [type(l).__name__ for l in extra.layers]
+    assert {"RandomFlip", "RandomRotation", "RandomZoom", "RandomContrast"} <= set(nombres)
+    assert not any("Random" in type(l).__name__ for l in base.layers)
+    assert len(extra.losses) > 0 and len(base.losses) == 0          # la regularización L2 agrega términos a la pérdida
+
+
+def test_augmentation_is_inactive_at_inference():
+    pytest.importorskip("tensorflow")
+    import numpy as np
+    m = cnn.build_cnn(64, 3, "gap", augment=True)
+    x = np.random.default_rng(0).random((4, 64, 64, 3), dtype=np.float32)
+    assert np.allclose(m.predict(x, verbose=0), m.predict(x, verbose=0))      # determinista al predecir

@@ -65,13 +65,46 @@ def prepare_photo(src: Path | str, dst: Path | str, max_side: int = 1024, qualit
     return size
 
 
+def fill_image_ids(mapa: pd.DataFrame) -> pd.DataFrame:
+    """Genera ``image_id`` donde está vacío, como ``<object_id>_d<day>_<angle>.jpg``.
+
+    Si dos fotos darían el mismo nombre, se agrega ``_2``, ``_3``… Los ``image_id`` ya escritos se
+    respetan. Cada fila sin ``image_id`` necesita ``object_id``; ``day`` vale 0 y ``angle`` vale ``x``
+    si están vacíos.
+
+    Raises:
+        ValueError: si una fila sin ``image_id`` no tiene ``object_id``.
+    """
+    mapa = mapa.copy()
+    if "image_id" not in mapa.columns:
+        mapa["image_id"] = ""
+    usados = set(mapa.loc[mapa["image_id"] != "", "image_id"])
+    for i in mapa.index[mapa["image_id"] == ""]:
+        objeto = mapa.at[i, "object_id"].strip() if "object_id" in mapa.columns else ""
+        if not objeto:
+            raise ValueError(f"La foto {mapa.at[i, 'original']!r} no tiene image_id ni object_id")
+        dia = (mapa.at[i, "day"].strip() if "day" in mapa.columns else "") or "0"
+        angulo = (mapa.at[i, "angle"].strip() if "angle" in mapa.columns else "") or "x"
+        base = f"{objeto}_d{dia}_{angulo}"
+        nombre, k = f"{base}.jpg", 1
+        while nombre in usados:
+            k += 1
+            nombre = f"{base}_{k}.jpg"
+        usados.add(nombre)
+        mapa.at[i, "image_id"] = nombre
+    return mapa
+
+
 def load_photo_map(map_csv: Path | str) -> pd.DataFrame:
-    """Lee el mapa de fotos y valida columnas obligatorias, duplicados y extensiones.
+    """Lee el mapa de fotos, completa los ``image_id`` vacíos y valida columnas, duplicados y extensiones.
 
     Raises:
         ValueError: si faltan columnas, hay ``image_id`` repetidos u originales repetidos.
     """
     mapa = pd.read_csv(map_csv, dtype=str, keep_default_na=False)
+    if "original" not in mapa.columns:
+        raise ValueError("Faltan columnas obligatorias en el mapa: ['original']")
+    mapa = fill_image_ids(mapa)
     faltan = [c for c in REQUIRED_MAP_COLUMNS if c not in mapa.columns]
     if faltan:
         raise ValueError(f"Faltan columnas obligatorias en el mapa: {faltan}")
