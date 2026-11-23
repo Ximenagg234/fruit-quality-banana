@@ -41,7 +41,7 @@ streamlit run 06_despliegue/app.py   # app (ver 06_despliegue/README.md)
 _(Las instrucciones por fase se completarán a medida que existan los notebooks.)_
 
 ## Datos y referencias
-- Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (licencia por verificar en su ficha). Ver [`data/README.md`](data/README.md).
+- Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (licencia CC0, dominio público, verificada en su ficha). Ver [`data/README.md`](data/README.md).
 - Todo código o dato de terceros se referencia explícitamente en el informe y en el archivo donde se usa.
 
 ## Estado

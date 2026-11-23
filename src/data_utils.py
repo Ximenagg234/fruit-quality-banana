@@ -11,7 +11,7 @@ Cubre la fase 2 de CRISP-DM (comprensión de los datos):
 
 Dataset de referencia: *Fruit Quality Classification* (R. D. Park, Kaggle),
 https://www.kaggle.com/datasets/ryandpark/fruit-quality-classification
-(licencia por verificar en la ficha de Kaggle).
+(licencia CC0, dominio público).
 
 Los nombres de archivo del dataset no siguen una sola convención: hay marcas de
 tiempo de cámara de celular (``IMG<AAAAMMDD><HHMMSS>[_NN]``,
