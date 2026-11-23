@@ -37,7 +37,12 @@ DEFECTOS = {
     "lime": "manchas marrones o negras, moho blanco o grisáceo, aspecto seco o arrugado",
     "orange": "podredumbre marrón, zonas blandas, moho, depresiones oscuras",
     "pomegranate": "manchas oscuras, grietas con podredumbre, zonas hundidas",
+    "foto": "manchas oscuras o marrones extensas, zonas hundidas o blandas, moho, arrugas por deshidratación",
 }
+#: Ancho (px) de la imagen mostrada: 300 sirve para recortes pequeños; para fotos completas conviene 450.
+ANCHO = int(os.environ.get("ETIQUETADOR_ANCHO", "300"))
+#: Prefijo del archivo de etiquetas (``etiquetas_mixed`` por defecto; ``etiquetas_fotos`` para las fotos propias).
+PREFIJO = os.environ.get("ETIQUETADOR_PREFIJO", "etiquetas_mixed")
 
 
 def imagen_con_recuadro(carpeta: Path, fila) -> Image.Image | None:
@@ -58,7 +63,7 @@ def main() -> None:
     iniciales_txt = st.sidebar.text_input("Tus iniciales", value=os.environ.get("ETIQUETADOR_INICIALES", ""))
     carpeta = Path(st.sidebar.text_input("Carpeta de recortes", value=CARPETA_DEFECTO))
     try:
-        ruta = lb.ruta_etiquetas(carpeta, iniciales_txt)
+        ruta = lb.ruta_etiquetas(carpeta, iniciales_txt, PREFIJO)
     except ValueError:
         st.info("Escribe tus iniciales en la barra lateral para empezar.")
         return
@@ -87,7 +92,7 @@ def main() -> None:
     col1, col2 = st.columns([1, 1])
     crop = carpeta / "recortes" / esp / f"{fila['crop_id']}.jpg"
     if crop.is_file():
-        col1.image(str(crop), caption=f"Recorte {int(fila['orden'])} de {total} · {esp}", width=300)
+        col1.image(str(crop), caption=f"Imagen {int(fila['orden'])} de {total} · {esp}", width=ANCHO)
     else:
         col1.error(f"Falta la imagen {crop.name}")
     ctx = imagen_con_recuadro(carpeta, fila)

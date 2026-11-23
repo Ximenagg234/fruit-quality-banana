@@ -70,3 +70,13 @@ def test_missing_initials_or_folder_show_a_clear_message(carpeta, monkeypatch, t
     monkeypatch.setenv("ETIQUETADOR_CARPETA", str(tmp_path / "no_existe"))
     at = AppTest.from_file(str(APP), default_timeout=60).run()
     assert not at.exception and any("muestra_etiquetado.csv" in e.value for e in at.error)
+
+
+def test_custom_prefix_and_width_for_whole_photos(carpeta, monkeypatch):
+    monkeypatch.setenv("ETIQUETADOR_PREFIJO", "etiquetas_fotos")
+    monkeypatch.setenv("ETIQUETADOR_ANCHO", "450")
+    at = AppTest.from_file(str(APP), default_timeout=60).run()
+    assert not at.exception, at.exception
+    _boton(at, "Mala").click().run()
+    assert pd.read_csv(carpeta / "etiquetas_fotos_TS.csv")["calidad"].tolist() == ["Mala"]
+    assert not (carpeta / "etiquetas_mixed_TS.csv").exists()

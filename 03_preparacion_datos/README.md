@@ -19,3 +19,17 @@ La segmentación **no tiene verdad de terreno** y se valida a ojo: las frutas so
 **Pendiente:** unir las etiquetas finales con las fotos propias para construir *Regular*; normalización y aumento de datos; manejo del desbalance (submuestreo por celda especie × clase y pesos de clase, ya usados en los modelos).
 **Alimenta rúbrica:** 3, 5 (normalización), 6.
 Estado: 🟡 (segmentación y herramientas listas; faltan las etiquetas)
+
+## Etiquetar las fotos propias con la misma herramienta
+
+`etiquetador_mixed.py` también sirve para las fotos propias completas (no solo recortes de *Mixed*). Se prepara una carpeta con `recortes/foto/F001.jpg …` y un `muestra_etiquetado.csv` (columnas `crop_id`, `species`, `source_image`, `x0`, `y0`, `x1`, `y1`, `orden`) y se lanza con variables de entorno:
+
+```powershell
+$env:ETIQUETADOR_CARPETA = "C:\etiquetado\fotos_para_etiquetar"
+$env:ETIQUETADOR_INICIALES = "NP"
+$env:ETIQUETADOR_PREFIJO = "etiquetas_fotos"   # archivo de salida: etiquetas_fotos_NP.csv
+$env:ETIQUETADOR_ANCHO = "450"                 # ancho de la imagen en pantalla (300 por defecto)
+streamlit run 03_preparacion_datos/etiquetador_mixed.py
+```
+
+Cada persona etiqueta por separado; el acuerdo se calcula con `calcular_acuerdo.py --id crop_id`. Las fotos mismas no se versionan hasta contar con el visto bueno de las personas que aparecen en ellas.
