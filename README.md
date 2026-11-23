@@ -27,6 +27,9 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 ## Documentos clave
 - [Formulación matemática](docs/formulacion_matematica.md)
 - [Reparto del trabajo y flujo de colaboración](docs/REPARTO_TRABAJO.md)
+- [Estrategia de solución y alternativas](docs/estrategia_solucion.md)
+- [Diagrama CRISP-DM](docs/diagrama_crispdm.svg)
+- [Estructura del informe y referencias verificadas](report/ESTRUCTURA_INFORME.md)
 - [Definición de clases y protocolo de fotos](docs/definicion_clases.md)
 - [EDA multifruta (ejecutado)](02_comprension_datos/eda.ipynb)
 - [Trazabilidad de la rúbrica](docs/RUBRICA_TRAZABILIDAD.md)
