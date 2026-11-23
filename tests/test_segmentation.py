@@ -62,6 +62,25 @@ def test_uniform_or_tiny_objects_return_none():
         sg.segment_fruit(np.zeros((10, 10), dtype=np.uint8))
 
 
+def test_gray_shadow_is_not_fruit_with_saturation_but_is_with_distance():
+    # luz desigual: la mitad izquierda del fondo es una sombra gris oscura (poco saturada)
+    img = _scene(blobs=[(100, 220, 50, 50)])
+    img[:, :140] = (110, 110, 110)
+    por_sat = sg.segment_fruit(img, method="saturation")
+    assert por_sat[100, 220] and not por_sat[100, 60]
+    assert sg.mask_geometry(por_sat)["length_px"] == pytest.approx(100, rel=0.03)
+    por_dist = sg.segment_fruit(img, method="distance")
+    assert por_dist[100, 60]                       # el método de distancia sí confunde la sombra con fruta
+
+
+def test_distance_method_works_on_colored_uniform_background():
+    img = _scene(blobs=[(100, 150, 60, 40)], bg=(0, 170, 200), color=(220, 40, 40))
+    g = sg.mask_geometry(sg.segment_fruit(img, method="distance"))
+    assert g["length_px"] == pytest.approx(120, rel=0.03)
+    with pytest.raises(ValueError):
+        sg.segment_fruit(img, method="otro")
+
+
 def test_background_estimation_and_geometry_errors():
     assert np.allclose(sg.estimate_background(_scene(blobs=[(100, 150, 40, 40)])), BG)
     with pytest.raises(ValueError):

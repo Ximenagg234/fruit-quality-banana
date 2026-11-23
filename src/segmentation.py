@@ -1,11 +1,15 @@
 """Segmentación de la fruta sobre fondo simple y medición de tamaño.
 
-Método clásico (sin aprendizaje), pensado para fondo liso:
+Método clásico (sin aprendizaje), pensado para fondo liso y neutro (blanco o gris):
 
-1. el color del fondo se estima con la mediana de los píxeles del marco de la imagen,
-2. se mide la distancia de cada píxel a ese color,
-3. se binariza con el umbral de Otsu,
-4. se limpia con operaciones morfológicas y se conserva el objeto conectado más grande.
+1. se calcula un puntaje por píxel: la saturación HSV (por defecto; una sombra es gris y
+   la fruta es saturada) o la distancia al color del fondo (estimado con el marco),
+2. se binariza con el umbral de Otsu,
+3. se limpia con operaciones morfológicas y se conserva el objeto conectado más grande.
+
+Se eligió la saturación como método por defecto tras compararla con la distancia al fondo
+y con GrabCut en fotos reales sobre una superficie con luz desigual: la distancia incluía las
+manchas de luz y GrabCut se extendía a las sombras.
 
 El tamaño se mide con la longitud normalizada ``ell = 4 * sqrt(lambda_1) / W`` (ver
 ``docs/formulacion_matematica.md`` §3.1): ``lambda_1`` es el mayor valor propio de la
@@ -24,6 +28,7 @@ from typing import Optional
 
 import numpy as np
 from scipy import ndimage
+from skimage.color import rgb2hsv
 from skimage.filters import threshold_otsu
 
 
@@ -36,21 +41,38 @@ def estimate_background(img: np.ndarray, frame: int = 6) -> np.ndarray:
     return np.median(img[~inner].reshape(-1, 3), axis=0)
 
 
-def segment_fruit(img: np.ndarray, frame: int = 6, min_area_frac: float = 0.01) -> Optional[np.ndarray]:
+#: Contraste mínimo del puntaje entre fruta y fondo para aceptar una segmentación.
+MIN_CONTRAST = {"saturation": 0.15, "distance": 10.0}
+
+
+def segment_fruit(img: np.ndarray, frame: int = 6, min_area_frac: float = 0.01,
+                  method: str = "saturation") -> Optional[np.ndarray]:
     """Máscara booleana ``(h, w)`` de la fruta, o ``None`` si no se encuentra un objeto.
 
     Args:
         img: imagen RGB ``uint8`` ``(h, w, 3)``.
-        frame: ancho del marco que se usa para estimar el fondo.
+        frame: ancho del marco que se usa para estimar el fondo (método ``distance``).
         min_area_frac: fracción mínima de la imagen que debe ocupar el objeto.
+        method: ``'saturation'`` (por defecto) binariza la saturación HSV con Otsu: sirve
+            con fondos neutros (blanco o gris) aunque haya sombras y luz desigual, porque
+            una sombra es gris y la fruta es saturada. ``'distance'`` binariza la distancia
+            al color del fondo: sirve con un fondo liso de color (cian, morado), pero falla
+            con iluminación desigual (toma las manchas de luz como fruta).
+
+    Raises:
+        ValueError: si ``img`` no es RGB o ``method`` no existe.
     """
     if img.ndim != 3 or img.shape[2] != 3:
         raise ValueError("img debe ser RGB (h, w, 3)")
-    bg = estimate_background(img, frame)
-    dist = np.linalg.norm(img.astype(np.float64) - bg, axis=2)
-    if dist.max() - dist.min() < 1e-6:                      # imagen uniforme: no hay objeto
+    if method == "saturation":
+        score = rgb2hsv(img)[..., 1]
+    elif method == "distance":
+        score = np.linalg.norm(img.astype(np.float64) - estimate_background(img, frame), axis=2)
+    else:
+        raise ValueError("method debe ser 'saturation' o 'distance'")
+    if score.max() - score.min() < MIN_CONTRAST[method]:      # sin contraste: no hay objeto
         return None
-    mask = dist > threshold_otsu(dist)
+    mask = score > threshold_otsu(score)
     mask = ndimage.binary_opening(mask, iterations=1)
     mask = ndimage.binary_closing(mask, iterations=2)
     labels, n = ndimage.label(mask)
