@@ -131,3 +131,35 @@ def species_class_report(df: pd.DataFrame, min_per_class: int = 5) -> pd.DataFra
     t = pd.crosstab(df["species"], df["label"]).reindex(columns=CLASES, fill_value=0)
     t["completa"] = (t[CLASES] >= min_per_class).all(axis=1)
     return t
+
+
+def assign_splits(df: pd.DataFrame, kaggle_partition: pd.DataFrame, seed: int = 42,
+                  val_size: float = 0.15, test_size: float = 0.15) -> pd.DataFrame:
+    """Agrega la columna ``split`` (train, val o test) a la tabla unificada.
+
+    * Las filas de **Kaggle conservan exactamente** la partición fija de ``partition.pkl`` (así el test
+      de Kaggle sigue intacto y los resultados anteriores siguen siendo comparables).
+    * Las filas de **Mixed** y de las **fotos propias** reciben una partición nueva **por grupo**
+      (``StratifiedGroupKFold`` estratificado por clase): todas las frutas de una misma foto, o todas las
+      fotos de un mismo objeto, caen en una sola partición.
+
+    Raises:
+        KeyError: si la partición de Kaggle no trae ``path`` y ``split``.
+        AssertionError: si algún grupo queda en dos particiones.
+    """
+    import splits as sp
+
+    if {"path", "split"} - set(kaggle_partition.columns):
+        raise KeyError("la partición de Kaggle debe traer 'path' y 'split'")
+    out = df.copy()
+    out["split"] = out["path"].map(dict(zip(kaggle_partition["path"], kaggle_partition["split"])))
+    nuevo = out["split"].isna()
+    if nuevo.any():
+        sub = out[nuevo].reset_index()
+        tr, va, te = sp.grouped_train_val_test(sub, label_col="label", group_col="group", val_size=val_size,
+                                               test_size=test_size, seed=seed)
+        for nombre, parte in (("train", tr), ("val", va), ("test", te)):
+            out.loc[parte["index"].to_numpy(), "split"] = nombre
+    for a, b in (("train", "val"), ("train", "test"), ("val", "test")):
+        sp.assert_no_group_overlap(out[out["split"] == a], out[out["split"] == b], "group")
+    return out

@@ -80,3 +80,51 @@ def test_source_class_report_flags_the_regular_only_in_one_source_risk():
     assert rep.loc["kaggle", "Regular"] == 0
     esp = ud.species_class_report(ud.combine(k, m, o))
     assert esp.loc["apple", "completa"]
+
+
+def test_assign_splits_keeps_kaggle_split_and_groups_the_rest():
+    k = _fuente("kaggle", ["Buena"] * 10 + ["Mala"] * 10)
+    reparto = (["train"] * 14) + (["val"] * 3) + (["test"] * 3)
+    part = pd.DataFrame({"path": k["path"], "split": reparto})
+    filas = []
+    for g in range(40):                                              # 40 fotos de Mixed con 3 frutas cada una
+        for j, lab in enumerate(["Buena", "Regular", "Mala"][g % 3: g % 3 + 1] * 3):
+            filas.append({"path": f"mixed_{g}_{j}", "species": "apple", "label": lab, "source": "mixed", "group": f"mix_g{g}",
+                          "label_origin": "x"})
+    m = pd.DataFrame(filas)
+    df = ud.combine(k, m)
+    out = ud.assign_splits(df, part, seed=1)
+    # Kaggle conserva su partición exacta
+    assert out[out["source"] == "kaggle"]["split"].tolist() == reparto
+    # Mixed: sin grupos compartidos y con las tres particiones presentes
+    mix = out[out["source"] == "mixed"]
+    assert set(mix["split"]) == {"train", "val", "test"} and not out["split"].isna().any()
+    for g, parte in mix.groupby("group"):
+        assert parte["split"].nunique() == 1                          # las frutas de una foto van juntas
+    with pytest.raises(KeyError):
+        ud.assign_splits(df, part.drop(columns="split"))
+
+
+def test_build_script_end_to_end_with_synthetic_files(tmp_path):
+    """El script une Kaggle, Mixed y fotos propias, conserva la partición de Kaggle y avisa de fuentes incompletas."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("construir", Path(__file__).resolve().parents[1] / "03_preparacion_datos" / "construir_tres_clases.py")
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    # Kaggle sintético con su partición
+    k = pd.DataFrame({"path": [f"k{i}" for i in range(40)], "species": "apple", "label_weak": ["Buena", "Mala"] * 20,
+                      "group": [f"kg{i}" for i in range(40)], "split": ["train"] * 28 + ["val"] * 6 + ["test"] * 6})
+    k.to_pickle(tmp_path / "particion.pkl")
+    # Mixed: 30 recortes etiquetados por dos personas (10 fotos x 3 frutas) y su manifiesto
+    ids = [f"apple_I{g}_{j:02d}" for g in range(10) for j in range(3)]
+    cal = ["Buena", "Regular", "Mala"] * 10
+    pd.DataFrame({"crop_id": ids, "calidad": cal, "notas": ""}).to_csv(tmp_path / "a.csv", index=False)
+    pd.DataFrame({"crop_id": ids, "calidad": cal, "notas": ""}).to_csv(tmp_path / "b.csv", index=False)
+    pd.DataFrame({"crop_id": ids, "species": "apple", "group": [f"mg{g}" for g in range(10) for _ in range(3)]}).to_csv(
+        tmp_path / "manifiesto.csv", index=False)
+    salida = tmp_path / "tres.pkl"
+    df = mod.main(["--particion", str(tmp_path / "particion.pkl"), "--etiquetas-a", str(tmp_path / "a.csv"),
+                   "--etiquetas-b", str(tmp_path / "b.csv"), "--recortes", str(tmp_path), "--salida", str(salida)])
+    assert salida.exists() and len(df) == 40 + 30
+    assert df[df["source"] == "kaggle"]["split"].tolist() == k["split"].tolist()      # partición de Kaggle intacta
+    assert set(df["label"]) == {"Buena", "Regular", "Mala"}
+    assert not df["split"].isna().any()
