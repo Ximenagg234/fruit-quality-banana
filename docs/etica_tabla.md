@@ -1,0 +1,35 @@
+# Dilemas éticos y decisiones adoptadas (rúbrica 1 · PI1)
+
+> **Estado: BORRADOR v1.** Cada fila separa lo que **ya está verificado** de lo que está **planeado**. No se debe presentar como implementado en el informe nada que esté en ⬜ o 🟡 el día de la entrega.
+> Estados: ✅ verificado · 🟡 parcial · ⬜ pendiente.
+
+## Alcance del sistema (para situar los dilemas)
+Sistema que recibe una **fotografía estática** de una banana y devuelve su **calidad** (Buena / Regular / Mala) y su **tamaño**, con interfaz Streamlit. Datos: dataset público *Fruit Quality Classification* (Kaggle, CC0) más fotos propias del equipo. No procesa video ni datos de personas por diseño.
+
+## Códigos de ética usados
+- **IEEE Code of Ethics** (IEEE Policy 7.8, 2020): texto consultado en https://ieee-cas.org/about/ieee-code-ethics. Se cita por el **contenido del compromiso**, no por número, porque la numeración varía según la fuente.
+- **ACM Code of Ethics and Professional Conduct** (versión 2018, https://www.acm.org/code-of-ethics): se cita por el **nombre del principio**. *Nota de verificación:* la copia que se pudo abrir al redactar este borrador era la versión de 1992; antes de entregar, confirmar nombres y numeración en la versión 2018.
+
+## Tabla de decisiones éticas
+
+| # | Situación / dilema en este proyecto | Principio del código | Decisión o medida | Estado y evidencia |
+|---|---|---|---|---|
+| E1 | **Privacidad en las fotos propias.** Las fotos con la banana en la mano muestran manos, joyas y fondo del hogar; las fotos de celular pueden traer ubicación GPS en los metadatos. | IEEE: *proteger la privacidad de otros*. ACM: *Respect privacy*. | No fotografiar rostros. Reducir las fotos y **eliminar los metadatos (EXIF/GPS)** antes de subirlas al repositorio. | 🟡 Verificado en las 61 fotos recibidas: sin rostros y **0 con metadatos** (WhatsApp los elimina). Falta el script que lo garantice para cualquier foto nueva (`src/prepare_photos.py`, pendiente). |
+| E2 | **Consentimiento de terceros.** Los lineamientos permiten fotografiar en plazas de mercado o supermercados, donde aparecen personas y vendedores. | IEEE: *tratar a todas las personas con justicia y respeto*, *proteger la privacidad*. ACM: *Respect privacy*. | Fotografiar **bananas propias** y, si se fotografía en un lugar público, pedir permiso y no incluir personas. | ✅ Las fotos del equipo son de bananas propias, sin personas identificables (revisión visual de las 61). |
+| E3 | **Datos de terceros y licencias.** El dataset es CC0, pero reúne imágenes de estilos muy distintos (según el equipo, fondos, cartulinas, entornos naturales) y su **procedencia no está documentada** en la ficha. | IEEE: *acreditar correctamente las contribuciones de otros*. ACM: respeto por la propiedad intelectual / dar crédito. | Citar el dataset (autor, plataforma, licencia, fecha de acceso). **No redistribuir las imágenes** en el repo (solo instrucciones de descarga). Declarar en el informe que la procedencia de parte de las imágenes no está documentada. | 🟡 El repo ya ignora `data/raw/` y documenta la descarga (`data/README.md`). Falta la referencia IEEE en `report/refs.bib`. |
+| E4 | **Sesgos del dataset y de las etiquetas.** (a) El fondo o estilo de foto puede correlacionar con la clase y el modelo aprendería el fondo; (b) la clase Regular no existe en el dataset y es minoritaria; (c) puede haber pocas variedades de banano, y un modelo entrenado así podría **rechazar injustamente fruta de variedades poco representadas** y perjudicar a ciertos productores; (d) etiquetado manual subjetivo. | IEEE: *tratar a todas las personas con justicia*, *evitar daños a otros*. ACM: *Be fair and take action not to discriminate*, *Avoid harm*. | Medir en el EDA estadísticos por clase y por fuente; **partición por banana** (sin fuga); métricas **por clase** (F1 macro, kappa ponderado); probar en fotos propias; doble etiquetado con acuerdo entre anotadores; declarar la variedad y el alcance en el informe. | 🟡 Código del EDA y de la partición por grupo en el repo con pruebas que pasan. Faltan los resultados reales (EDA ejecutado) y el doble etiquetado. |
+| E5 | **Honestidad en los resultados.** Pocas fotos propias (decenas) hacen que una sola imagen mueva mucho la métrica, y la fuga de datos infla el rendimiento. | IEEE: *ser honesto y realista al afirmar resultados basados en los datos disponibles*, *aceptar y ofrecer crítica honesta*. ACM: *comprehensive and thorough evaluations … including analysis of possible risks*. | Usar el conjunto de prueba **una sola vez**; reportar el **error estándar** y no llamar concluyentes diferencias menores a 2 EE; reportar también lo que falla (análisis de errores). | ⬜ Se evidencia en `05_evaluacion/` y en el informe. |
+| E6 | **Uso responsable y decisiones con consecuencias.** Clasificar fruta como "Mala" puede llevar a descartarla (pérdida económica y desperdicio de alimento) y clasificar como "Buena" una fruta en mal estado puede llegar al consumidor. El sistema **no es un control de inocuidad**. | IEEE: *velar por la seguridad, salud y bienestar del público*, *emprender tareas solo si se está calificado o tras revelar las limitaciones*. ACM: *Avoid harm*. | Diseñar la app como **apoyo a la decisión, no como decisión final**: mostrar la confianza de la predicción y avisar cuando sea baja; declarar en la interfaz y en el informe el alcance (una fruta, condiciones controladas) y que no certifica inocuidad. | ⬜ Pendiente de implementar en `06_despliegue/`. |
+| E7 | **Datos de los usuarios de la app.** Una app que recibe fotos podría almacenarlas sin que el usuario lo sepa. | IEEE: *proteger la privacidad de otros*. ACM: *Respect privacy*. | **Privacidad por diseño:** la app procesa la imagen en memoria y **no la guarda ni la envía a terceros**. | ⬜ Pendiente de implementar y de verificar con una prueba. |
+| E8 | **Integridad académica y uso de herramientas.** Todo código o dato de terceros debe referenciarse (si no, es fraude según los lineamientos) y el trabajo se ha desarrollado con ayuda de un asistente de IA. | IEEE: *acreditar correctamente las contribuciones de otros*, *integridad y conducta ética*. ACM: *dar crédito a la propiedad intelectual*, *Be honest and trustworthy*. | Referenciar cada fuente de datos y código; **declarar el uso de herramientas de IA** de la forma que indique la política del curso. | ⬜ Pendiente: confirmar con el profesor qué política aplica y cómo declararlo. |
+
+## Cómo se conecta con el resto del proyecto
+- E1, E2, E7 → diseño de datos y de la app (fases 3 y 6 de CRISP-DM).
+- E3, E4 → fase 2 (EDA) y la sección de datos del informe.
+- E5 → fase 5 (evaluación) y análisis de resultados.
+- E6 → fase 6 (despliegue) y conclusiones/trabajo futuro.
+
+## Pendientes para llegar al nivel "Outstanding"
+1. Que cada medida marcada 🟡/⬜ tenga **evidencia enlazada** (script, prueba, captura de la app).
+2. Confirmar la política de IA del curso (E8) y las citas de los códigos de ética (versión 2018 de la ACM).
+3. Llevar esta tabla (resumida) al informe: la rúbrica pide una tabla o sección con las decisiones éticas clave y su relación con el código de ética.

@@ -13,7 +13,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla dilema → principio del código de ética → decisión/medida | `docs/etica_tabla.md` → informe, sección Ética | ⬜ |
+| Tabla dilema → principio del código de ética → decisión/medida | `docs/etica_tabla.md` (borrador v1, 8 filas con estado por medida) → informe, sección Ética | 🟡 |
 | Las medidas están realmente implementadas (no solo declaradas): p. ej. fotos sin rostros, sesgo del dataset medido en EDA | enlaces a notebooks/código | ⬜ |
 | Código de ética citado con referencia IEEE (IEEE/ACM) | `report/refs.bib` | ⬜ |
 
@@ -22,7 +22,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Matriz 4 dimensiones × (impacto positivo, riesgo, mitigación) | `docs/impactos_matriz.md` → informe | ⬜ |
+| Matriz 4 dimensiones × (impacto positivo, riesgo, mitigación) | `docs/impactos_matriz.md` (borrador v1, análisis inicial; faltan datos [MEDIR]) → informe | 🟡 |
 | Dimensión ambiental con **dato medido** (energía/tiempo de entrenamiento e inferencia, hardware) | `05_evaluacion/` | ⬜ |
 | Análisis inicial (en avance) **y** análisis final (lineamientos §6 piden ambos) | informe | ⬜ |
 
