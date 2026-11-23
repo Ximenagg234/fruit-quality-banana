@@ -38,7 +38,8 @@ Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`c
 | CNN: 4 288 067 parámetros con `Flatten` y 110 147 con GAP (128 px, 3 clases) | `src/cnn.py`, `tests/test_cnn.py` |
 | Segmentación: error de la longitud ≤ 3 % en formas sintéticas; contacto con el borde 0.000 en 7 fotos sobre superficie y 0.065–0.122 en 22 con mano (revisión visual) | `tests/test_segmentation.py`, `docs/estrategia_solucion.md` §6 |
 | Mixed: 8 194 recortes, 3 978 pasan los filtros; muestra de 360 para etiquetar | `03_preparacion_datos/segmentar_mixed.py` |
-| Experimentos de la CNN (10) y clasificador de especie | `04_modelado/resultados_cnn_calidad.csv`, `resultados_cnn_especie.csv` |
+| **CNN (Buena vs. Mala, val):** mejor E4 0.938 (`Flatten`) y E5 0.929 (GAP, 22 veces menos parámetros, diferencia no concluyente); aumento de datos ayuda (+0.033 y +0.016); no supera al Random Forest (0.947); control solo borde E10 = 0.871. **Especie:** Random Forest sobre color 0.908, CNN 0.790; solo borde 0.800 y 0.658 | `04_modelado/resultados_cnn_calidad.csv`, `resultados_cnn_especie.csv`, `cnn_experimentos.ipynb` |
+| Partir por imagen infla el F1 en ≈ 0.027 (0.987 frente a 0.960; cota inferior); 49.9 % de las imágenes de prueba con casi-duplicado en train | `04_modelado/fuga_particion.ipynb` |
 | Fotos propias, *Regular*, evaluación en fotos propias, kappa entre anotadores, test | **[MEDIR]**: aún no existen |
 
 ## Figuras disponibles
@@ -51,6 +52,9 @@ Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`c
 | Calibración del hash perceptual | `02_comprension_datos/figuras/calibracion_hash.pdf` |
 | Prueba del atajo del fondo | `02_comprension_datos/figuras/prueba_atajo_borde.pdf` |
 | Modelos clásicos y matriz de confusión | `04_modelado/figuras/modelos_clasicos.pdf` |
+| Curvas de aprendizaje de la CNN | `04_modelado/figuras/cnn_curvas_aprendizaje.pdf` |
+| CNN frente a ML tradicional y control solo borde | `04_modelado/figuras/cnn_comparacion.pdf` |
+| Inflación por partición aleatoria | `04_modelado/figuras/fuga_particion.pdf` |
 
 ## Antes de entregar
 

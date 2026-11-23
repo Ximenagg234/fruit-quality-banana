@@ -59,8 +59,8 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla comparativa de modelos en **train / val / test** | train y val en `04_modelado/resultados_modelos_clasicos.csv` (F1 train, CV agrupada y val, brecha); el **test aún no se usa** (se usa una sola vez al final) | 🟡 |
-| Curvas de aprendizaje y de entrenamiento/validación de la CNN | `05_evaluacion/` | ⬜ |
+| Tabla comparativa de modelos en **train / val / test** | train y val en `04_modelado/resultados_modelos_clasicos.csv` y `resultados_cnn_calidad.csv` (F1 train, F1 val, brecha, EE); el **test aún no se usa** (se usa una sola vez al final) | 🟡 |
+| Curvas de aprendizaje y de entrenamiento/validación de la CNN | `04_modelado/cnn_experimentos.ipynb` y `04_modelado/figuras/cnn_curvas_aprendizaje.pdf` (10 experimentos en Buena vs. Mala sobre Kaggle, con parada temprana); **falta** repetirlas con tres clases | 🟡 |
 | Matriz de confusión por modelo y análisis de errores con imágenes | matriz del mejor modelo en val en `04_modelado/figuras/modelos_clasicos.pdf`; falta el análisis de errores con imágenes | 🟡 |
 | Generalización a **fotos propias** (dominio distinto al dataset) | `05_evaluacion/` | ⬜ |
 | Incertidumbre: error estándar con n pequeño | error estándar binomial en la tabla de val (`models_classic.evaluate`); falta aplicarlo a fotos propias | 🟡 |
@@ -96,7 +96,7 @@ Estado a la fecha de esta versión; solo se marca ✅ con evidencia verificable.
 | 30–50 imágenes propias anotadas (calidad y tamaño), por varias especies | 91 fotos de banano recibidas, sin `object_id` ni etiquetas; fotos de las otras 5 especies pendientes | 🟡 |
 | Mecanismo para compartir anotaciones con la clase | esquema en `data/README.md` §2–3; herramienta de etiquetado independiente `03_preparacion_datos/etiquetador_mixed.py` y acuerdo entre anotadores `calcular_acuerdo.py` (con pruebas). **Falta definir con el profesor y los otros grupos dónde se comparten** | 🟡 |
 | ≥ 2 modelos de ML tradicional con hiperparámetros por validación cruzada | `04_modelado/modelos_clasicos.ipynb`: regresión logística, SVM RBF y Random Forest con `GridSearchCV` y `StratifiedGroupKFold` (tarea binaria en Kaggle; se repite con *Regular*) | 🟡 |
-| ≥ 1 modelo de deep learning (CNN desde cero) | `src/cnn.py` (arquitectura y conteo de parámetros verificados; sin entrenar) | 🟡 |
+| ≥ 1 modelo de deep learning (CNN desde cero) | `src/cnn.py`, `04_modelado/entrenar_cnn.py` y `cnn_experimentos.ipynb`: 10 experimentos entrenados y analizados (tabla al estilo de `02-CNN_resuelto`), con control "solo borde" y regla de 2 EE; **falta** la CNN de tres clases y evaluarla en fotos propias | 🟡 |
 | Comparación con línea base | línea base mayoritaria (F1 0.388) y línea base "solo borde" en el mismo notebook | 🟡 |
 | CRISP-DM con evidencia: fase 2 (EDA ejecutado) | `02_comprension_datos/eda.ipynb` ejecutado con datos reales; falta medir la nitidez como parte de "calidad de imagen" | 🟡 |
 | CRISP-DM: fases 1, 3, 4, 5 y 6 | — | ⬜ |
