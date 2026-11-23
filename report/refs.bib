@@ -1,0 +1,161 @@
+% Referencias del informe (formato IEEE). Regla del proyecto: una referencia solo entra aquí si se
+% comprobó que existe (autores, año, datos de publicación). Cada entrada dice contra qué se verificó.
+% Se citan únicamente las que el informe realmente use y haya leído el equipo.
+% Verificación hecha el 22-23 de noviembre de 2026.
+
+% ---------- Datos ----------
+@misc{park_fruit_quality,
+  author       = {Park, Ryan},
+  title        = {Fruit Quality Classification},
+  howpublished = {Kaggle dataset},
+  url          = {https://www.kaggle.com/datasets/ryandpark/fruit-quality-classification},
+  note         = {Licencia CC0 (dominio público), verificada en la ficha del dataset. El a{\~n}o de publicaci{\'o}n y la fecha de acceso quedan por completar [VERIFICAR]}
+}
+
+% ---------- Contexto e impacto ----------
+% Verificada contra el PDF original de la FAO (portada, cita requerida y texto): el informe dice que alrededor
+% del 14 % de los alimentos producidos se pierde desde la poscosecha hasta el comercio minorista, sin incluirlo.
+@book{fao2019sofa,
+  author    = {{FAO}},
+  title     = {The State of Food and Agriculture 2019. Moving forward on food loss and waste reduction},
+  publisher = {FAO},
+  address   = {Rome},
+  year      = {2019},
+  url       = {https://openknowledge.fao.org/3/ca6030en/ca6030en.pdf},
+  note      = {Licence: CC BY-NC-SA 3.0 IGO. El 14 \% es en valor econ{\'o}mico y excluye el comercio minorista}
+}
+
+% T{\'i}tulo y fecha (marzo de 2024) verificados en la ficha oficial. Las cifras de 1 050 millones de toneladas y 19 \%
+% NO se pudieron comprobar en el documento desde el entorno de desarrollo: [VERIFICAR] abriendo el PDF a mano.
+@misc{unep2024fwi,
+  author       = {{UNEP}},
+  title        = {{UNEP} Food Waste Index Report 2024 -- Key Messages},
+  year         = {2024},
+  howpublished = {United Nations Environment Programme},
+  url          = {https://wedocs.unep.org/handle/20.500.11822/45275},
+  note         = {Cifras de desperdicio por verificar en el PDF original [VERIFICAR]}
+}
+
+% ---------- Modelos y entrenamiento (verificadas en Crossref, JMLR o arXiv) ----------
+% Crossref: DOI 10.1023/A:1010933404324
+@article{breiman2001rf,
+  author  = {Breiman, L.},
+  title   = {Random Forests},
+  journal = {Machine Learning},
+  volume  = {45},
+  number  = {1},
+  pages   = {5--32},
+  year    = {2001},
+  doi     = {10.1023/A:1010933404324}
+}
+
+% Crossref: DOI 10.1007/BF00994018
+@article{cortes1995svm,
+  author  = {Cortes, C. and Vapnik, V.},
+  title   = {Support-vector networks},
+  journal = {Machine Learning},
+  volume  = {20},
+  number  = {3},
+  pages   = {273--297},
+  year    = {1995},
+  doi     = {10.1007/BF00994018}
+}
+
+% P{\'a}gina oficial de JMLR (metadatos de citaci{\'o}n)
+@article{pedregosa2011sklearn,
+  author  = {Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V. and Thirion, B. and Grisel, O. and
+             Blondel, M. and Prettenhofer, P. and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
+             Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, {\'E}.},
+  title   = {Scikit-learn: Machine Learning in {P}ython},
+  journal = {Journal of Machine Learning Research},
+  volume  = {12},
+  pages   = {2825--2830},
+  year    = {2011}
+}
+
+% P{\'a}gina oficial de JMLR
+@article{srivastava2014dropout,
+  author  = {Srivastava, N. and Hinton, G. and Krizhevsky, A. and Sutskever, I. and Salakhutdinov, R.},
+  title   = {Dropout: A Simple Way to Prevent Neural Networks from Overfitting},
+  journal = {Journal of Machine Learning Research},
+  volume  = {15},
+  number  = {56},
+  pages   = {1929--1958},
+  year    = {2014}
+}
+
+% arXiv confirma t{\'i}tulo, autores y fecha (22-dic-2014). La publicaci{\'o}n formal en ICLR 2015 no se
+% comprob{\'o} en este entorno: si se cita esa versi{\'o}n, [VERIFICAR] primero.
+@misc{kingma2014adam,
+  author        = {Kingma, D. P. and Ba, J.},
+  title         = {Adam: A Method for Stochastic Optimization},
+  year          = {2014},
+  eprint        = {1412.6980},
+  archivePrefix = {arXiv}
+}
+
+% ---------- Segmentaci{\'o}n y agrupaci{\'o}n (verificadas en Crossref) ----------
+% Crossref: DOI 10.1109/TSMC.1979.4310076
+@article{otsu1979,
+  author  = {Otsu, N.},
+  title   = {A threshold selection method from gray-level histograms},
+  journal = {IEEE Transactions on Systems, Man, and Cybernetics},
+  volume  = {9},
+  number  = {1},
+  pages   = {62--66},
+  year    = {1979},
+  doi     = {10.1109/TSMC.1979.4310076}
+}
+
+% Crossref: DOI 10.1109/34.87344
+@article{vincent1991watershed,
+  author  = {Vincent, L. and Soille, P.},
+  title   = {Watersheds in digital spaces: an efficient algorithm based on immersion simulations},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {13},
+  number  = {6},
+  pages   = {583--598},
+  year    = {1991},
+  doi     = {10.1109/34.87344}
+}
+
+% Crossref devuelve "GrabCut" como t{\'i}tulo; el subt{\'i}tulo que sigue no se comprob{\'o} en este entorno.
+% Crossref: DOI 10.1145/1015706.1015720
+@article{rother2004grabcut,
+  author  = {Rother, C. and Kolmogorov, V. and Blake, A.},
+  title   = {``{GrabCut}'': interactive foreground extraction using iterated graph cuts},
+  journal = {ACM Transactions on Graphics},
+  volume  = {23},
+  number  = {3},
+  pages   = {309--314},
+  year    = {2004},
+  doi     = {10.1145/1015706.1015720}
+}
+
+% ---------- Acuerdo entre anotadores (verificadas en Crossref) ----------
+% Crossref: DOI 10.1177/001316446002000104
+@article{cohen1960kappa,
+  author  = {Cohen, J.},
+  title   = {A coefficient of agreement for nominal scales},
+  journal = {Educational and Psychological Measurement},
+  volume  = {20},
+  number  = {1},
+  pages   = {37--46},
+  year    = {1960},
+  doi     = {10.1177/001316446002000104}
+}
+
+% Crossref: DOI 10.1037/h0026256
+@article{cohen1968weighted,
+  author  = {Cohen, J.},
+  title   = {Weighted kappa: Nominal scale agreement provision for scaled disagreement or partial credit},
+  journal = {Psychological Bulletin},
+  volume  = {70},
+  number  = {4},
+  pages   = {213--220},
+  year    = {1968},
+  doi     = {10.1037/h0026256}
+}
+
+% Pendientes (no se agregan hasta verificarlas): c{\'o}digos de {\'e}tica IEEE y ACM (versi{\'o}n 2018), literatura
+% sobre clasificaci{\'o}n de calidad de frutas con aprendizaje profundo, y la Ley 1581 de 2012.

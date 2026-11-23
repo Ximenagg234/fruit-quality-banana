@@ -104,4 +104,6 @@ ax.text(65, 2.9, "Control transversal: trazabilidad de la rúbrica, pruebas auto
 
 fig.savefig(salida / "diagrama_crispdm.svg", bbox_inches="tight")
 fig.savefig(salida / "diagrama_crispdm.png", dpi=120, bbox_inches="tight")
+plt.rcParams["pdf.fonttype"] = 42
+fig.savefig(salida / "diagrama_crispdm.pdf", bbox_inches="tight")
 print("diagrama guardado en", salida)
