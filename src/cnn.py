@@ -43,24 +43,37 @@ def analytic_param_count(size: int = 128, n_classes: int = 3, head: str = "flatt
 
 
 def build_cnn(size: int = 128, n_classes: int = 3, head: str = "flatten",
-              filters: Sequence[int] = FILTERS, dense_units: int = 128, dropout: float = 0.5):
+              filters: Sequence[int] = FILTERS, dense_units: int = 128, dropout: float = 0.5,
+              l2: float = 0.0, augment: bool = False):
     """Construye la CNN (API funcional de Keras, como en la guía del curso).
 
     Las imágenes de entrada deben venir escaladas a [0, 1]. Devuelve un modelo sin
     compilar. Keras se importa aquí para no cargar TensorFlow al importar el módulo.
+
+    Args:
+        l2: coeficiente de regularización L2 en las capas convolucionales y densas (0 = sin L2).
+        augment: si es ``True``, antepone aumento de datos (volteo horizontal, rotación, zoom y
+            contraste aleatorios). Son capas **sin parámetros** que solo actúan al entrenar,
+            así que no cambian el conteo de parámetros ni la inferencia.
     """
     if head not in ("flatten", "gap"):
         raise ValueError("head debe ser 'flatten' o 'gap'")
     from tensorflow import keras
     from tensorflow.keras import layers
 
+    reg = keras.regularizers.l2(l2) if l2 > 0 else None
     inputs = keras.Input((size, size, 3))
     x = inputs
+    if augment:
+        x = layers.RandomFlip("horizontal")(x)
+        x = layers.RandomRotation(0.08)(x)
+        x = layers.RandomZoom(0.1)(x)
+        x = layers.RandomContrast(0.15)(x)
     for f in filters:
-        x = layers.Conv2D(f, (3, 3), activation="relu", padding="same")(x)
+        x = layers.Conv2D(f, (3, 3), activation="relu", padding="same", kernel_regularizer=reg)(x)
         x = layers.MaxPooling2D((2, 2))(x)
     x = layers.Flatten()(x) if head == "flatten" else layers.GlobalAveragePooling2D()(x)
-    x = layers.Dense(dense_units, activation="relu")(x)
+    x = layers.Dense(dense_units, activation="relu", kernel_regularizer=reg)(x)
     x = layers.Dropout(dropout)(x)               # sin parámetros: no cambia el conteo
     outputs = layers.Dense(n_classes, activation="softmax")(x)
     return keras.Model(inputs, outputs)
