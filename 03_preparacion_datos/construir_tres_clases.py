@@ -48,7 +48,7 @@ def construir(args: argparse.Namespace) -> pd.DataFrame:
         frames.append(own)
         print(f"Fotos propias: {len(own)} con quality_final")
     df = ud.combine(*frames, lemon_as_lime=args.lemon_como_lima)
-    return ud.assign_splits(df, part, seed=args.semilla)
+    return ud.assign_splits(df, part, seed=args.semilla, own_as_test=args.propias_solo_prueba)
 
 
 def main(argv=None) -> pd.DataFrame:
@@ -60,6 +60,8 @@ def main(argv=None) -> pd.DataFrame:
     ap.add_argument("--recortes", default=str(PROC / "mixed_crops"))
     ap.add_argument("--anotaciones", help="data/own_photos/annotations.csv")
     ap.add_argument("--lemon-como-lima", action="store_true", help="une las especies lemon y lime [DECIDIR]")
+    ap.add_argument("--propias-solo-prueba", action="store_true",
+                    help="las fotos propias no se reparten: todas son la prueba propia ('own_test'), de uso único")
     ap.add_argument("--semilla", type=int, default=42)
     ap.add_argument("--salida", default=str(PROC / "tres_clases.pkl"))
     args = ap.parse_args(argv)
@@ -78,7 +80,7 @@ def main(argv=None) -> pd.DataFrame:
     print("\nImágenes por especie y clase:")
     print(ud.species_class_report(df).to_string())
     print("\nImágenes por partición y clase:")
-    print(pd.crosstab(df["split"], df["label"]).reindex(["train", "val", "test"]).to_string())
+    print(pd.crosstab(df["split"], df["label"]).reindex(["train", "val", "test", "own_test"]).dropna(how="all").to_string())
     return df
 
 
