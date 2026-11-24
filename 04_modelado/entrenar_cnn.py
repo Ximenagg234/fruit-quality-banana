@@ -66,6 +66,7 @@ EXPERIMENTOS_ESPECIE = [
 
 
 def log(*a):
+    """Imprime un mensaje con la hora."""
     print(time.strftime("%H:%M:%S"), *a, flush=True)
 
 
@@ -113,6 +114,7 @@ def pesos_de_clase(y: np.ndarray, k: int, potencia: float = 1.0) -> dict:
 
 
 def entrenar(exp: dict, datos, tarea: str, humo: bool, salida: Path) -> dict:
+    """Entrena un experimento de CNN, mide validación y entrenamiento y guarda modelo y resultados."""
     import tensorflow as tf
 
     Xtr, ytr, Xva, yva, clases, especies_va = datos
@@ -121,6 +123,7 @@ def entrenar(exp: dict, datos, tarea: str, humo: bool, salida: Path) -> dict:
     tf.keras.utils.set_random_seed(SEED)
 
     def ds(X, y, barajar):
+        """Dataset de TensorFlow en lotes con las imágenes escaladas a [0, 1]."""
         d = tf.data.Dataset.from_tensor_slices((X, y))
         if barajar:
             d = d.shuffle(len(X), seed=SEED)
@@ -182,6 +185,7 @@ def baselines_especie(salida: Path, humo: bool) -> list:
 
 
 def main() -> None:
+    """Línea de comandos: corre la tabla de experimentos de la CNN (reanudable)."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--tarea", choices=["calidad", "especie"], required=True)
     ap.add_argument("--humo", action="store_true", help="prueba rápida con pocos datos; no escribe resultados")

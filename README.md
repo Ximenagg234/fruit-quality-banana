@@ -42,11 +42,27 @@ pip install -r requirements.txt
 # datos: ver data/README.md
 streamlit run 06_despliegue/app.py   # app (ver 06_despliegue/README.md)
 ```
-_(Las instrucciones por fase se completarán a medida que existan los notebooks.)_
+Por fase (desde la raíz, con el entorno activado; los datos de Kaggle se descargan según `data/README.md`):
+```bash
+python 03_preparacion_datos/construir_tres_clases.py --help    # tabla unificada de tres clases y su partición
+python 04_modelado/entrenar_tres_clases.py --fase clasicos     # ML tradicional (fases: datos, clasicos, cnn, test)
+python 04_modelado/analisis_modelos.py                         # tabla train/val/test, matrices y errores
+python 05_evaluacion/medir_costo.py                            # hardware, tiempos y energía estimada
+python report/generar_tablas.py                                # tablas del informe con los números finales
+python -m pytest tests -q                                      # pruebas
+```
+Los modelos entrenados y los datos procesados no se versionan (salvo el modelo de la app); las etiquetas finales sí (`data/mixed_labels/`, `data/own_photos/annotations.csv`).
 
 ## Datos y referencias
 - Dataset base: *Fruit Quality Classification*, `ryandpark`, Kaggle (licencia CC0, dominio público, verificada en su ficha). Ver [`data/README.md`](data/README.md).
 - Todo código o dato de terceros se referencia explícitamente en el informe y en el archivo donde se usa.
+
+## Resultados principales (tres clases)
+- **Validación** (Kaggle y *Mixed*): la CNN T6 llega a F1 macro 0.725 frente a 0.257 de la línea base; es la que usa la app.
+- **Prueba** (Kaggle y *Mixed*, usada una sola vez): el SVM llega a 0.774 y la CNN T6 a 0.714.
+- **Fotos propias** (69 fotos, 34 frutas): F1 macro 0.439 con la CNN T6; **ningún modelo detecta *Regular*** (0 de 14) y ninguno supera la exactitud de la línea base. La generalización a fotos reales es pobre y se declara.
+- **Tamaño:** la longitud normalizada es una medida relativa (correlación débil con la medida real en cm).
+- Detalle: `04_modelado/ANALISIS_ERRORES.md`, `report/tablas_informe.md` y `docs/estrategia_solucion.md`.
 
 ## Estado
 Ver la matriz de trazabilidad para el avance por criterio de la rúbrica. **Entrega: jueves 26 de noviembre de 2026, en la mañana.**

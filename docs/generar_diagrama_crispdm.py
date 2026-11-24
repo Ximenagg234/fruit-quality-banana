@@ -23,12 +23,14 @@ COL = {"fase": "#E8EEF7", "borde": "#2B4C7E", "dato": "#FFF6E0", "bdato": "#C77D
 
 
 def caja(x, y, w, h, titulo, lineas, fc=COL["fase"], ec=COL["borde"], size=7.6):
+    """Dibuja un recuadro de una fase con su título y su lista."""
     ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.4,rounding_size=1.2", fc=fc, ec=ec, lw=1.6))
     ax.text(x + w / 2, y + h - 2.2, titulo, ha="center", va="top", fontsize=9.6, fontweight="bold", color=ec)
     ax.text(x + 1.6, y + h - 6.6, "\n".join(lineas), ha="left", va="top", fontsize=size, color="#222", linespacing=1.35)
 
 
 def flecha(a, b, color="#2B4C7E", estilo="-|>", ls="-", rad=0.0, lw=1.8):
+    """Dibuja una flecha entre dos puntos."""
     ax.add_patch(FancyArrowPatch(a, b, arrowstyle=estilo, mutation_scale=14, color=color, lw=lw, ls=ls,
                                  connectionstyle=f"arc3,rad={rad}"))
 

@@ -32,6 +32,7 @@ PROC = REPO / "data" / "processed"
 
 
 def construir(args: argparse.Namespace) -> pd.DataFrame:
+    """Une Kaggle, *Mixed* y las fotos propias en una tabla y le asigna la partición."""
     part = pd.read_pickle(Path(args.particion))
     frames = [ud.from_kaggle(part[part["split"].isin(["train", "val", "test"])])]
     if args.etiquetas_a and args.etiquetas_b:
@@ -52,6 +53,7 @@ def construir(args: argparse.Namespace) -> pd.DataFrame:
 
 
 def main(argv=None) -> pd.DataFrame:
+    """Línea de comandos: construye la tabla de tres clases y muestra sus conteos."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--particion", default=str(PROC / "partition.pkl"), help="partición fija de Kaggle")
     ap.add_argument("--etiquetas-a")

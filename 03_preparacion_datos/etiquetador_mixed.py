@@ -56,6 +56,7 @@ def imagen_con_recuadro(carpeta: Path, fila) -> Image.Image | None:
 
 
 def main() -> None:
+    """Interfaz de Streamlit para etiquetar recortes o fotos, con guardado automático por persona."""
     st.set_page_config(page_title="Etiquetador de frutas", page_icon="🍋", layout="centered")
     st.title("Etiquetador de frutas (Mixed)")
     st.caption("Etiqueta **sin comparar** con otra persona: el acuerdo entre anotadores se mide después.")

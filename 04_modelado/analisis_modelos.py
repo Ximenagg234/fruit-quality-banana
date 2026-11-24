@@ -12,6 +12,7 @@ Salidas (desde la raíz del repositorio: ``python 04_modelado/analisis_modelos.p
 * ``04_modelado/figuras/matrices_confusion_tres_clases.pdf``: matrices de confusión (vectorial);
 * ``04_modelado/figuras/errores_cnn_T6.pdf``: ejemplos de error de la CNN T6 en la prueba (imágenes de Kaggle y *Mixed*;
   las fotos propias no se muestran porque faltan los permisos de las personas cuyas manos aparecen);
+* ``04_modelado/figuras/cnn_curvas_tres_clases.pdf``: curvas de validación por época de las CNN;
 * ``04_modelado/errores_resumen.csv`` y ``errores_fotos_propias.csv``: conteos de errores por especie y por foto.
 """
 from __future__ import annotations
@@ -38,6 +39,7 @@ SALIDA = REPO / "04_modelado"
 
 
 def tabla(partes, X64, X96) -> pd.DataFrame:
+    """Tabla de F1 y exactitud por modelo en entrenamiento, validación, prueba y fotos propias."""
     val = pd.read_csv(et.CSV_VAL)
     val = val[val["conjunto"] == "val"].set_index("modelo")
     test = pd.read_csv(et.CSV_TEST)
@@ -58,10 +60,12 @@ def tabla(partes, X64, X96) -> pd.DataFrame:
 
 
 def matriz(y, pred) -> np.ndarray:
+    """Matriz de confusión 3 x 3 en el orden Buena, Regular, Mala."""
     return pd.crosstab(pd.Series(y, name="y"), pd.Series(pred, name="p")).reindex(index=CLASES, columns=CLASES, fill_value=0).values
 
 
 def figura_matrices(partes, X64, X96) -> None:
+    """Dibuja las matrices de confusión de tres modelos en validación, prueba y fotos propias."""
     modelos = ["cnn_T6", "svm_rbf", "random_forest"]
     conf = json.loads((et.MODELOS / "matrices_confusion_test.json").read_text(encoding="utf-8"))
     pred_val = et.predecir_todos(partes, X64, X96, "val")
@@ -96,6 +100,7 @@ def figura_matrices(partes, X64, X96) -> None:
 
 
 def figura_errores(partes, X64, X96) -> None:
+    """Dibuja ejemplos de error de la CNN T6 y guarda el resumen de errores por especie."""
     pred = et.predecir_todos(partes, X64, X96, "test")["cnn_T6"]
     t = partes["test"].reset_index(drop=True).assign(pred=pred)
     err = t[t["label"] != t["pred"]]
@@ -131,7 +136,35 @@ def figura_errores(partes, X64, X96) -> None:
     pd.DataFrame(resumen).to_csv(SALIDA / "errores_resumen.csv", index=False)
 
 
+def figura_curvas() -> None:
+    """Curvas de entrenamiento y validación (pérdida y exactitud) de las CNN de tres clases.
+
+    T4 y T5 (peso de clase completo, partición anterior) colapsaron y se muestran como contraste; T6 y T7 son las finales.
+    """
+    runs = et.PROC / "cnn_runs"
+    nombres = {"T4": "T4 Flatten, peso completo (colapsó)", "T5": "T5 GAP, peso completo (colapsó)",
+               "T6": "T6 Flatten, peso suavizado", "T7": "T7 GAP, peso suavizado"}
+    fig, ejes = plt.subplots(1, 2, figsize=(10, 3.8))
+    for id_, nombre in nombres.items():
+        h = json.loads((runs / f"tres_clases_{id_}.json").read_text(encoding="utf-8"))["historia"]
+        ep = range(1, len(h["loss"]) + 1)
+        estilo = "--" if id_ in ("T4", "T5") else "-"
+        ejes[0].plot(ep, h["val_loss"], estilo, marker="o", ms=3, label=nombre)
+        ejes[1].plot(ep, h["val_accuracy"], estilo, marker="o", ms=3, label=nombre)
+    ejes[0].set_ylabel("Pérdida de validación")
+    ejes[1].set_ylabel("Exactitud de validación")
+    for ax in ejes:
+        ax.set_xlabel("Época")
+        ax.grid(alpha=0.3)
+    ejes[0].legend(fontsize=7)
+    fig.suptitle("CNN de tres clases: validación por época", fontsize=10)
+    fig.tight_layout()
+    fig.savefig(SALIDA / "figuras" / "cnn_curvas_tres_clases.pdf")
+    plt.close(fig)
+
+
 def errores_fotos_propias() -> None:
+    """Guarda, por foto propia, la verdad y la predicción de la CNN T6 y del SVM."""
     d = None
     for m in ("cnn_T6", "svm_rbf"):
         p = pd.read_csv(et.MODELOS / f"predicciones_own_test_{m}.csv")
@@ -142,6 +175,7 @@ def errores_fotos_propias() -> None:
 
 
 def main() -> None:
+    """Genera la tabla, las figuras y los resúmenes de errores."""
     (SALIDA / "figuras").mkdir(exist_ok=True)
     partes = et.cargar_tabla(et.FOTOS_PROPIAS)
     X64, X96 = et.matrices(partes, 64), et.matrices(partes, 96)
@@ -151,6 +185,7 @@ def main() -> None:
     figura_matrices(partes, X64, X96)
     figura_errores(partes, X64, X96)
     errores_fotos_propias()
+    figura_curvas()
     print("listo")
 
 

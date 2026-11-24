@@ -1,6 +1,6 @@
 # Estructura del informe IEEE (máximo 7 páginas)
 
-Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`conference-template-letter.docx`, o la plantilla clonable de la carpeta `PROYECTO/`). **No hay LaTeX en el entorno de desarrollo, así que no se compiló nada.** Las secciones y su orden salen de los lineamientos (§7). Responsable: Natalia; revisor: Juan Pablo (revisión cruzada con la rúbrica, sin haberlo escrito).
+**Los números finales ya están en `report/tablas_informe.md`** (se regenera con `python report/generar_tablas.py`); copia las tablas de ahí. Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`conference-template-letter.docx`, o la plantilla clonable de la carpeta `PROYECTO/`). **No hay LaTeX en el entorno de desarrollo, así que no se compiló nada.** Las secciones y su orden salen de los lineamientos (§7). Responsable: Natalia; revisor: Juan Pablo (revisión cruzada con la rúbrica, sin haberlo escrito).
 
 ## Reglas
 
@@ -40,7 +40,15 @@ Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`c
 | Mixed: 8 194 recortes, 3 978 pasan los filtros; muestra de 360 para etiquetar | `03_preparacion_datos/segmentar_mixed.py` |
 | **CNN (Buena vs. Mala, val):** mejor E4 0.938 (`Flatten`) y E5 0.929 (GAP, 22 veces menos parámetros, diferencia no concluyente); aumento de datos ayuda (+0.033 y +0.016); no supera al Random Forest (0.947); control solo borde E10 = 0.871. **Especie:** Random Forest sobre color 0.908, CNN 0.790; solo borde 0.800 y 0.658 | `04_modelado/resultados_cnn_calidad.csv`, `resultados_cnn_especie.csv`, `cnn_experimentos.ipynb` |
 | Partir por imagen infla el F1 en ≈ 0.027 (0.987 frente a 0.960; cota inferior); 49.9 % de las imágenes de prueba con casi-duplicado en train | `04_modelado/fuga_particion.ipynb` |
-| Fotos propias, *Regular*, evaluación en fotos propias, kappa entre anotadores, test | **[MEDIR]**: aún no existen |
+| **Tres clases** (partición con las fotos propias como prueba): entrenamiento (submuestreado a <= 1 100 por especie y clase) 5 408 *Buena* / 137 *Regular* / 4 954 *Mala*; validación 2 758 imágenes (35 *Regular*), prueba 2 746 (27 *Regular*), fotos propias 69 (14 *Regular*, 6 *Mala*) | `report/tablas_informe.md` (Tablas 1 a 3), `04_modelado/resultados_tres_clases*.csv` |
+| Mejor modelo en validación: CNN T6 (F1 macro 0.725; recall de *Regular* 0.60); SVM 0.693; Random Forest 0.628; línea base 0.257 | `report/tablas_informe.md` Tabla 1 |
+| Prueba (usada una vez): SVM 0.774, Random Forest 0.765, CNN T7 0.736, CNN T6 0.714 | `report/tablas_informe.md` Tabla 2 |
+| **Fotos propias:** ningún modelo detecta *Regular* (0 de 14); ninguno supera la exactitud de la línea base (0.710); la mejor es la CNN T6 (F1 macro 0.439, exactitud 0.681 ± 0.056) | `report/tablas_informe.md` Tablas 3 y 4, `04_modelado/ANALISIS_ERRORES.md` |
+| Sobreajuste (F1 entrenamiento − validación): CNN T6 0.04; SVM 0.24; Random Forest 0.30 | `report/tablas_informe.md` Tabla 5 |
+| Acuerdo entre anotadores en *Mixed*: kappa ponderado 0.607 (360 recortes) y 0.606 (400); 760 recortes, 199 *Regular* | `report/tablas_informe.md` Tabla 6, `data/mixed_labels/acuerdo_anotadores.csv` |
+| Con el peso de clase completo la CNN colapsó (F1 de validación 0.30 y 0.32); con peso suavizado, 0.725 y 0.623 | `docs/estrategia_solucion.md` decisión 10 |
+| Costo de cómputo: i7-1255U sin GPU; 7.2 h de procesos de entrenamiento y 0.11 a 0.40 kWh estimados; 116 ms por foto en la app | `report/tablas_informe.md` Tabla 7, `05_evaluacion/` |
+| Tamaño: correlación de Spearman entre ℓ y los cm medidos de 0.26 en 69 fotos (−0.66 a +0.54 por especie): ℓ es relativa | `05_evaluacion/validacion_tamano_resumen.csv` |
 
 ## Figuras disponibles
 
@@ -55,6 +63,17 @@ Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`c
 | Curvas de aprendizaje de la CNN | `04_modelado/figuras/cnn_curvas_aprendizaje.pdf` |
 | CNN frente a ML tradicional y control solo borde | `04_modelado/figuras/cnn_comparacion.pdf` |
 | Inflación por partición aleatoria | `04_modelado/figuras/fuga_particion.pdf` |
+| Matrices de confusión de tres clases (CNN T6, SVM, Random Forest) | `04_modelado/figuras/matrices_confusion_tres_clases.pdf` |
+| Curvas de validación de las CNN de tres clases | `04_modelado/figuras/cnn_curvas_tres_clases.pdf` |
+| Ejemplos de error de la CNN T6 (imágenes de Kaggle y *Mixed*) | `04_modelado/figuras/errores_cnn_T6.pdf` |
+
+## Mensajes que el informe debe decir (con su evidencia)
+1. **El rendimiento en Kaggle no demuestra que el modelo aprenda calidad:** un modelo que solo ve el borde de la imagen alcanza F1 macro de 0.76 a 0.96 (EDA §7). Cada modelo se reporta junto a su control "solo borde".
+2. **La clase *Regular* no existe en el dataset** y se construyó con 760 recortes de *Mixed* etiquetados por dos personas; es la clase más difícil: en fotos propias ningún modelo la detecta.
+3. **Con fotos propias el modelo generaliza mal** (F1 macro 0.44 frente a 0.71 en la prueba de Kaggle y *Mixed*): cambio de dominio (manos, fondos, otras frutas). La prueba propia se usó una sola vez.
+4. **El tamaño es una medida relativa:** la longitud normalizada correlaciona débilmente con los cm medidos.
+5. **Qué se mejoraría:** más fotos propias de *Regular* y *Mala* sobre superficie y sin mano, entrenar con parte de ellas, sobremuestreo de *Regular*, un dataset adicional con nivel intermedio. Trabajo futuro derivado de los errores medidos.
+6. **Limitaciones declaradas:** fotos propias etiquetadas por consenso (sin kappa); energía estimada, no medida; pocos casos de *Regular* en validación y prueba.
 
 ## Antes de entregar
 

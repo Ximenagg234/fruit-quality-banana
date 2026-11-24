@@ -1,6 +1,6 @@
 # Formulación matemática del problema
 
-> **Estado: BORRADOR v2 (alcance multifruta).** Cubre rúbrica 3 (formulación), 4 (estrategia) y 5 (fundamentos). Los puntos marcados **[DECIDIR]** dependen de decisiones del equipo o de resultados del EDA y NO deben presentarse como definitivos en el informe hasta resolverse. Las cifras marcadas **[VERIFICAR]** deben contrastarse con el código antes de citarse; el conteo de parámetros de la CNN (§6) ya está verificado.
+> **Estado: v3 (decisiones cerradas con los resultados medidos).** Cubre rúbrica 3 (formulación), 4 (estrategia) y 5 (fundamentos). Las decisiones que estaban abiertas se resolvieron (§9) y los resultados están en `04_modelado/` y `report/tablas_informe.md`; el conteo de parámetros de la CNN (§6) está verificado contra Keras.
 
 ## 0. Notación
 
@@ -8,7 +8,7 @@
 |---|---|
 | $x \in [0,1]^{H\times W\times 3}$ | imagen RGB de una fruta, normalizada a $[0,1]$ |
 | $c \in \{1,\dots,C\}$ | especie (manzana, banano, guayaba, lima, naranja, granada; $C=6$) |
-| $H, W$ | alto y ancho tras redimensionar. **[DECIDIR]** propuesta inicial $H=W=128$ (costo en CPU); el dataset original es $256\times256$ |
+| $H, W$ | alto y ancho tras redimensionar. **Decidido:** la CNN usa $H=W=96$ (costo en CPU) y las características de color de ML tradicional, miniaturas de $64\times64$; el dataset original es $256\times256$ |
 | $y \in \{1,2,3\}$ | clase de calidad: 1 = Buena, 2 = Regular, 3 = Mala (**ordinal**: $1<2<3$) |
 | $s \in \{S,M,L\}$ | clase de tamaño; $\ell \in \mathbb{R}_{\ge 0}$ longitud normalizada (§3) |
 | $K=3$ | número de clases de calidad |
@@ -38,7 +38,7 @@ pero $P$ es desconocida; se minimiza el riesgo empírico regularizado sobre entr
 5. **Cambio de dominio (*domain shift*):** $P_{\text{Kaggle}}(x,y)\neq P_{\text{propias}}(x,y)$ (iluminación, cámara, fondo). Se cuantifica con la brecha $\Delta=\text{F1}_{\text{test Kaggle}}-\text{F1}_{\text{fotos propias}}$.
 6. **Fuga de datos por dependencia:** las imágenes se toman en ráfagas desde varios ángulos y parte del dataset parece contener versiones recortadas o en gris de una misma foto; imágenes del mismo objeto no son independientes (§7). *Medido en el EDA:* solo el 80.3 % de los nombres de archivo trae fecha, y las reglas de agrupación tienen fuga residual conocida.
 7. **Atajos y cambio de especie:** *medido en el EDA*, un modelo que solo ve el borde de la imagen separa *Good* de *Bad* con F1 macro de 0.76 a 0.96 según la especie, así que el fondo o la sesión de captura delatan la clase; además, la definición de "defecto" cambia con la especie (`docs/definicion_clases.md`), por lo que una frontera de decisión aprendida en una especie no se transfiere automáticamente a otra.
-8. **Salida múltiple y restricción de cómputo:** tres salidas (especie, calidad y tamaño) y despliegue en CPU **[DECIDIR]** con latencia objetivo < 1 s por imagen.
+8. **Salida múltiple y restricción de cómputo:** tres salidas (especie, calidad y tamaño) y despliegue en CPU. **Decidido:** la app entrega calidad y tamaño (no predice especie); latencia medida de 116 ms por foto con la CNN y el tamaño (`05_evaluacion/`), por debajo del objetivo de 1 s.
 
 ## 2. Formulación de la clasificación de calidad
 
@@ -91,7 +91,7 @@ $$
 \rho(x)=\frac{\sum_{p\in\mathcal{P}}\mathbb{1}[x_p\in B_c]}{|\mathcal{P}|}\in[0,1].
 $$
 
-Regla de etiquetado propuesta (ver `docs/definicion_clases.md`): Buena si $\rho<0.10$; Regular si $0.10\le\rho\le0.40$; Mala si $\rho>0.40$ o hay moho/zona blanda. **Los umbrales 0.10 y 0.40 son una propuesta, no una norma [DECIDIR]**; $\rho$ permite validar objetivamente las etiquetas manuales y medir el acuerdo entre anotadores.
+Regla de etiquetado propuesta (ver `docs/definicion_clases.md`): Buena si $\rho<0.10$; Regular si $0.10\le\rho\le0.40$; Mala si $\rho>0.40$ o hay moho/zona blanda. **Los umbrales 0.10 y 0.40 son la regla de etiquetado adoptada por el equipo (no una norma)**; el desacuerdo entre anotadores se concentró en el límite *Regular*/*Mala* (kappa ponderado 0.607 y 0.606). La fracción $\rho$ no se midió (`stain_pct` queda vacío); las etiquetas son visuales.
 
 ## 4. Preprocesamiento y normalización
 
@@ -108,9 +108,9 @@ con $\mu_j,\sigma_j$ **calculados solo con entrenamiento** (dentro de un `Pipeli
 
 ## 5. Funciones de pérdida y criterios de ajuste por familia de modelo
 
-*(Se conservarán en el informe solo las de los modelos finalmente elegidos.)*
+*(Modelos finalmente usados: regresión logística, SVM RBF, Random Forest y la CNN. XGBoost no se probó.)*
 
-| Modelo **[DECIDIR]** | Criterio / pérdida | Hiperparámetros a ajustar |
+| Modelo | Criterio / pérdida | Hiperparámetros a ajustar |
 |---|---|---|
 | Regresión logística / softmax (línea base) | entropía cruzada + L2, §2 | $C=1/\lambda$ |
 | SVM con núcleo RBF | $\min_{w,b,\xi}\tfrac12\|w\|^2+C\sum_i\xi_i$ s.a. $y_i(w^\top\phi(x_i)+b)\ge1-\xi_i$; $K(x,x')=e^{-\gamma\|x-x'\|^2}$ | $C,\gamma$ |
@@ -175,9 +175,11 @@ donde $O$ son las frecuencias observadas y $E$ las esperadas por azar.
 
 ## 9. Preguntas abiertas que bloquean el cierre de este documento
 
+Todas resueltas:
+
 1. ~~¿El dataset de Kaggle trae identificador de fruta?~~ **Resuelto en el EDA:** no lo trae; se infiere con tiempo + hash + contador (§7), con fuga residual declarada.
-2. ¿Qué modelos de ML tradicional se eligen finalmente (SVM y RF/XGBoost son los candidatos)?
-3. $H,W$ definitivos (medir una época de la CNN en CPU antes de decidir) y si la CNN usa `Flatten` o `GlobalAveragePooling2D`.
-4. Umbrales de $\rho$ por especie y tratamiento de la fruta verde (propuesta: Buena si no tiene defectos).
-5. Referencia de escala para el tamaño en fotos propias (regla en cuadro).
-6. Fuentes definitivas de la clase *Regular* (fotos propias, frutas de *Mixed* etiquetadas y, si se aprueba, un dataset adicional con nivel intermedio).
+2. ~~¿Qué modelos de ML tradicional?~~ **Regresión logística, SVM RBF y Random Forest** con `GridSearchCV` agrupado (`04_modelado/entrenar_tres_clases.py`); XGBoost no se probó.
+3. ~~$H,W$ y cabeza de la CNN~~ **$H=W=96$; se probaron `Flatten` (T6) y `GlobalAveragePooling2D` (T7)**; la T6 gana en validación y va en la app.
+4. ~~Umbrales y fruta verde~~ **Los de `docs/definicion_clases.md`** (0.10 y 0.40; la madurez no es defecto: una fruta verde sin defectos es Buena).
+5. ~~Referencia de escala para el tamaño~~ **Medida del lado más largo con regla (`max_dim_cm`)** en las 69 fotos propias; las clases de tamaño se derivan de $\ell$.
+6. ~~Fuentes de la clase *Regular*~~ **760 recortes de *Mixed* etiquetados por dos personas por ronda**; las fotos propias son solo prueba; no se usó un dataset adicional.

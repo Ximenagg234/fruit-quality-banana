@@ -75,6 +75,7 @@ def mostrar_tamano(im: Image.Image) -> None:
 
 
 def main() -> None:
+    """Página de Streamlit: imagen o cámara, calidad y tamaño."""
     st.set_page_config(page_title="Calidad y tamaño de frutas", page_icon="🍎", layout="centered")
     st.title("Calidad y tamaño de frutas")
     st.write("Carga una foto o usa la cámara. Una sola fruta, sobre un fondo liso y claro.")
