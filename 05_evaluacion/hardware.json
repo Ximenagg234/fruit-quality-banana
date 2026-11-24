@@ -1,0 +1,13 @@
+{
+ "sistema": "Windows-10-10.0.26200-SP0",
+ "python": "3.11.9",
+ "procesador": "12th Gen Intel(R) Core(TM) i7-1255U",
+ "nucleos": 10,
+ "hilos": 12,
+ "memoria_GB": 39.7,
+ "GPU_usada": "no (TensorFlow para Windows corre en CPU)",
+ "potencia_W_fabricante": {
+  "base": 15.0,
+  "turbo_max": 55.0
+ }
+}

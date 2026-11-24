@@ -13,9 +13,9 @@ streamlit run 06_despliegue/app.py
 
 **Privacidad (E7):** la imagen se procesa en memoria; ni la app ni `src/inference.py` la guardan ni la envían a terceros (hay una prueba que lo verifica).
 
-**Modelo incluido:** `modelo/calidad.joblib`, un Random Forest entrenado **solo con el conjunto de entrenamiento** de Kaggle para distinguir **Buena** y **Mala** (`../04_modelado/modelos_clasicos.ipynb`). Es **provisional**: se reemplazará al entrenar con la clase *Regular*. Sus métricas en Kaggle no demuestran que haya aprendido la calidad de la fruta (el fondo solo ya predice la clase; ver el EDA y el cuaderno de modelos).
+**Modelo incluido:** `modelo/calidad_cnn.keras`, la CNN T6 de tres clases (Buena, Regular, Mala; 29.5 MB, 2 453 059 parámetros) entrenada con Kaggle y los recortes de *Mixed* etiquetados por el equipo (`../04_modelado/entrenar_tres_clases.py`). Se eligió por su F1 macro de validación (0.725). En la prueba con fotos propias acierta *Mala* y *Buena*, pero **no detectó ninguna *Regular*** (0 de 14): la app lo avisa. Sus predicciones coinciden en las 69 fotos propias con las de la evaluación. Si falta ese archivo, la app usa `modelo/calidad.joblib`, el Random Forest provisional de dos clases. Costo de cómputo: 116 ms por foto en CPU (`../05_evaluacion/`).
 
 **Límites:** una sola fruta sobre fondo liso y claro; el tamaño es relativo (depende de la distancia a la cámara) y no es fiable si hay una mano en la foto; apoyo a la decisión, no certificación de inocuidad.
 
 **Pruebas:** `../tests/test_app.py` (arranque y entradas), `../tests/test_inference.py` (lógica).
-Estado: 🟡 funciona con carga de imagen (verificado en un navegador); la captura con cámara no se pudo verificar en el entorno de desarrollo; faltan la clase *Regular* y las clases de tamaño por especie.
+Estado: 🟡 funciona con carga de imagen y con la CNN de tres clases (pruebas automáticas y coincidencia con la evaluación); la captura con cámara no se pudo verificar en el entorno de desarrollo; faltan las clases de tamaño por especie.

@@ -94,3 +94,16 @@ def test_inference_does_not_write_files(tmp_path, tiny_model, monkeypatch):
     im = _fruit_image((220, 190, 30))
     inf.predict_quality(tiny_model, im); inf.measure_size(im)
     assert list(tmp_path.iterdir()) == []
+
+
+def test_cnn_wrapper_loads_keras_file_and_predicts_three_classes(tmp_path):
+    """Una CNN guardada como .keras se carga con load_model y predict_quality devuelve las tres clases."""
+    pytest.importorskip("tensorflow")
+    import cnn
+    modelo = cnn.build_cnn(inf.CNN_SIZE, 3, "gap", filters=(4, 8), dense_units=8, dropout=0.0)
+    ruta = tmp_path / "m.keras"
+    modelo.save(ruta)
+    cargado = inf.load_model(ruta)
+    r = inf.predict_quality(cargado, _fruit_image((220, 190, 30)))
+    assert set(r["probabilities"]) == {"Buena", "Regular", "Mala"} and r["label"] in r["probabilities"]
+    assert abs(sum(r["probabilities"].values()) - 1.0) < 1e-4

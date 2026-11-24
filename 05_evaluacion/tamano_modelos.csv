@@ -1,0 +1,5 @@
+modelo,MB,parametros
+logreg,0.01,
+svm_rbf,2.43,
+random_forest,12.98,
+cnn_T6 (calidad_cnn.keras),29.5,2453059

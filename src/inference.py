@@ -3,8 +3,8 @@
 Todo se hace **en memoria**: ninguna función guarda la imagen en disco ni la envía a
 terceros (medida de privacidad E7, ``docs/etica_tabla.md``).
 
-* Calidad: características de color (las mismas del entrenamiento, ver
-  ``features.color_features``) y un modelo de scikit-learn con ``predict_proba``.
+* Calidad: una CNN de Keras (``.keras``, la imagen reducida a 96 x 96 como en el entrenamiento) o un modelo de
+  scikit-learn con ``predict_proba`` sobre características de color (``features.color_features``).
 * Tamaño: segmentación por saturación y longitud normalizada ``ell = 4*sqrt(lambda_1)/W``
   (``segmentation.py``). Es una medida **relativa**: depende de la distancia cámara-fruta.
 """
@@ -22,6 +22,9 @@ import segmentation as sg
 
 #: Por debajo de esta probabilidad máxima, la app avisa que la predicción es poco fiable.
 LOW_CONFIDENCE = 0.70
+#: Lado de la miniatura que recibe la CNN (el mismo del entrenamiento) y orden de sus clases.
+CNN_SIZE = 96
+CNN_CLASSES = ["Buena", "Regular", "Mala"]
 #: La imagen se reduce a este lado máximo antes de segmentar (rapidez; no cambia ``ell``).
 SEGMENT_MAX_SIDE = 400
 #: Si más de esta fracción del borde de la imagen cae en la máscara, se avisa de una posible mano,
@@ -30,8 +33,20 @@ SEGMENT_MAX_SIDE = 400
 HAND_BORDER_FRAC = 0.02
 
 
+class CnnQuality:
+    """Envuelve una CNN de Keras entrenada con miniaturas ``size`` x ``size`` y clases ``classes`` (en ese orden)."""
+
+    def __init__(self, keras_model, size: int = CNN_SIZE, classes=CNN_CLASSES):
+        self.model, self.size, self.classes_ = keras_model, size, np.array(classes)
+
+    def predict_proba_image(self, im: Image.Image) -> np.ndarray:
+        """Probabilidades por clase de una imagen PIL (la misma reducción que en el entrenamiento)."""
+        x = ft.thumb_from_image(im, self.size)[None].astype("float32") / 255.0
+        return np.asarray(self.model.predict(x, verbose=0)[0], dtype=float)
+
+
 def load_model(path: Path | str):
-    """Carga un modelo guardado con ``joblib`` (``Pipeline`` de scikit-learn).
+    """Carga el modelo de calidad: una CNN de Keras (``.keras``) o un ``Pipeline`` de scikit-learn (``joblib``).
 
     Raises:
         FileNotFoundError: si el archivo no existe.
@@ -39,6 +54,9 @@ def load_model(path: Path | str):
     path = Path(path)
     if not path.is_file():
         raise FileNotFoundError(f"No se encontró el modelo: {path}")
+    if path.suffix == ".keras":
+        from tensorflow import keras                       # se importa aquí: solo hace falta con la CNN
+        return CnnQuality(keras.models.load_model(path))
     return joblib.load(path)
 
 
@@ -55,7 +73,10 @@ def predict_quality(model, im: Image.Image, low_confidence: float = LOW_CONFIDEN
         un diccionario clase -> probabilidad (suma 1) y ``low_confidence`` es ``True`` si la
         probabilidad máxima es menor que ``low_confidence``.
     """
-    proba = model.predict_proba(extract_features(im))[0]
+    if hasattr(model, "predict_proba_image"):               # CNN: recibe la imagen
+        proba = model.predict_proba_image(im)
+    else:                                                    # scikit-learn: recibe las características de color
+        proba = model.predict_proba(extract_features(im))[0]
     classes = [str(c) for c in model.classes_]
     k = int(np.argmax(proba))
     return {"label": classes[k], "confidence": float(proba[k]),

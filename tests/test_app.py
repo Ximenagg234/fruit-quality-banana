@@ -13,12 +13,12 @@ from streamlit.testing.v1 import AppTest  # noqa: E402
 
 RAIZ = Path(__file__).resolve().parents[1]
 APP = RAIZ / "06_despliegue" / "app.py"
-MODELO = RAIZ / "06_despliegue" / "modelo" / "calidad.joblib"
+MODELO = RAIZ / "06_despliegue" / "modelo" / "calidad_cnn.keras"
 
 
 @pytest.mark.skipif(not MODELO.exists(), reason="falta el modelo de la app (se genera en 04_modelado)")
 def test_app_starts_and_offers_upload_and_camera():
-    at = AppTest.from_file(str(APP), default_timeout=60).run()
+    at = AppTest.from_file(str(APP), default_timeout=180).run()
     assert not at.exception, at.exception
     assert at.title[0].value == "Calidad y tamaño de frutas"
     assert at.radio[0].options == ["Subir imagen", "Usar la cámara"]
@@ -38,6 +38,6 @@ def test_app_reports_a_missing_model_without_crashing(monkeypatch, tmp_path):
     copia.mkdir()
     (copia / "app.py").write_text(APP.read_text(encoding="utf-8").replace(
         "REPO = Path(__file__).resolve().parents[1]", f"REPO = Path(r'{RAIZ}')"), encoding="utf-8")
-    at = AppTest.from_file(str(copia / "app.py"), default_timeout=60).run()
+    at = AppTest.from_file(str(copia / "app.py"), default_timeout=180).run()
     assert not at.exception, at.exception
     assert any("No se encontró el modelo" in e.value for e in at.error)

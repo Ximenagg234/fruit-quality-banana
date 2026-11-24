@@ -1,0 +1,29 @@
+etapa,modelo,segundos,horas,kWh_estimado_min,kWh_estimado_max
+"tres clases, ronda 2 (modelos finales)",baseline_mayoritaria,0.4,0.0,0.0,0.0
+"tres clases, ronda 2 (modelos finales)",logreg,94.1,0.026,0.0004,0.0014
+"tres clases, ronda 2 (modelos finales)",svm_rbf,260.6,0.072,0.0011,0.004
+"tres clases, ronda 2 (modelos finales)",cnn_T7,660.7,0.184,0.0028,0.0101
+"tres clases, ronda 2 (modelos finales)",random_forest,241.0,0.067,0.001,0.0037
+"tres clases, ronda 2 (modelos finales)",rf_solo_borde,47.3,0.013,0.0002,0.0007
+"tres clases, ronda 2 (modelos finales)",cnn_T6,827.0,0.23,0.0034,0.0126
+"tres clases, ronda 1 (descartada)",baseline_mayoritaria,2.0,0.001,0.0,0.0
+"tres clases, ronda 1 (descartada)",logreg,864.0,0.24,0.0036,0.0132
+"tres clases, ronda 1 (descartada)",svm_rbf,588.0,0.163,0.0024,0.009
+"tres clases, ronda 1 (descartada)",random_forest,849.0,0.236,0.0035,0.013
+"tres clases, ronda 1 (descartada)",rf_solo_borde,79.0,0.022,0.0003,0.0012
+"tres clases, ronda 1 (descartada)",cnn_T4,1324.0,0.368,0.0055,0.0202
+"tres clases, ronda 1 (descartada)",cnn_T5,1151.0,0.32,0.0048,0.0176
+"tres clases, ronda 1 (descartada)",cnn_T6,6624.0,1.84,0.0276,0.1012
+"tres clases, ronda 1 (descartada)",cnn_T7,7242.0,2.012,0.0302,0.1106
+"dos clases, CNN (calidad)",E1,225.1,0.063,0.0009,0.0034
+"dos clases, CNN (calidad)",E2,168.6,0.047,0.0007,0.0026
+"dos clases, CNN (calidad)",E3,194.8,0.054,0.0008,0.003
+"dos clases, CNN (calidad)",E4,369.7,0.103,0.0015,0.0056
+"dos clases, CNN (calidad)",E5,518.5,0.144,0.0022,0.0079
+"dos clases, CNN (calidad)",E6,646.4,0.18,0.0027,0.0099
+"dos clases, CNN (calidad)",E7,257.4,0.072,0.0011,0.0039
+"dos clases, CNN (calidad)",E8,497.4,0.138,0.0021,0.0076
+"dos clases, CNN (calidad)",E9,890.4,0.247,0.0037,0.0136
+"dos clases, CNN (calidad)",E10,462.2,0.128,0.0019,0.0071
+"dos clases, CNN (especie)",S1,307.3,0.085,0.0013,0.0047
+"dos clases, CNN (especie)",S2,554.5,0.154,0.0023,0.0085
