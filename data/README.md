@@ -45,14 +45,14 @@ Esquema de `annotations.csv` (una fila por foto):
 | `in_hand` | 1 si la fruta está sostenida en la mano, 0 si está sobre una superficie |
 | `quality_a`, `quality_b` | etiqueta de cada anotador, de forma independiente (Buena/Regular/Mala) |
 | `quality_final` | etiqueta tras resolver desacuerdos |
-| `size_class` | Pequeño/Mediano/Grande |
-| `max_dim_cm` | lado más largo medido con regla, en cm (si se midió) |
+| `size_class` | Pequeño/Mediano/Grande (se deriva de la longitud normalizada ℓ, no se anota a mano; ver `docs/definicion_clases.md` §3) |
+| `max_dim_cm` | lado más largo medido con regla, en cm (anotación manual de tamaño) |
 | `stain_pct` | fracción de superficie con defecto ($\rho$), opcional |
 | `photographer` | quién la tomó |
 | `notes` | observaciones (iluminación, golpe, moho…) |
 
 ## 3. Anotaciones compartidas con la clase
-**[DECIDIR con el profesor/otros grupos]** mecanismo para compartir (carpeta en la nube o repositorio común). El esquema de arriba es el que se compartiría.
+Las anotaciones se comparten en este repositorio, que es público: `data/own_photos/annotations.csv` (fotos propias, con el esquema de la sección 2) y `data/mixed_labels/etiquetas_mixed_final.csv` (columnas `crop_id`, `calidad` y `origen`: etiqueta final de los recortes de *Mixed* tras resolver desacuerdos). Las fotos originales no se suben.
 
 ## 4. Otros datasets (solo si se aprueban; todo se cita)
 Candidatos revisados en sus páginas oficiales, **no descargados**:
