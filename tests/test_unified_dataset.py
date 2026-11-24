@@ -115,6 +115,20 @@ def test_assign_splits_keeps_kaggle_split_and_groups_the_rest():
         ud.assign_splits(df, part.drop(columns="split"))
 
 
+def test_assign_splits_own_photos_only_as_own_test():
+    k = _fuente("kaggle", ["Buena"] * 10 + ["Mala"] * 10)
+    part = pd.DataFrame({"path": k["path"], "split": (["train"] * 14) + (["val"] * 3) + (["test"] * 3)})
+    filas = [{"path": f"mixed_{g}", "species": "apple", "label": ["Buena", "Regular", "Mala"][g % 3], "source": "mixed",
+              "group": f"mix_g{g}", "label_origin": "x"} for g in range(40)]
+    filas += [{"path": f"own_{g}", "species": "banana", "label": ["Buena", "Mala"][g % 2], "source": "own",
+               "group": f"own_O{g // 2}", "label_origin": "x"} for g in range(10)]
+    df = ud.combine(k, pd.DataFrame(filas))
+    out = ud.assign_splits(df, part, seed=1, own_as_test=True)
+    assert set(out[out["source"] == "own"]["split"]) == {"own_test"}               # nada de lo propio entra a train ni val
+    assert set(out[out["source"] == "mixed"]["split"]) == {"train", "val", "test"}  # Mixed sí se reparte
+    assert not out["split"].isna().any()
+
+
 def test_build_script_end_to_end_with_synthetic_files(tmp_path):
     """El script une Kaggle, Mixed y fotos propias, conserva la partición de Kaggle y avisa de fuentes incompletas."""
     import importlib.util

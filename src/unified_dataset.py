@@ -134,7 +134,7 @@ def species_class_report(df: pd.DataFrame, min_per_class: int = 5) -> pd.DataFra
 
 
 def assign_splits(df: pd.DataFrame, kaggle_partition: pd.DataFrame, seed: int = 42,
-                  val_size: float = 0.15, test_size: float = 0.15) -> pd.DataFrame:
+                  val_size: float = 0.15, test_size: float = 0.15, own_as_test: bool = False) -> pd.DataFrame:
     """Agrega la columna ``split`` (train, val o test) a la tabla unificada.
 
     * Las filas de **Kaggle conservan exactamente** la partición fija de ``partition.pkl`` (así el test
@@ -142,6 +142,9 @@ def assign_splits(df: pd.DataFrame, kaggle_partition: pd.DataFrame, seed: int = 
     * Las filas de **Mixed** y de las **fotos propias** reciben una partición nueva **por grupo**
       (``StratifiedGroupKFold`` estratificado por clase): todas las frutas de una misma foto, o todas las
       fotos de un mismo objeto, caen en una sola partición.
+    * Con ``own_as_test=True`` las **fotos propias** no se reparten: todas reciben ``split = 'own_test'``
+      (prueba propia, que se usa una sola vez al final) y solo *Mixed* se parte por grupo. El nombre distinto
+      evita que se mezclen por descuido con la prueba de Kaggle o de *Mixed* (``'test'``).
 
     Raises:
         KeyError: si la partición de Kaggle no trae ``path`` y ``split``.
@@ -153,6 +156,8 @@ def assign_splits(df: pd.DataFrame, kaggle_partition: pd.DataFrame, seed: int = 
         raise KeyError("la partición de Kaggle debe traer 'path' y 'split'")
     out = df.copy()
     out["split"] = out["path"].map(dict(zip(kaggle_partition["path"], kaggle_partition["split"])))
+    if own_as_test:
+        out.loc[out["source"] == "own", "split"] = "own_test"
     nuevo = out["split"].isna()
     if nuevo.any():
         sub = out[nuevo].reset_index()
