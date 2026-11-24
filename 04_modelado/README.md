@@ -10,10 +10,11 @@ Todo se entrena y valida con `train` y `val` del dataset de Kaggle (Buena vs. Ma
 | `fuga_particion.ipynb` | cuánto infla las métricas partir por imagen en vez de por objeto (≈ 0.027 de F1, cota inferior) |
 | `resultados_*.csv` | tablas de resultados para el informe |
 | `figuras/` | figuras vectoriales (PDF) |
+| `analisis_modelos.py` | tabla train / val / test (`tabla_train_val_test.csv`), matrices de confusión y ejemplos de error de los modelos de tres clases; el texto está en `ANALISIS_ERRORES.md` |
 | `../src/models_classic.py`, `../src/cnn.py`, `../src/features.py` | código de los modelos |
 
 Modelos entrenados: `../data/processed/` (no versionado); el modelo provisional de la app está en `../06_despliegue/modelo/`.
 
 **Tres clases (`entrenar_tres_clases.py`):** usa `data/processed/tres_clases.pkl` (de `../03_preparacion_datos/construir_tres_clases.py --propias-solo-prueba`). Se entrena y valida con Kaggle y *Mixed* (746 recortes etiquetados); las 69 fotos propias son solo la prueba final (`own_test`). Hay cuatro fases: `datos`, `clasicos`, `cnn` y `test`; la prueba se corre **una sola vez** y el script se niega a repetirla. Resultados: `resultados_tres_clases.csv` (validación) y `resultados_tres_clases_test.csv` (prueba). *Regular* tiene 137 imágenes de entrenamiento (todas de *Mixed*): se usan pesos de clase y, en la CNN, pesos suavizados (raíz), porque con el peso completo (~60) la red colapsó y predecía *Regular* para casi todo.
 **Alimenta rúbrica:** 4, 5, 6.
-Estado: 🟡 ML tradicional y CNN ejecutados en dos y en tres clases, con prueba usada una vez. Falta el análisis de errores con imágenes.
+Estado: ✅ ML tradicional y CNN ejecutados en dos y en tres clases, con la prueba usada una vez y el análisis de errores hecho. Pendiente: dimensión ambiental (tiempo y energía) y la app con tres clases.
