@@ -1,0 +1,8 @@
+paso,mediana_ms,p95_ms,n,Wh_por_1000_min,Wh_por_1000_max
+abrir y decodificar la foto (1 024 px),10.0,,123,0.042,0.153
+logreg: características de color + predicción,10.2,14.6,120,0.042,0.156
+svm_rbf: características de color + predicción,10.5,14.1,120,0.044,0.16
+random_forest: características de color + predicción,21.9,28.2,120,0.091,0.335
+CNN T6: reducir a 96 px + predicción,73.4,85.8,120,0.306,1.121
+tamaño: segmentar y medir la longitud normalizada,42.9,52.0,120,0.179,0.655
+flujo completo de la app (CNN T6 + tamaño),116.4,127.5,120,0.485,1.778

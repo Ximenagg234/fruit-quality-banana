@@ -23,14 +23,19 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 import inference as inf  # noqa: E402
 
-MODEL_PATH = Path(__file__).resolve().parent / "modelo" / "calidad.joblib"
+MODEL_DIR = Path(__file__).resolve().parent / "modelo"
+#: Se usa la CNN de tres clases si está; si no, el modelo provisional de dos clases.
+MODEL_PATHS = [MODEL_DIR / "calidad_cnn.keras", MODEL_DIR / "calidad.joblib"]
 ORIGENES = ["Subir imagen", "Usar la cámara"]
 
 
 @st.cache_resource(show_spinner="Cargando el modelo…")
 def cargar_modelo():
     """Carga el modelo una sola vez por sesión del servidor."""
-    return inf.load_model(MODEL_PATH)
+    for ruta in MODEL_PATHS:
+        if ruta.is_file():
+            return inf.load_model(ruta)
+    raise FileNotFoundError(f"No se encontró el modelo en {MODEL_DIR}")
 
 
 def mostrar_calidad(model, im: Image.Image) -> None:
@@ -45,8 +50,10 @@ def mostrar_calidad(model, im: Image.Image) -> None:
                    "revisa la fruta a mano. Prueba con un fondo liso y claro, buena luz y una sola fruta.")
     st.bar_chart(r["probabilities"], horizontal=True)
     if "Regular" not in r["probabilities"]:
-        st.caption("Este modelo distingue **Buena** y **Mala**. La clase **Regular** se agregará cuando "
-                   "esté entrenada con las fotos propias del equipo.")
+        st.caption("Este modelo distingue solo **Buena** y **Mala**.")
+    elif r["label"] == "Regular" or r["probabilities"]["Regular"] >= 0.25:
+        st.caption("**Regular** es la clase menos fiable: en las fotos propias de prueba el modelo no la detectó. "
+                   "Tómala como una alerta para revisar la fruta, no como un resultado.")
 
 
 def mostrar_tamano(im: Image.Image) -> None:
@@ -74,15 +81,16 @@ def main() -> None:
     with st.expander("Alcance y límites"):
         st.markdown(
             "- **Es un apoyo a la decisión, no una decisión final** ni una certificación de inocuidad.\n"
-            "- Entrenado con el dataset *Fruit Quality Classification* (Kaggle); funciona mejor con "
-            "manzana, banano, guayaba, lima, naranja y granada en condiciones controladas.\n"
+            "- Entrenado con el dataset *Fruit Quality Classification* (Kaggle) y recortes de su carpeta *Mixed* "
+            "etiquetados por el equipo; pensado para manzana, banano, guayaba, lima, naranja y granada. "
+            "Con fotos propias (mano, otros fondos) su acierto es bajo, sobre todo en *Regular*.\n"
             "- **La imagen no se guarda ni se envía a ningún servicio**: se procesa en memoria.\n"
             "- El tamaño es relativo (depende de la distancia a la cámara)."
         )
     try:
         model = cargar_modelo()
     except FileNotFoundError:
-        st.error("No se encontró el modelo entrenado (`06_despliegue/modelo/calidad.joblib`).")
+        st.error("No se encontró el modelo entrenado (`06_despliegue/modelo/calidad_cnn.keras`).")
         st.stop()
 
     # La cámara solo se activa si la persona la elige: un widget de cámara dentro de una pestaña

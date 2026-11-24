@@ -224,6 +224,7 @@ data/raw/
 data/processed/
 *.h5
 *.keras
+!06_despliegue/modelo/calidad_cnn.keras
 *.pt
 models/*.pkl
 .ipynb_checkpoints/

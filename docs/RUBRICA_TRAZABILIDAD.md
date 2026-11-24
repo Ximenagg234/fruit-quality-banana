@@ -23,7 +23,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 | Pieza | Evidencia | Estado |
 |---|---|---|
 | Matriz 4 dimensiones × (impacto positivo, riesgo, mitigación) | `docs/impactos_matriz.md` (borrador v2 multifruta, análisis inicial; faltan datos [MEDIR]) → informe | 🟡 |
-| Dimensión ambiental con **dato medido** (energía/tiempo de entrenamiento e inferencia, hardware) | `05_evaluacion/` | ⬜ |
+| Dimensión ambiental con **dato medido** (energía/tiempo de entrenamiento e inferencia, hardware) | `05_evaluacion/medir_costo.py` y `README.md`: hardware (i7-1255U, 10 núcleos, 39.7 GB, sin GPU), tiempos de entrenamiento por modelo medidos (modelos finales 0.59 h; todo el proyecto 7.2 h de procesos), latencia de inferencia medida (app completa 116 ms por foto) y tamaño de los modelos. **La energía es una estimación** (potencia del fabricante 15–55 W × tiempo: 0.11 a 0.40 kWh en todo el proyecto), no una lectura con vatímetro; el factor de emisión de la UPME no se verificó y no se usó | ✅ |
 | Análisis inicial (en avance) **y** análisis final (lineamientos §6 piden ambos) | informe | ⬜ |
 
 ### 3. Formulación matemática (PI3)
@@ -100,7 +100,7 @@ Estado a la fecha de esta versión; solo se marca ✅ con evidencia verificable.
 | Comparación con línea base | línea base mayoritaria (F1 0.388 en dos clases; 0.257 en tres) y control "solo borde" en dos y tres clases (`resultados_tres_clases.csv`) | ✅ |
 | CRISP-DM con evidencia: fase 2 (EDA ejecutado) | `02_comprension_datos/eda.ipynb` ejecutado con datos reales; falta medir la nitidez como parte de "calidad de imagen" | 🟡 |
 | CRISP-DM: fases 1, 3, 4, 5 y 6 | — | ⬜ |
-| **App Streamlit funcional: cargar imagen o capturar con cámara y mostrar calidad y tamaño** | `06_despliegue/app.py` + `src/inference.py` + `tests/test_app.py`. Carga de imagen verificada en un navegador con fotos reales; el widget de cámara solo se monta al elegirla, pero **la captura real con cámara no se pudo verificar** (el navegador del entorno bloquea la cámara). Modelo provisional Buena/Mala; tamaño como longitud normalizada, sin clases por especie | 🟡 |
+| **App Streamlit funcional: cargar imagen o capturar con cámara y mostrar calidad y tamaño** | `06_despliegue/app.py` + `src/inference.py` + `tests/test_app.py`. Carga de imagen verificada en un navegador con fotos reales; el widget de cámara solo se monta al elegirla, pero **la captura real con cámara no se pudo verificar** (el navegador del entorno bloquea la cámara). La app usa ahora la CNN T6 de tres clases (`06_despliegue/modelo/calidad_cnn.keras`); sus predicciones coinciden en las 69 fotos propias con las de la evaluación; avisa que *Regular* es poco fiable. Tamaño como longitud normalizada, sin clases por especie | 🟡 |
 | Diagrama de flujo CRISP-DM personalizado | — | ⬜ |
 | Informe ≤ 7 páginas IEEE y video ≤ 10 min | — | ⬜ |
 | Análisis ético y análisis inicial y final de impactos | `docs/etica_tabla.md`, `docs/impactos_matriz.md` (iniciales) | 🟡 |
