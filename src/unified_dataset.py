@@ -41,9 +41,10 @@ def resolve_labels(a: pd.DataFrame, b: pd.DataFrame, resolved: Optional[pd.DataF
     """Etiqueta final de cada ítem a partir de dos anotadores y de los desacuerdos ya resueltos.
 
     * Si los dos coinciden en Buena, Regular o Mala: esa es la etiqueta (``origen = 'acuerdo'``).
-    * Si difieren: se usa ``calidad_final`` de ``resolved`` (``origen = 'resuelto'``); si no está resuelto, el
-      ítem **se excluye** (no se adivina).
-    * Si alguno lo descartó, o la etiqueta final es ``Descartar``: se excluye.
+    * Si difieren (también cuando uno de los dos lo descartó): se usa ``calidad_final`` de ``resolved``
+      (``origen = 'resuelto'``); la decisión conjunta prevalece sobre el descarte de una sola persona. Si no está
+      resuelto, el ítem **se excluye** (no se adivina).
+    * Si los dos lo descartaron, o la etiqueta final es ``Descartar`` o no es válida: se excluye.
 
     Returns:
         DataFrame con ``id_col``, ``calidad`` y ``origen``.
@@ -53,10 +54,9 @@ def resolve_labels(a: pd.DataFrame, b: pd.DataFrame, resolved: Optional[pd.DataF
     res = {} if resolved is None else dict(zip(resolved[id_col], resolved.get("calidad_final", pd.Series(dtype=str))))
     for r in m.itertuples(index=False):
         ia, ib, ic = getattr(r, id_col), r.calidad_a, r.calidad_b
-        if lb.DESCARTAR in (ic, ib):
-            continue
         if ib == ic:
-            filas.append({id_col: ia, "calidad": ib, "origen": "acuerdo"})
+            if ib in CLASES:
+                filas.append({id_col: ia, "calidad": ib, "origen": "acuerdo"})
         elif res.get(ia) in CLASES:
             filas.append({id_col: ia, "calidad": res[ia], "origen": "resuelto"})
     return pd.DataFrame(filas, columns=[id_col, "calidad", "origen"])

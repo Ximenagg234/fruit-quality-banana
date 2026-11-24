@@ -28,6 +28,16 @@ def test_resolve_labels_agreement_resolution_and_exclusions():
     assert "c2" not in set(ud.resolve_labels(a, b, invalida)["crop_id"])
 
 
+def test_resolve_labels_joint_decision_prevails_over_single_discard():
+    a = _tabla(["c1", "c2", "c3", "c4"], ["Descartar", "Descartar", "Mala", "Buena"])
+    b = _tabla(["c1", "c2", "c3", "c4"], ["Regular", "Descartar", "Descartar", "Descartar"])
+    resuelto = pd.DataFrame({"crop_id": ["c1", "c2", "c3", "c4"], "calidad_final": ["Regular", "Buena", "Descartar", ""]})
+    out = ud.resolve_labels(a, b, resuelto).set_index("crop_id")
+    # c1: uno descartó y la decisión conjunta fue Regular -> entra; c2: ambos descartaron -> fuera aunque haya texto;
+    # c3: la decisión conjunta fue Descartar -> fuera; c4: sin resolver -> fuera
+    assert out["calidad"].to_dict() == {"c1": "Regular"} and out["origen"].to_dict() == {"c1": "resuelto"}
+
+
 def test_from_kaggle_keeps_only_good_and_bad_as_weak_labels():
     part = pd.DataFrame({"path": ["a", "b", "c"], "species": ["apple", "apple", "lime"],
                          "label_weak": ["Buena", "Mala", None], "group": ["g1", "g2", "g3"]})
