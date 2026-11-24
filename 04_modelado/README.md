@@ -14,6 +14,6 @@ Todo se entrena y valida con `train` y `val` del dataset de Kaggle (Buena vs. Ma
 
 Modelos entrenados: `../data/processed/` (no versionado); el modelo provisional de la app está en `../06_despliegue/modelo/`.
 
-**Pendiente:** repetir con tres clases cuando exista *Regular* (`../03_preparacion_datos/construir_tres_clases.py`), evaluar en fotos propias y en frutas de *Mixed*, y usar el test una sola vez.
+**Tres clases (`entrenar_tres_clases.py`):** usa `data/processed/tres_clases.pkl` (de `../03_preparacion_datos/construir_tres_clases.py --propias-solo-prueba`). Se entrena y valida con Kaggle y *Mixed* (746 recortes etiquetados); las 69 fotos propias son solo la prueba final (`own_test`). Hay cuatro fases: `datos`, `clasicos`, `cnn` y `test`; la prueba se corre **una sola vez** y el script se niega a repetirla. Resultados: `resultados_tres_clases.csv` (validación) y `resultados_tres_clases_test.csv` (prueba). *Regular* tiene 137 imágenes de entrenamiento (todas de *Mixed*): se usan pesos de clase y, en la CNN, pesos suavizados (raíz), porque con el peso completo (~60) la red colapsó y predecía *Regular* para casi todo.
 **Alimenta rúbrica:** 4, 5, 6.
-Estado: 🟡 ML tradicional y CNN ejecutados en la tarea binaria; faltan *Regular* y la evaluación en fotos propias.
+Estado: 🟡 ML tradicional y CNN ejecutados en dos y en tres clases, con prueba usada una vez. Falta el análisis de errores con imágenes.

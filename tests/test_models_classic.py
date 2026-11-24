@@ -76,3 +76,13 @@ def test_cv_has_no_group_overlap_between_folds():
     y = np.repeat(rng.integers(0, 2, 40), 5)
     for tr, te in mc.make_cv(5, 0).split(np.zeros((200, 1)), y, g):
         assert not set(g[tr]) & set(g[te])
+
+
+def test_evaluate_kappa_uses_ordinal_order_buena_regular_mala():
+    """Confundir Buena con Regular debe pesar menos que confundir Buena con Mala (no el orden alfabético)."""
+    verdad = ["Buena"] * 10 + ["Regular"] * 10 + ["Mala"] * 10
+    cerca = ["Buena"] * 10 + ["Mala"] * 10 + ["Mala"] * 10            # Regular -> Mala: un escalón
+    lejos = ["Buena"] * 10 + ["Regular"] * 10 + ["Buena"] * 10        # Mala -> Buena: dos escalones
+    k_cerca = mc.evaluate(verdad, cerca)["global"]["kappa_w"]
+    k_lejos = mc.evaluate(verdad, lejos)["global"]["kappa_w"]
+    assert k_cerca > k_lejos
