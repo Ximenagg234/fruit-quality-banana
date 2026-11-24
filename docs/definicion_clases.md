@@ -46,7 +46,7 @@ Limitaciones que se declaran:
 
 ## 4. Protocolo para las fotos propias
 
-Mínimo exigido por los lineamientos: 30 a 50 imágenes. Reparto aprobado: el **banano** ya tiene 91 fotos (falta asignar `object_id` y calidades); para las otras 5 especies, **5 especies × 6 objetos × 2 ángulos = 60 fotos nuevas**, con 2 objetos Buena, 2 Regular y 2 Mala por especie (hay que **conseguir** fruta con distinto grado de deterioro).
+Mínimo exigido por los lineamientos: 30 a 50 imágenes. Las fotos propias son las del 23 de noviembre: 69 fotos de 34 frutas de cinco especies del alcance (apple, banana, guava, lime, orange), con `object_id` por fruta y distintos grados de deterioro. Siguen faltando frutas *Mala* y *Regular* de lima, granada y sobre superficie sin mano (ver `docs/RUBRICA_TRAZABILIDAD.md`).
 
 1. **Un objeto por foto**, con un papel con su código antes de cada objeto (especie y número, p. ej. `A03`, `G02`, `L04`, `N01`, `P05`).
 2. Fondo liso claro (pared o cartulina), luz natural difusa, sin flash, ~30–40 cm, mismo encuadre.
@@ -56,4 +56,4 @@ Mínimo exigido por los lineamientos: 30 a 50 imágenes. Reparto aprobado: el **
 6. Un registro por foto en `data/own_photos/annotations.csv` (esquema en `data/README.md`), con `object_id` para separar train/test por objeto.
 7. **Sin rostros** en las fotos; si aparecen manos de otras personas, pedirles su visto bueno (ver `docs/etica_tabla.md`).
 8. Reducir las fotos a ~1024 px y **quitar los metadatos** antes de subirlas al repositorio; los originales quedan fuera.
-9. Etiquetar cada foto de forma **independiente por dos integrantes** y medir el acuerdo (kappa de Cohen ponderado) antes de resolver los desacuerdos.
+9. Los recortes de `Mixed` se etiquetan de forma **independiente por dos integrantes** y se mide el acuerdo (kappa de Cohen ponderado) antes de resolver los desacuerdos. La calidad de las fotos propias se decidió por **consenso del grupo**, así que para ellas no hay kappa (limitación que se declara).

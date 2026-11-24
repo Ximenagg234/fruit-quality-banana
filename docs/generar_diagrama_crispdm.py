@@ -97,7 +97,7 @@ ax.text(50, 8.2, "Si no supera la línea base \"solo borde\" o falla en fotos pr
 
 # datos propios y evidencia
 ax.add_patch(FancyBboxPatch((3, 0.6), 56, 4.6, boxstyle="round,pad=0.3,rounding_size=0.8", fc=COL["dato"], ec=COL["bdato"], lw=1.4))
-ax.text(5, 2.9, "Datos propios: fotos de 5 especies y banano, con dos anotadores", fontsize=7.8, va="center", color="#6b4500")
+ax.text(5, 2.9, "Datos propios: fotos de 5 especies; Mixed con dos anotadores", fontsize=7.8, va="center", color="#6b4500")
 ax.add_patch(FancyBboxPatch((63, 0.6), 84, 4.6, boxstyle="round,pad=0.3,rounding_size=0.8", fc=COL["ok"], ec=COL["bok"], lw=1.4))
 ax.text(65, 2.9, "Control transversal: trazabilidad de la rúbrica, pruebas automáticas y revisión cruzada",
         fontsize=7.8, va="center", color="#1b5e20")
