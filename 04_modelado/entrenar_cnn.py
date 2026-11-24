@@ -105,10 +105,11 @@ def enmascarar_centro(X: np.ndarray, size: int) -> np.ndarray:
     return X
 
 
-def pesos_de_clase(y: np.ndarray, k: int) -> dict:
-    """w_k = N / (K * N_k) (docs/formulacion_matematica.md §2)."""
+def pesos_de_clase(y: np.ndarray, k: int, potencia: float = 1.0) -> dict:
+    """w_k = (N / (K * N_k)) ** potencia (docs/formulacion_matematica.md §2). Con ``potencia=0.5`` se suaviza
+    el peso de una clase muy escasa (con 57 imágenes de *Regular*, el peso completo es ~60 y la red se vuelve inestable)."""
     n = np.bincount(y, minlength=k)
-    return {i: float(len(y) / (k * n[i])) for i in range(k)}
+    return {i: float((len(y) / (k * n[i])) ** potencia) for i in range(k)}
 
 
 def entrenar(exp: dict, datos, tarea: str, humo: bool, salida: Path) -> dict:
@@ -131,7 +132,7 @@ def entrenar(exp: dict, datos, tarea: str, humo: bool, salida: Path) -> dict:
     model.compile(tf.keras.optimizers.Adam(exp["lr"]), "sparse_categorical_crossentropy", metrics=["accuracy"])
     t0 = time.time()
     hist = model.fit(ds(Xtr, ytr, True), validation_data=ds(Xva, yva, False), epochs=1 if humo else MAX_EPOCHS,
-                     class_weight=pesos_de_clase(ytr, len(clases)), verbose=0,
+                     class_weight=pesos_de_clase(ytr, len(clases), exp.get("peso_potencia", 1.0)), verbose=0,
                      callbacks=[tf.keras.callbacks.EarlyStopping("val_loss", patience=PATIENCE, restore_best_weights=True)])
     segundos = time.time() - t0
     nombres = np.array(clases)

@@ -25,6 +25,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 
+#: Orden ordinal de las clases de calidad (para el kappa ponderado).
+ORDEN_CALIDAD = ["Buena", "Regular", "Mala"]
+
+
 def cap_per_cell(df: pd.DataFrame, cell_cols: Sequence[str], cap: int, seed: int = 42) -> pd.DataFrame:
     """Submuestrea cada celda (p. ej. especie x clase) a lo sumo ``cap`` filas.
 
@@ -52,9 +56,12 @@ def evaluate(y_true, y_pred, species=None) -> dict:
 
     def one(yt, yp):
         acc = accuracy_score(yt, yp)
+        # con las clases de calidad, el orden ordinal es Buena < Regular < Mala (no el alfabético)
+        presentes = set(yt) | set(yp)
+        orden = [c for c in ORDEN_CALIDAD if c in presentes] if presentes <= set(ORDEN_CALIDAD) else None
         return {"n": len(yt), "exactitud": acc, "EE": binomial_se(acc, len(yt)),
                 "F1_macro": f1_score(yt, yp, average="macro"),
-                "kappa_w": cohen_kappa_score(yt, yp, weights="quadratic") if len(set(yt)) > 1 else float("nan")}
+                "kappa_w": cohen_kappa_score(yt, yp, weights="quadratic", labels=orden) if len(set(yt)) > 1 else float("nan")}
 
     out = {"global": one(y_true, y_pred)}
     if species is not None:
