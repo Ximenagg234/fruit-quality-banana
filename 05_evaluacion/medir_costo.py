@@ -47,6 +47,7 @@ RONDA1_S = {"baseline_mayoritaria": 2, "logreg": 864, "svm_rbf": 588, "random_fo
 
 
 def hardware() -> dict:
+    """Datos del equipo: procesador, núcleos, hilos y memoria."""
     info = {"sistema": platform.platform(), "python": platform.python_version()}
     try:
         out = subprocess.run(["powershell", "-NoProfile", "-Command",
@@ -61,10 +62,12 @@ def hardware() -> dict:
 
 
 def energia_kwh(segundos: float) -> tuple[float, float]:
+    """Cota de energía (kWh) en un tiempo dado, con la potencia base y la de turbo del fabricante."""
     return tuple(round(POTENCIA_W[k] * segundos / 3.6e6, 4) for k in ("base", "turbo_max"))
 
 
 def entrenamiento() -> pd.DataFrame:
+    """Tabla de tiempos de entrenamiento y su energía estimada."""
     filas = []
     val = pd.read_csv(REPO / "04_modelado" / "resultados_tres_clases.csv")
     val = val[val["conjunto"] == "val"]
@@ -83,6 +86,7 @@ def entrenamiento() -> pd.DataFrame:
 
 
 def tiempos(f, n_calentamiento: int = 3, repeticiones: int = 1) -> dict:
+    """Mediana y percentil 95 (ms) de una función aplicada a cada imagen, tras unas pasadas de calentamiento."""
     ts = []
     for k, im in enumerate(IMAGENES):
         t0 = time.perf_counter()
@@ -96,6 +100,7 @@ def tiempos(f, n_calentamiento: int = 3, repeticiones: int = 1) -> dict:
 
 
 def inferencia() -> pd.DataFrame:
+    """Latencia por imagen de cada modelo y del flujo completo de la app."""
     global IMAGENES
     archivos = sorted(FOTOS.glob("F*.jpg"))
     # decodificación (apertura y orientación), medida aparte de los modelos
@@ -117,6 +122,7 @@ def inferencia() -> pd.DataFrame:
 
 
 def tamanos(cnn) -> pd.DataFrame:
+    """Tamaño en disco y parámetros de los modelos."""
     filas = [{"modelo": n, "MB": round((MODELOS / f"{n}.joblib").stat().st_size / 1e6, 2), "parametros": ""}
              for n in ("logreg", "svm_rbf", "random_forest")]
     filas.append({"modelo": "cnn_T6 (calidad_cnn.keras)", "MB": round((REPO / "06_despliegue/modelo/calidad_cnn.keras").stat().st_size / 1e6, 2),
@@ -125,6 +131,7 @@ def tamanos(cnn) -> pd.DataFrame:
 
 
 def main() -> None:
+    """Mide y guarda hardware, tiempos, latencias y tamaños."""
     hw = hardware()
     (SALIDA / "hardware.json").write_text(json.dumps({**hw, "potencia_W_fabricante": POTENCIA_W}, ensure_ascii=False, indent=1), encoding="utf-8")
     ent = entrenamiento()

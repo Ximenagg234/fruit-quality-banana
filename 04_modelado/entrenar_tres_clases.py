@@ -60,6 +60,7 @@ CSV_TEST = REPO / "04_modelado" / "resultados_tres_clases_test.csv"
 
 
 def log(*a):
+    """Imprime un mensaje con la hora."""
     print(time.strftime("%H:%M:%S"), *a, flush=True)
 
 
@@ -112,6 +113,7 @@ def fila_conjunto(modelo: str, conjunto: str, sub: pd.DataFrame, pred: np.ndarra
 
 
 def filas_validacion(modelo: str, val: pd.DataFrame, pred: np.ndarray) -> list[dict]:
+    """Métricas de validación: conjunto completo y por fuente (Kaggle y *Mixed*)."""
     filas = [fila_conjunto(modelo, "val", val, pred)]
     for fuente in ("kaggle", "mixed"):
         m = (val["source"] == fuente).to_numpy()
@@ -120,12 +122,14 @@ def filas_validacion(modelo: str, val: pd.DataFrame, pred: np.ndarray) -> list[d
 
 
 def guardar_filas(csv: Path, filas: list[dict]) -> None:
+    """Agrega filas al CSV, reemplazando las del mismo modelo."""
     previo = pd.read_csv(csv) if csv.exists() else pd.DataFrame()
     previo = previo[~previo.get("modelo", pd.Series(dtype=str)).isin({f["modelo"] for f in filas})] if len(previo) else previo
     pd.concat([previo, pd.DataFrame(filas)], ignore_index=True).to_csv(csv, index=False)
 
 
 def fase_datos(fotos: Path) -> None:
+    """Lee y reduce las imágenes (64 y 96 px) y las guarda en caché."""
     partes = cargar_tabla(fotos)
     for k, v in partes.items():
         log(f"{k}: {len(v):,} imágenes | {v['label'].value_counts().to_dict()}")
@@ -135,6 +139,7 @@ def fase_datos(fotos: Path) -> None:
 
 
 def fase_clasicos(fotos: Path) -> None:
+    """Entrena los modelos de ML tradicional con GridSearchCV agrupado y mide la validación."""
     partes = cargar_tabla(fotos)
     X = matrices(partes, 64)
     MODELOS.mkdir(parents=True, exist_ok=True)
@@ -176,6 +181,7 @@ CNN_EXPERIMENTOS = [("T6", "Tres clases: Flatten + Dropout 0.5 + aumento + pesos
 
 
 def fase_cnn(fotos: Path, solo: list[str] | None = None) -> None:
+    """Entrena las CNN T6 y T7 y mide la validación."""
     import entrenar_cnn as ec
     from tensorflow import keras
 
@@ -216,6 +222,7 @@ def predecir_todos(partes: dict, X64: dict, X96: dict, conjunto: str) -> dict[st
 
 
 def fase_test(fotos: Path) -> None:
+    """Evalúa todos los modelos en la prueba, una sola vez (se niega a repetirse)."""
     if CSV_TEST.exists():
         sys.exit(f"{CSV_TEST.name} ya existe: la prueba se usa una sola vez. No se repite ni se vuelve a ajustar nada con ella.")
     faltan = [n for n in ("baseline_mayoritaria", "logreg", "svm_rbf", "random_forest", "rf_solo_borde") if not (MODELOS / f"{n}.joblib").exists()]
@@ -252,6 +259,7 @@ def fase_test(fotos: Path) -> None:
 
 
 def main() -> None:
+    """Línea de comandos: corre la fase indicada."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--fase", choices=["datos", "clasicos", "cnn", "test"], required=True)
     ap.add_argument("--fotos-propias", default=str(FOTOS_PROPIAS),

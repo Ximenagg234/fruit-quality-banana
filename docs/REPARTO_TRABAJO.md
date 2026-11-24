@@ -16,15 +16,15 @@ Los tres saben hacer de todo: el reparto es por **carga de trabajo**, no por hab
 
 | # | Entregable | Criterio de la rúbrica | Responsable | Revisor | Para cuándo |
 |---|---|---|---|---|---|
-| A | Fotos propias (5 especies nuevas), `object_id` y medidas con regla | datos (§2.2) | Ximena | Natalia | lunes |
-| B | **Etiquetado independiente** de las fotos (sección 5) | 1, 6 | Natalia y Juan Pablo, cada uno por separado | Ximena (acuerdo y kappa) | lunes noche – martes mañana |
-| C | Clase *Regular*, CNN y su tabla de experimentos, evaluación final (test **una sola vez**) | 4, 5, 6 | Ximena | Juan Pablo | martes – miércoles |
-| D | App Streamlit final; **probar la cámara en el computador de cada uno** | 8 | Ximena | Juan Pablo y Natalia | miércoles |
-| E | Informe IEEE de máximo 7 páginas y `report/refs.bib` (cada referencia verificada) | 3, 4, 5, 6, 7, 8 | Natalia | Juan Pablo | borrador martes; final miércoles |
-| F | Diagrama de flujo CRISP-DM **personalizado** (SVG) y guion del video | 8 | Juan Pablo | Natalia | martes |
-| G | Video de máximo 10 minutos | 8 | Juan Pablo (con los tres frente a cámara si quieren) | Natalia | miércoles |
-| H | Tabla de ética y matriz de impactos **finales**, con evidencia enlazada | 1, 2 | Natalia y Juan Pablo | Ximena | miércoles |
-| I | Auditoría final criterio por criterio (revisión cruzada) | todos | los tres | — | miércoles noche – jueves mañana |
+| A | Fotos propias, `object_id` y medidas con regla | datos | Ximena | Natalia | ✅ hecho (69 fotos en `data/own_photos/annotations.csv`) |
+| B | Etiquetado independiente de *Mixed* (dos rondas) y de las fotos propias | 1, 6 | Natalia, Juan Pablo y Ximena | Ximena | ✅ hecho (760 recortes; kappa 0.607 y 0.606; fotos propias por consenso) |
+| C | Clase *Regular*, CNN, tabla de experimentos y evaluación final (prueba **una sola vez**) | 4, 5, 6 | Ximena | Juan Pablo | ✅ hecho (`04_modelado/`, `ANALISIS_ERRORES.md`) |
+| D | App Streamlit con la CNN de tres clases; **probar la cámara en un computador real** | 8 | Ximena (app); **Juan Pablo** (cámara) | Natalia | app ✅; **cámara: miércoles** |
+| E | **Informe IEEE** de máximo 7 páginas y `report/refs.bib` (cada referencia verificada) | 3, 4, 5, 6, 7, 8 | **Natalia** | Juan Pablo | borrador: miércoles en la mañana; final: miércoles en la noche |
+| F | **Diagrama de flujo CRISP-DM** personalizado (SVG): revisar el que está regenerado y afinarlo | 8 | **Juan Pablo** | Natalia | miércoles |
+| G | **Video** de máximo 10 minutos (guion y grabación) | 8 | **Juan Pablo** (con los tres frente a cámara si quieren) | Natalia | guion: miércoles; video: miércoles en la noche |
+| H | Ética e impactos: revisar las tablas ya redactadas (v2/v3) y llevarlas al informe | 1, 2 | **Natalia y Juan Pablo** | Ximena | miércoles |
+| I | **Auditoría final** criterio por criterio (revisión cruzada) | todos | los tres | — | miércoles en la noche – jueves en la mañana |
 
 Pendientes que **decide Ximena** y no se tocan sin hablar con ella: la fila E8 de `etica_tabla.md` (declaración del uso de herramientas) y la política del curso al respecto.
 
@@ -79,9 +79,11 @@ Reglas:
 
 Las fotos originales y los archivos pesados se comparten por la **carpeta de Drive del grupo**, no por GitHub.
 
-## 5. Etiquetado independiente de las fotos propias
+## 5. Etiquetado (hecho)
 
-Se necesitan **dos anotadores** que etiqueten **sin verse entre sí** para poder medir el acuerdo (kappa de Cohen ponderado). Natalia y Juan Pablo son los anotadores; Ximena resuelve los desacuerdos.
+**Ya está hecho:** los 760 recortes de *Mixed* se etiquetaron en dos rondas por dos personas cada una, por separado, y los desacuerdos se resolvieron en grupo (`data/mixed_labels/`). Las fotos propias se decidieron por consenso del grupo. Lo que sigue describe el procedimiento, por si hay que repetirlo con más datos.
+
+Se necesitan **dos anotadores** que etiqueten **sin verse entre sí** para poder medir el acuerdo (kappa de Cohen ponderado); los desacuerdos se resuelven entre todos.
 
 1. Leer antes `docs/definicion_clases.md` (regla general y defectos por especie): **madurez no es defecto**, y los umbrales de ~10 % y ~40 % de superficie con defecto son una propuesta.
 2. Copiar `docs/plantilla_etiquetado.csv`, llenar una fila por foto y guardarla como `etiquetas_<iniciales>.csv`.
@@ -94,4 +96,4 @@ Se necesitan **dos anotadores** que etiqueten **sin verse entre sí** para poder
 
 ## 6. Privacidad de las fotos
 
-No se fotografían rostros. Las manos y objetos de otras personas que aparezcan se usan con su visto bueno. Las fotos se suben reducidas y **sin metadatos** (EXIF/GPS); lo garantiza `src/prepare_photos.py`.
+No se fotografían rostros (confirmado: ninguna de las fotos propias incluye rostros). Las manos que aparecen son de integrantes del equipo, que aceptan salir en su propio proyecto. Las fotos se suben reducidas y **sin metadatos** (EXIF/GPS); lo garantiza `src/prepare_photos.py`.

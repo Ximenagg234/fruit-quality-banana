@@ -55,6 +55,7 @@ def evaluate(y_true, y_pred, species=None) -> dict:
     y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
 
     def one(yt, yp):
+        """Métricas de un subconjunto (exactitud, EE, F1 macro y kappa ponderado)."""
         acc = accuracy_score(yt, yp)
         # con las clases de calidad, el orden ordinal es Buena < Regular < Mala (no el alfabético)
         presentes = set(yt) | set(yp)

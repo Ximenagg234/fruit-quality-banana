@@ -1,0 +1,9 @@
+subconjunto,n,spearman,p,sin_fruta_detectada
+todas,69,0.256,0.0336,0
+en mano,55,0.714,0.0,
+sin mano,14,0.419,0.1359,
+especie apple,11,-0.588,0.0572,
+especie banana,13,0.536,0.0588,
+especie guava,19,-0.242,0.3183,
+especie lime,9,,,
+especie orange,17,-0.655,0.0043,

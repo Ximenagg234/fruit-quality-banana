@@ -149,6 +149,7 @@ def prepare_folder(src_dir: Path | str, map_csv: Path | str, dst_dir: Path | str
 
 
 def main() -> None:
+    """Línea de comandos: prepara las fotos propias y escribe ``annotations.csv``."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("src_dir", help="carpeta con las fotos originales")
     ap.add_argument("map_csv", help="CSV con las columnas original, image_id (y las de annotations.csv)")

@@ -11,6 +11,7 @@ La evaluación de los modelos (tablas train / val / test, matrices de confusión
 | Tiempo de entrenamiento | **medido** (reloj) por modelo; la ronda 1 (descartada al ampliar las etiquetas) viene de los registros de la ejecución | `costo_entrenamiento.csv` |
 | Latencia de inferencia por imagen | **medida** (mediana y percentil 95) en 120 fotos propias, por modelo y para el flujo completo de la app | `costo_inferencia.csv` |
 | Tamaño y parámetros de los modelos | **medido** | `tamano_modelos.csv` |
+| Validación del tamaño (ℓ frente a los cm medidos) | **medida**: correlación de Spearman en las 69 fotos propias (`python 05_evaluacion/validar_tamano.py`) | `validacion_tamano.csv`, `validacion_tamano_resumen.csv` |
 | Energía | **estimada**, no medida: potencia x tiempo con el rango del fabricante (base 15 W, turbo máximo 55 W, Intel ARK i7-1255U). No hubo vatímetro | columnas `kWh_estimado_*` y `Wh_por_1000_*` |
 | Emisiones de CO₂ | **no calculadas**: el factor del sistema eléctrico colombiano (UPME) no se pudo verificar `[VERIFICAR]` | — |
 
@@ -19,6 +20,8 @@ La evaluación de los modelos (tablas train / val / test, matrices de confusión
 - **Todo el proyecto** (dos clases, dos rondas de tres clases y los intentos fallidos): 25 946 s de procesos = **7.2 h**, que a 15 – 55 W serían **0.11 a 0.40 kWh** (estimación; la suma cuenta por separado procesos que corrieron en paralelo, por lo que el tiempo de reloj real fue menor).
 - **Inferencia (por foto, en CPU):** abrir la foto 10 ms; regresión logística 10 ms, SVM 11 ms y Random Forest 22 ms (con las características de color); **CNN T6 73 ms** (percentil 95: 86 ms); medir el tamaño 43 ms; **flujo completo de la app 116 ms** (percentil 95: 128 ms). A 15 – 55 W, mil predicciones de la app consumen entre 0.5 y 1.8 Wh (estimación).
 - **Tamaño de los modelos:** regresión logística 0.01 MB, SVM 2.4 MB, Random Forest 13 MB y la CNN T6 29.5 MB (2 453 059 parámetros).
+
+- **Tamaño (ℓ frente a los cm):** correlación de Spearman de 0.26 en las 69 fotos (0.71 en mano, 0.42 sin mano) y de −0.66 a +0.54 por especie. ℓ depende de la distancia de la cámara: sirve como medida relativa y no como tamaño real.
 
 Límites: las latencias son de un portátil sin GPU con otras aplicaciones abiertas; la energía es una cota calculada, no una lectura de potencia.
 Estado: ✅ hardware y tiempos medidos; energía estimada con su supuesto declarado.

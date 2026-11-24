@@ -40,6 +40,7 @@ PROC = REPO / "data" / "processed"
 
 
 def main() -> None:
+    """Línea de comandos: segmenta las frutas de *Mixed* y prepara la muestra para etiquetar."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--salida", default=str(PROC / "mixed_crops"))
     ap.add_argument("--por-especie", type=int, default=60, help="recortes a etiquetar por especie")

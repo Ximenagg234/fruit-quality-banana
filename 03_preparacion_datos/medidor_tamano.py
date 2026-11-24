@@ -30,6 +30,7 @@ ANCHO = int(os.environ.get("MEDIDOR_ANCHO", "500"))
 
 
 def main() -> None:
+    """Interfaz de Streamlit para registrar la medida en cm de cada foto, con guardado automático."""
     st.set_page_config(page_title="Medidas de las fotos propias", page_icon="📏", layout="centered")
     st.title("Medida real de cada fruta (cm)")
     st.caption("Lado **más largo** de la fruta, medido con regla. Si la foto tiene varias frutas, mide la central "
@@ -77,6 +78,7 @@ def main() -> None:
     anterior = medidas.get(ids[pos - 1]) if pos > 0 else None
 
     def avanzar() -> None:
+        """Pasa a la foto siguiente y vuelve a dibujar la página."""
         st.session_state["pos_medidor"] = min(pos + 1, total - 1)
         st.rerun()
 

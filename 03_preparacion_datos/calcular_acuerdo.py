@@ -26,6 +26,7 @@ import labeling as lb  # noqa: E402
 
 
 def main() -> None:
+    """Línea de comandos: imprime el acuerdo entre dos anotadores y guarda los desacuerdos."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("archivo_a")
     ap.add_argument("archivo_b")
