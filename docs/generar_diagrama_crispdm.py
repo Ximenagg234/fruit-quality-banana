@@ -58,7 +58,7 @@ caja(103, 56, 44, 24, "3 · Preparación de los datos",
      ["• Grupos por objeto: tiempo, hash y contador",
       "• Partición por grupo, sin fuga de datos",
       "• Mixed: frutas individuales segmentadas",
-      "• Regular: fotos propias + Mixed etiquetado",
+      "• Regular: recortes de Mixed etiquetados",
       "• Tamaño: longitud normalizada (PCA)"])
 
 # fila inferior: fases 4-6
