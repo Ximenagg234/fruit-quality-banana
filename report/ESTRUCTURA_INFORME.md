@@ -50,6 +50,8 @@
 | Costo de cómputo: i7-1255U sin GPU; 7.2 h de procesos de entrenamiento y 0.11 a 0.40 kWh estimados; 116 ms por foto en la app | `report/tablas_informe.md` Tabla 7, `05_evaluacion/` |
 | Tamaño: correlación de Spearman entre ℓ y los cm medidos de 0.26 en 69 fotos (−0.66 a +0.54 por especie): ℓ es relativa | `05_evaluacion/validacion_tamano_resumen.csv` |
 
+**Exploración (opcional, en trabajo futuro):** transfer learning con MobileNetV2 \cite{sandler2018mobilenetv2}, solo en validación; ver la Tabla 8 de `tablas_informe.md`. Debe presentarse como no concluyente y aclarar que la app usa la CNN propia.
+
 ## Figuras disponibles
 
 | Figura | Archivo |
