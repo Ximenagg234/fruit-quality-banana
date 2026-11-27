@@ -5,7 +5,7 @@
 **Alcance (confirmado por el profesor):** el sistema debe cubrir variedad de frutas (posiblemente también verduras), no una sola especie. Especies del dataset base: manzana, banano, guayaba, lima, naranja y granada.
 
 ## Entregables
-- [ ] Informe final, **máximo 7 páginas**, formato IEEE (plantilla del profesor o Overleaf IEEE)
+- [x] Informe final, **máximo 7 páginas**, formato IEEE (plantilla del profesor o Overleaf IEEE)
 - [x] Repositorio en GitHub con estructura por fases de CRISP-DM (este repo)
 - [x] Enlace del repo + integrantes reportados en el documento compartido por el profesor
 - [x] Diagrama de flujo **personalizado** de CRISP-DM
@@ -39,17 +39,17 @@
 - [x] 6. Despliegue (GUI)
 
 ## Informe: estructura obligatoria
-- [ ] Título · [ ] Resumen · [ ] Introducción · [ ] Fundamentos teóricos (sin generalidades)
-- [ ] Metodología (no copiar el diagrama CRISP-DM tal cual) · [ ] Resultados
-- [ ] Análisis de resultados (generalización, sobreajuste, qué falla, comparación con la literatura)
-- [ ] Conclusiones y trabajo futuro · [ ] Referencias IEEE (solo las leídas y usadas)
+- [x] Título · [x] Resumen · [x] Introducción · [x] Fundamentos teóricos (sin generalidades)
+- [x] Metodología (no copiar el diagrama CRISP-DM tal cual) · [x] Resultados
+- [x] Análisis de resultados (generalización, sobreajuste, qué falla, comparación con la literatura)
+- [x] Conclusiones y trabajo futuro · [x] Referencias IEEE (solo las leídas y usadas)
 
 ## Competencias (`1_competencias_consigna_Actualizada.pdf`)
-- [ ] Tabla/sección de dilemas éticos ↔ código de ética (PI1)
-- [ ] Matriz de impactos social, económico, ambiental, global + mitigaciones (PI2)
-- [ ] Formulación, estrategia, fundamentos matemáticos, análisis y conclusiones (PI3)
+- [x] Tabla/sección de dilemas éticos ↔ código de ética (PI1)
+- [x] Matriz de impactos social, económico, ambiental, global + mitigaciones (PI2)
+- [x] Formulación, estrategia, fundamentos matemáticos, análisis y conclusiones (PI3)
 
 ## Reglas de integridad
-- [ ] Todo dato o código de terceros referenciado explícitamente (si no, cuenta como fraude)
+- [x] Todo dato o código de terceros referenciado explícitamente (si no, cuenta como fraude)
 - [ ] Gráficos de calidad vectorial
 - [x] Código bien documentado

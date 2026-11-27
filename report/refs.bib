@@ -36,8 +36,7 @@
   publisher = {FAO},
   address   = {Rome},
   year      = {2019},
-  url       = {https://openknowledge.fao.org/3/ca6030en/ca6030en.pdf},
-  note      = {El 14 \% es en valor econ{\'o}mico y excluye el comercio minorista}
+  url       = {https://openknowledge.fao.org/3/ca6030en/ca6030en.pdf}
 }
 
 % T{\'i}tulo y fecha (marzo de 2024) verificados en la ficha oficial. Las cifras de 1 050 millones de toneladas y 19 \%
@@ -101,12 +100,13 @@
 
 % arXiv confirma t{\'i}tulo, autores y fecha (22-dic-2014). La publicaci{\'o}n formal en ICLR 2015 no se
 % comprob{\'o} en este entorno: si se cita esa versi{\'o}n, [VERIFICAR] primero.
-@misc{kingma2014adam,
-  author        = {Kingma, D. P. and Ba, J.},
-  title         = {Adam: A Method for Stochastic Optimization},
-  year          = {2014},
-  eprint        = {1412.6980},
-  archivePrefix = {arXiv}
+@inproceedings{kingma2014adam,
+  author    = {Kingma, D. P. and Ba, J.},
+  title     = {Adam: A Method for Stochastic Optimization},
+  booktitle = {Proc. 3rd Int. Conf. Learning Representations (ICLR)},
+  address   = {San Diego, CA},
+  year      = {2015},
+  note      = {arXiv:1412.6980}
 }
 
 % ---------- Segmentaci{\'o}n y agrupaci{\'o}n (verificadas en Crossref) ----------
@@ -172,36 +172,15 @@
   doi     = {10.1037/h0026256}
 }
 
-% Le{\'i}do en la versi{\'o}n HTML de arXiv (id 2104.05647); en la p{\'a}gina de arXiv no figura revista ni congreso, por eso se
-% cita como preprint. Datos usados: 2 690 im{\'a}genes de limones sanos y no sanos, VGG16, exactitud 83.77 \% y 88.75 \% con
-% im{\'a}genes sint{\'e}ticas; solo se informa exactitud y no se describe la partici{\'o}n.
-@misc{bird2021gan,
-  author        = {Bird, Jordan J. and Barnes, Chloe M. and Manso, Luis J. and Ek{\'a}rt, Anik{\'o} and Faria, Diego R.},
-  title         = {Fruit Quality and Defect Image Classification with Conditional {GAN} Data Augmentation},
-  year          = {2021},
-  eprint        = {2104.05647},
-  archivePrefix = {arXiv}
-}
-
-% Verificado en Crossref (DOI 10.1016/j.jfoodeng.2022.111401: Journal of Food Engineering, vol. 345, art. 111401, 2023) y
-% le{\'i}do en la versi{\'o}n de arXiv (id 2207.04523, HTML). Datos usados: banano (273 im{\'a}genes, 4 clases de madurez) y manzana
-% (5 858 im{\'a}genes); manzana 0.950 con DINO ViT-B/8 + SVM frente a 0.958 de la mejor CNN.
-@article{knott2023facilitated,
-  author  = {Knott, Manuel and Perez-Cruz, Fernando and Defraeye, Thijs},
-  title   = {Facilitated machine learning for image-based fruit quality assessment},
-  journal = {Journal of Food Engineering},
-  volume  = {345},
-  pages   = {111401},
-  year    = {2023},
-  doi     = {10.1016/j.jfoodeng.2022.111401}
-}
-
 % Verificado en la API de arXiv (id 2004.07780; DOI 10.1038/s42256-020-00257-z) y le{\'i}do en la versi{\'o}n HTML de arXiv.
 % Se usa su definici{\'o}n de atajo y su recomendaci{\'o}n de pruebas fuera de distribuci{\'o}n. Volumen y p{\'a}ginas no comprobados.
 @article{geirhos2020shortcut,
   author  = {Geirhos, Robert and Jacobsen, J{\"o}rn-Henrik and Michaelis, Claudio and Zemel, Richard and Brendel, Wieland and Bethge, Matthias and Wichmann, Felix A.},
   title   = {Shortcut learning in deep neural networks},
   journal = {Nature Machine Intelligence},
+  volume  = {2},
+  number  = {11},
+  pages   = {665--673},
   year    = {2020},
   doi     = {10.1038/s42256-020-00257-z}
 }
@@ -209,11 +188,10 @@
 % Verificado en la API de arXiv (id 2006.09994) y le{\'i}do en la versi{\'o}n HTML de arXiv. No se comprob{\'o} en qu{\'e}
 % conferencia se public{\'o}, por eso se cita como preprint.
 @misc{xiao2020noise,
-  author        = {Xiao, Kai and Engstrom, Logan and Ilyas, Andrew and M{\k{a}}dry, Aleksander},
-  title         = {Noise or Signal: The Role of Image Backgrounds in Object Recognition},
-  year          = {2020},
-  eprint        = {2006.09994},
-  archivePrefix = {arXiv}
+  author       = {Xiao, Kai and Engstrom, Logan and Ilyas, Andrew and M{\k{a}}dry, Aleksander},
+  title        = {Noise or Signal: The Role of Image Backgrounds in Object Recognition},
+  howpublished = {arXiv preprint arXiv:2006.09994},
+  year         = {2020}
 }
 
 % Verificado en la API de arXiv (id 1902.00423; DOI 10.3390/jimaging6060041). Solo se pudo leer el resumen.
@@ -261,3 +239,46 @@
 
 % Pendientes (no se agregan hasta verificarlas): m{\'a}s literatura sobre clasificaci{\'o}n de calidad de frutas con
 % aprendizaje profundo, el a{\~n}o de la versi{\'o}n del c{\'o}digo del IEEE y la Ley 1581 de 2012.
+
+@article{bird2022fruit,
+  author  = {Bird, Jordan J. and Barnes, Chloe M. and Manso, Luis J. and Ek{\'a}rt, Anik{\'o} and Faria, Diego R.},
+  title   = {Fruit quality and defect image classification with conditional {GAN} data augmentation},
+  journal = {Scientia Horticulturae},
+  volume  = {293},
+  pages   = {110684},
+  year    = {2022},
+  doi     = {10.1016/j.scienta.2021.110684}
+}
+
+@article{knott2023facilitated,
+  author  = {Knott, Manuel and Perez-Cruz, Fernando and Defraeye, Thijs},
+  title   = {Facilitated machine learning for image-based fruit quality assessment},
+  journal = {Journal of Food Engineering},
+  volume  = {345},
+  pages   = {111401},
+  year    = {2023},
+  doi     = {10.1016/j.jfoodeng.2022.111401}
+}
+
+@inproceedings{abadi2016tensorflow,
+  author    = {Abadi, Mart{\'i}n and others},
+  title     = {{TensorFlow}: A System for Large-Scale Machine Learning},
+  booktitle = {Proc. 12th USENIX Symp. Operating Systems Design and Implementation (OSDI)},
+  pages     = {265--283},
+  year      = {2016}
+}
+
+@misc{chollet2015keras,
+  author       = {Chollet, Fran{\c{c}}ois and others},
+  title        = {Keras},
+  year         = {2015},
+  howpublished = {Software},
+  url          = {https://keras.io}
+}
+
+@misc{streamlit,
+  author       = {{Snowflake Inc.}},
+  title        = {Streamlit},
+  howpublished = {Software de c{\'o}digo abierto (consultado el 26 nov. 2026)},
+  url          = {https://streamlit.io}
+}
