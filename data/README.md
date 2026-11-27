@@ -5,7 +5,7 @@ Las imágenes **no se suben al repositorio** (excepto las fotos propias, ya redu
 ## 1. Dataset de referencia (obligatorio, a citar)
 **Fruit Quality Classification**, autor `ryandpark`, Kaggle.
 https://www.kaggle.com/datasets/ryandpark/fruit-quality-classification
-*Licencia: **CC0 (dominio público)**, verificada en el campo "License" de la ficha de Kaggle el 22 de noviembre de 2026. Autor: Ryan Park. La fecha exacta de publicación o actualización **[VERIFICAR]** en la ficha para la referencia IEEE.*
+*Licencia: **CC0 (dominio público)**, verificada en el campo "License" de la ficha de Kaggle el 22 de noviembre de 2026. Autor: Ryan Park. Versión 1, del 19 de julio de 2022, citada en `report/refs.bib` (consultada el 26 de noviembre de 2026).*
 
 - Según su ficha: 19 526 imágenes; clases de calidad Bad / Good / Mixed; 6 frutas (apple, banana, guava, lime, orange, pomegranate).
 - Cada fruta fotografiada desde varios ángulos.

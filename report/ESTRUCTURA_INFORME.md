@@ -1,6 +1,6 @@
 # Estructura del informe IEEE (máximo 7 páginas)
 
-**Los números finales ya están en `report/tablas_informe.md`** (se regenera con `python report/generar_tablas.py`); copia las tablas de ahí. Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`conference-template-letter.docx`, o la plantilla clonable de la carpeta `PROYECTO/`). **No hay LaTeX en el entorno de desarrollo, así que no se compiló nada.** Las secciones y su orden salen de los lineamientos (§7). Responsable: Natalia; revisor: Juan Pablo (revisión cruzada con la rúbrica, sin haberlo escrito).
+**Los números finales ya están en `report/tablas_informe.md`** (se regenera con `python report/generar_tablas.py`); copia las tablas de ahí. Guía para armar el informe en Overleaf o Word con la plantilla del profesor (`conference-template-letter.docx`, o la plantilla clonable de la carpeta `PROYECTO/`). La versión final es `report/informe.pdf`. Las secciones y su orden salen de los lineamientos (§7). Responsable: Natalia; revisor: Juan Pablo (revisión cruzada con la rúbrica, sin haberlo escrito).
 
 ## Reglas
 

@@ -20,4 +20,4 @@ streamlit run 06_despliegue/app.py
 **Límites:** una sola fruta sobre fondo liso y claro; el tamaño es relativo (depende de la distancia a la cámara) y no es fiable si hay una mano en la foto; apoyo a la decisión, no certificación de inocuidad.
 
 **Pruebas:** `../tests/test_app.py` (arranque y entradas), `../tests/test_inference.py` (lógica).
-Estado: 🟡 funciona con carga de imagen y con la CNN de tres clases (pruebas automáticas y coincidencia con la evaluación); la captura con cámara no se pudo verificar en el entorno de desarrollo; faltan las clases de tamaño por especie.
+Estado: ✅ funciona con carga de imagen y con captura de cámara (probada en un computador real, `../docs/prueba_camara.md`) y usa la CNN de tres clases. El tamaño se reporta como longitud normalizada; las clases de tamaño por especie son trabajo futuro.

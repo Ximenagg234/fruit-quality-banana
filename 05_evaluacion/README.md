@@ -13,7 +13,7 @@ La evaluación de los modelos (tablas train / val / test, matrices de confusión
 | Tamaño y parámetros de los modelos | **medido** | `tamano_modelos.csv` |
 | Validación del tamaño (ℓ frente a los cm medidos) | **medida**: correlación de Spearman en las 69 fotos propias (`python 05_evaluacion/validar_tamano.py`) | `validacion_tamano.csv`, `validacion_tamano_resumen.csv` |
 | Energía | **estimada**, no medida: potencia x tiempo con el rango del fabricante (base 15 W, turbo máximo 55 W, Intel ARK i7-1255U). No hubo vatímetro | columnas `kWh_estimado_*` y `Wh_por_1000_*` |
-| Emisiones de CO₂ | **no calculadas**: el factor del sistema eléctrico colombiano (UPME) no se pudo verificar `[VERIFICAR]` | — |
+| Emisiones de CO₂ | **no calculadas**: el factor del sistema eléctrico colombiano (UPME) no se pudo verificar | — |
 
 ## Resultados
 - **Entrenamiento de los modelos finales (tres clases, ronda 2):** 2 131 s de procesos (0.59 h); el Random Forest, el SVM y la regresión logística tardaron 241, 261 y 94 s, y las CNN T6 y T7, 827 y 661 s. Los tres entrenamientos corrieron **a la vez** en el mismo equipo, así que cada tiempo está inflado frente a correr uno solo.

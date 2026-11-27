@@ -10,7 +10,7 @@
 - [x] Enlace del repo + integrantes reportados en el documento compartido por el profesor
 - [x] Diagrama de flujo **personalizado** de CRISP-DM
 - [x] Interfaz gráfica (Streamlit) **funcional**: cargar una imagen **o capturarla con la cámara** (§1.4 y §4.6) y mostrar la predicción de calidad y de tamaño
-- [ ] Video de **máximo 10 minutos** (contexto, técnicas, resultados, logros)
+- [x] Video de **máximo 10 minutos** (contexto, técnicas, resultados, logros)
 
 ## Caso de estudio
 - [x] Entrada: imagen estática de una fruta individual, fondo simple y uniforme
@@ -51,5 +51,5 @@
 
 ## Reglas de integridad
 - [x] Todo dato o código de terceros referenciado explícitamente (si no, cuenta como fraude)
-- [ ] Gráficos de calidad vectorial
+- [x] Gráficos de calidad vectorial
 - [x] Código bien documentado
