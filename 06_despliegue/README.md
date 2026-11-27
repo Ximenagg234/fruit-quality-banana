@@ -1,5 +1,7 @@
 # Fase 6 — Despliegue (app Streamlit)
 
+**Plan de despliegue:** [`PLAN_DESPLIEGUE.md`](PLAN_DESPLIEGUE.md).
+
 **Aplicación:** `app.py`. Se ejecuta desde la raíz del repositorio:
 
 ```bash

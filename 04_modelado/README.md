@@ -11,6 +11,7 @@ Todo se entrena y valida con `train` y `val` del dataset de Kaggle (Buena vs. Ma
 | `resultados_*.csv` | tablas de resultados para el informe |
 | `figuras/` | figuras vectoriales (PDF) |
 | `analisis_modelos.py` | tabla train / val / test (`tabla_train_val_test.csv`), matrices de confusión y ejemplos de error de los modelos de tres clases; el texto está en `ANALISIS_ERRORES.md` |
+| `experimento_transfer.py` | exploración posterior a la prueba: MobileNetV2 preentrenada, solo en validación (`resultados_transfer_validacion.csv`); no cambia la app |
 | `../src/models_classic.py`, `../src/cnn.py`, `../src/features.py` | código de los modelos |
 
 Modelos entrenados: `../data/processed/` (no versionado); el modelo provisional de la app está en `../06_despliegue/modelo/`.

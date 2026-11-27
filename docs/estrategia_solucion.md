@@ -57,7 +57,7 @@ SVM y Random Forest **no se distinguen** (diferencia de 0.003, menor que un erro
 | Alternativa | Ventaja | Límite | Decisión |
 |---|---|---|---|
 | CNN desde cero 32-64-128 | Recomendada por el enunciado; liviana en CPU; se vio en clase | Aprende fondo igual que los demás modelos | **Elegida.** Medido (10 experimentos, Buena vs. Mala en Kaggle): mejor F1 en val 0.938 (E4) y 0.929 con GAP (E5) |
-| Transfer learning con capas congeladas | Menos datos | Más pesado; el enunciado recomienda priorizar desde cero | No usada (decisión: priorizar la CNN desde cero, como recomienda el enunciado) |
+| Transfer learning con capas congeladas (MobileNetV2, ImageNet) | Aprovecha lo aprendido con muchas imágenes | Más pesado; el enunciado recomienda priorizar desde cero; se probó **después de usar la prueba** | **Probado como exploración, solo en validación.** Congelada: F1 macro 0.760 (CNN propia: 0.725) y recall de *Regular* 0.49 (CNN propia: 0.60); con ajuste fino: 0.717 y 0.26. Con 35 casos de *Regular* la mejora **no es concluyente**. La app sigue con la CNN propia (`04_modelado/experimento_transfer.py`, `resultados_transfer_validacion.csv`) |
 | `Flatten` frente a `GlobalAveragePooling2D` | GAP usa 110 147 parámetros frente a 4 288 067 con `Flatten` en 128 px y 3 clases (verificado contra Keras, `tests/test_cnn.py`) | Menos capacidad | **GAP.** Medido: sin diferencia concluyente (+0.007 sin aumento y −0.009 con aumento, menores que 2 EE) con 22 veces menos parámetros a 96 px |
 | Aumento de datos, Dropout, L2, filtros, tasa de aprendizaje, resolución | Control del sobreajuste | — | Una cosa a la vez (`04_modelado/cnn_experimentos.ipynb`). **El aumento de datos ayuda** (+0.033 con `Flatten`, +0.016 con GAP, concluyentes); Dropout con `Flatten` y Dense 64 empeora (−0.016); L2 y 128 px no son concluyentes (128 px cuesta 59.4 s frente a 34.6 s por época); menos filtros (−0.022) y lr 3e-4 (−0.020) empeoran. Una sola semilla por experimento |
 | Control "solo borde" con la CNN | Mide cuánto del rendimiento es fondo | — | **Medido (E10):** F1 0.871 con el centro enmascarado frente a 0.929 con la imagen completa; el fondo explica casi todo |
@@ -119,4 +119,4 @@ SVM y Random Forest **no se distinguen** (diferencia de 0.003, menor que un erro
 
 ## Qué falta para cerrar esta tabla
 
-Nada de lo que depende de datos o modelos: todas las decisiones tienen evidencia. Quedan como **trabajo futuro** declarado: HOG o textura, transfer learning, sobremuestreo de *Regular*, un dataset adicional con nivel intermedio y una CNN entrenada con parte de las fotos propias.
+Nada de lo que depende de datos o modelos: todas las decisiones tienen evidencia. Quedan como **trabajo futuro** declarado: HOG o textura, evaluar el transfer learning con una prueba nueva, sobremuestreo de *Regular*, un dataset adicional con nivel intermedio y una CNN entrenada con parte de las fotos propias.
