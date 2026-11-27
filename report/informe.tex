@@ -22,8 +22,8 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning}
 \graphicspath{{../docs/}{../02_comprension_datos/figuras/}{../04_modelado/figuras/}}
-\renewcommand{\arraystretch}{0.9}
-\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\renewcommand{\arraystretch}{0.85}
+\setlength{\textfloatsep}{4pt plus 2pt minus 2pt}
 \setlength{\floatsep}{6pt plus 2pt minus 2pt}
 \setlength{\intextsep}{6pt plus 2pt minus 2pt}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em T\kern-.1667em\lower.7ex\hbox{E}\kern-.125em X}}
@@ -47,7 +47,7 @@ clasificaci\'on de frutas, CNN, validaci\'on por grupos, cambio de dominio, \'et
 \end{IEEEkeywords}
 
 \section{Introducci\'on}
-La clasificaci\'on manual de la calidad de la fruta es lenta, subjetiva y propensa a errores, y las p\'erdidas poscosecha son relevantes: la FAO estima que alrededor del 14\,\% de los alimentos producidos, en valor econ\'omico, se pierde desde la poscosecha hasta el comercio minorista, sin incluirlo \cite{fao2019sofa}. Un sistema que apoye la decisi\'on con una foto de celular podr\'ia reducir ese desperdicio si sus resultados son confiables en condiciones reales.
+La clasificaci\'on manual de la calidad de la fruta es lenta, subjetiva y propensa a errores, y las p\'erdidas poscosecha son relevantes: la FAO estima que alrededor del 14\,\% de los alimentos producidos, en valor econ\'omico, se pierde desde la poscosecha hasta el comercio minorista, sin incluirlo \cite{fao2019sofa}.
 
 El objetivo es dise\~nar, entrenar y evaluar un sistema que reciba una imagen est\'atica de una fruta sobre fondo simple y entregue su calidad en tres clases ordenadas y su tama\~no, con carga de imagen y captura con c\'amara. Las contribuciones son: (1) una partici\'on por objeto f\'isico inferido sin identificadores y la medici\'on de la fuga que evita; (2) un control de ``solo borde'' junto a cada modelo; (3) la clase \emph{Regular}, inexistente en el dataset base, construida con 760 recortes etiquetados por dos personas; y (4) una evaluaci\'on honesta en 69 fotos propias, usadas una sola vez.
 
@@ -223,7 +223,7 @@ Global & Metodolog\'ia reutilizable con datos locales & Otras variedades, c\'ama
 \textbf{\'Etica e impactos.} Las Tablas~\ref{tab:etica} y~\ref{tab:impactos} resumen los dilemas, las medidas y los impactos. \emph{Social:} un criterio uniforme reduce la subjetividad de la clasificaci\'on manual, pero la sobreconfianza es un riesgo t\'ecnico real, porque el modelo no detecta \emph{Regular} en fotos propias; por eso la app muestra la confianza, avisa cuando es baja y no guarda im\'agenes (privacidad y percepci\'on de vigilancia). \emph{Econ\'omica:} un falso ``Mala'' descarta fruta aprovechable y un falso ``Buena'' deja pasar fruta en mal estado, as\'i que se reportan los errores por tipo y no solo la exactitud. \emph{Ambiental:} se eligieron modelos peque\~nos en CPU y se informa su costo (7.2 h de procesos y 0.11 a 0.40 kWh estimados). \emph{Global:} las clases se definen con criterios expl\'icitos y el rendimiento debe revalidarse con datos locales, porque el cambio de dominio ya lo degrad\'o. El an\'alisis inicial plane\'o estas mitigaciones y el final comprob\'o cu\'ales se implementaron; quedaron sin lograr m\'as fotos de \emph{Regular} y \emph{Mala}, un piloto con revisi\'on humana y la medici\'on directa de energ\'ia.
 
 \section{Resultados}
-La Tabla~\ref{tab:res} reporta el F1 macro por modelo y conjunto (l\'inea base: 0.257). En validaci\'on (2\,758 im\'agenes, 35 \emph{Regular}) la CNN T6 es la mejor (0.725, kappa ponderado 0.851, recall de \emph{Regular} 0.60), seguida del SVM (0.693); el Random Forest (0.628) iguala a su control de solo borde (0.630). En la prueba de Kaggle y \emph{Mixed}, usada una sola vez (2\,746 im\'agenes, 27 \emph{Regular}), el SVM (0.774) y el Random Forest (0.765) superan a la CNN T7 (0.736) y a la T6 (0.714); esas diferencias se apoyan en pocos \emph{Regular} y no son concluyentes. En Buena frente a Mala, la mejor CNN alcanz\'o 0.938 (\texttt{Flatten}) y 0.929 (GAP), sin superar al Random Forest (0.947).
+La Tabla~\ref{tab:res} reporta el F1 macro por modelo y conjunto (l\'inea base: 0.257). En validaci\'on (2\,758 im\'agenes, 35 \emph{Regular}) la CNN T6 es la mejor (0.725, kappa ponderado 0.851, recall de \emph{Regular} 0.60), seguida del SVM (0.693); el Random Forest (0.628) iguala a su control de solo borde (0.630). En la prueba de Kaggle y \emph{Mixed}, usada una sola vez (2\,746 im\'agenes, 27 \emph{Regular}), el SVM (0.774) y el Random Forest (0.765) superan a la CNN T7 (0.736) y a la T6 (0.714); esas diferencias se apoyan en pocos \emph{Regular} y no son concluyentes. En Buena frente a Mala, la mejor CNN alcanz\'o 0.938 (\texttt{Flatten}) y 0.929 (GAP), sin superar al Random Forest (0.947). Como exploraci\'on posterior a la prueba, solo en validaci\'on (35 \emph{Regular}), se entren\'o MobileNetV2 \cite{sandler2018mobilenetv2} (pesos de ImageNet): congelada obtuvo F1 macro 0.760 y recall de \emph{Regular} 0.49 (nuestra CNN: 0.725 y 0.60), y con ajuste fino de las \'ultimas 40 capas, 0.717 y 0.26. La diferencia no es concluyente y la app sigue usando la CNN propia.
 
 \begin{table}[t]
 \centering
@@ -247,14 +247,14 @@ CNN T7 (GAP) & 0.729 & 0.623 & 0.736 & 0.419 & 0.11 \\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.5\columnwidth]{prueba_atajo_borde.pdf}
+\includegraphics[width=0.46\columnwidth]{prueba_atajo_borde.pdf}
 \caption{Prueba del atajo del fondo: F1 macro de un Random Forest que solo ve el borde de la imagen para separar \emph{Good} de \emph{Bad}, por especie.}
 \label{fig:atajo}
 \end{figure}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.74\columnwidth]{matrices_confusion_tres_clases.pdf}
+\includegraphics[width=0.7\columnwidth]{matrices_confusion_tres_clases.pdf}
 \caption{Matrices de confusi\'on de tres clases (CNN T6, SVM y Random Forest).}
 \label{fig:conf}
 \end{figure}
@@ -268,19 +268,19 @@ En las 69 fotos propias (49 Buena, 14 Regular, 6 Mala; la l\'inea base de siempr
 
 \textbf{Qu\'e falla.} \emph{Regular} es la clase d\'ebil. Seg\'un las matrices de la Fig.~\ref{fig:conf}, en validaci\'on la T6 acierta 21 de 35 pero llama \emph{Regular} a 68 im\'agenes que no lo son (precisi\'on 0.24); en la prueba acierta 22 de 27 con 129 falsas alarmas (precisi\'on 0.17). El desacuerdo entre anotadores (kappa 0.607 y 0.606) se concentr\'o en el l\'imite \emph{Regular}/\emph{Mala}: la frontera es dif\'icil incluso para las personas, lo que limita lo que un modelo puede aprender. Los ejemplos de error (\texttt{errores\_cnn\_T6.pdf}) muestran manchas peque\~nas u otras frutas en el recorte.
 
-\textbf{Literatura.} Tres trabajos respaldan lo medido sobre el atajo del fondo y la fuga. Geirhos et al. \cite{geirhos2020shortcut} definen un atajo como una regla que rinde bien con datos de prueba de la misma distribuci\'on pero falla fuera de ella (el pasto como atajo para ``vaca'') y recomiendan probar la generalizaci\'on fuera de distribuci\'on: nuestras fotos propias cumplen ese papel y all\'i el F1 macro cae de 0.714 a 0.439. Xiao et al. \cite{xiao2020noise} muestran en ImageNet-9 que modelos que solo ven el fondo alcanzan alrededor de 40 a 50\,\% de exactitud, frente a 11\,\% del azar: un efecto an\'alogo al nuestro (F1 macro de 0.76 a 0.96 con solo el borde). Sobre la fuga, Barz y Denzler \cite{barz2020purging} reportan que 3.3\,\% y 10\,\% de las im\'agenes de prueba de CIFAR-10 y CIFAR-100 tienen duplicados en entrenamiento y que la exactitud cae entre 9\,\% y 14\,\% (relativa) al quitarlos; en nuestro dataset, al partir por imagen, el 49.9\,\% de la prueba tiene un casi-duplicado, y partir por objeto lo evita. En frutas, Palakodati et al. \cite{palakodati2020fresh} reportan 97.82\,\% de exactitud de prueba con una CNN de tres capas convolucionales sobre tres frutas de Kaggle (5\,989 im\'agenes), frente a 89.42\,\% de VGG-16 con transferencia; nuestro Buena frente a Mala con una CNN desde cero da un F1 macro de 0.938 en validaci\'on, de magnitud comparable aunque con m\'etricas y datos distintos. Con MobileNetV2 congelada \cite{sandler2018mobilenetv2}, explorada solo en validaci\'on, el F1 macro fue 0.760 frente a 0.725 de nuestra CNN, sin diferencia concluyente. Su art\'iculo no indica si la partici\'on fue por imagen u objeto ni reporta un control de solo borde; por eso, y a la luz de los tres trabajos anteriores, una exactitud tan alta no prueba por s\'i sola que se aprenda calidad.
+\textbf{Literatura.} Geirhos et al. \cite{geirhos2020shortcut} definen un atajo como una regla que rinde bien con datos de la misma distribuci\'on pero falla fuera de ella, y recomiendan pruebas fuera de distribuci\'on: nuestras fotos propias lo son, y all\'i el F1 macro cae de 0.714 a 0.439. Xiao et al. \cite{xiao2020noise} muestran que modelos que solo ven el fondo alcanzan 40 a 50\,\% de exactitud en ImageNet-9 (azar: 11\,\%), an\'alogo a nuestro 0.76 a 0.96 con solo el borde. Barz y Denzler \cite{barz2020purging} hallan que 3.3\,\% y 10\,\% de las im\'agenes de prueba de CIFAR-10 y CIFAR-100 tienen duplicados en entrenamiento; en nuestro dataset, al partir por imagen, es el 49.9\,\%. En frutas, Palakodati et al. \cite{palakodati2020fresh} reportan 97.82\,\% de exactitud con una CNN de tres capas convolucionales en tres frutas de Kaggle (5\,989 im\'agenes) y Bird et al. \cite{bird2021gan}, 83.77\,\% con VGG16 en limones sanos y no sanos (2\,690 im\'agenes), que sube a 88.75\,\% con im\'agenes sint\'eticas; ninguno discute casi-duplicados ni reporta un control de solo borde. Knott et al. \cite{knott2023facilitated} obtienen 0.950 en manzana (la mejor CNN, 0.958) con caracter\'isticas DINO y clasificadores cl\'asicos, y atribuyen parte del solapamiento entre clases de madurez del banano a ruido de etiquetas, como nuestro kappa de 0.6. Nuestro Buena frente a Mala (F1 macro 0.938 en validaci\'on) es de magnitud comparable, con m\'etricas y datos distintos; a la luz de estos trabajos, una exactitud alta no prueba por s\'i sola que se aprenda calidad.
 
-\textbf{Limitaciones.} Las fotos propias se etiquetaron por consenso (sin kappa); hay pocos \emph{Regular} en validaci\'on (35), prueba (27) y fotos propias (14); la energ\'ia es una estimaci\'on (15 a 55 W), no una medici\'on.
+\textbf{Limitaciones.} Las fotos propias se etiquetaron por consenso (sin kappa); hay pocos \emph{Regular} en validaci\'on (35), prueba (27) y fotos propias (14); la energ\'ia es una estimaci\'on no una medici\'on.
 
 \section{Conclusiones y trabajo futuro}
 \begin{enumerate}
-\item El rendimiento en Kaggle no demuestra que se aprenda calidad: el control de solo borde alcanza 0.76 a 0.96 (Fig.~\ref{fig:atajo}) e iguala al Random Forest completo en validaci\'on (Tabla~\ref{tab:res}).
-\item \emph{Regular}, construida con 760 recortes (kappa 0.607 y 0.606), es la clase m\'as dif\'icil: en fotos propias ning\'un modelo la detecta (0 de 14).
-\item Con fotos propias el modelo generaliza mal: el F1 macro de la mejor CNN baja de 0.714 a 0.439 (Tabla~\ref{tab:res}); la CNN T6 es la que menos se sobreajusta (brecha 0.04).
-\item El tama\~no es una medida relativa: Spearman de 0.26 entre $\ell$ y los cent\'imetros medidos.
-\item El sistema es un apoyo a la decisi\'on (confianza, aviso, sin guardar im\'agenes), no un control de inocuidad.
+\item Se construy\'o un pipeline completo (datos, partici\'on por objeto, tres clases, modelos cl\'asicos, CNN y app con c\'amara): F1 macro de 0.725 en validaci\'on con la CNN T6 (l\'inea base 0.257) y de 0.774 en la prueba de Kaggle y \emph{Mixed} con el SVM (Tabla~\ref{tab:res}).
+\item Se midi\'o el atajo del fondo: el control de solo borde alcanza 0.76 a 0.96 (Fig.~\ref{fig:atajo}) e iguala al Random Forest completo en validaci\'on; por eso cada resultado lleva su control.
+\item Se construy\'o la clase \emph{Regular} con 760 recortes (kappa 0.607 y 0.606). Es la m\'as dif\'icil: en fotos propias ning\'un modelo la detecta (0 de 14).
+\item El l\'imite principal es la generalizaci\'on a fotos propias: el F1 macro de la mejor CNN baja de 0.714 a 0.439; la CNN T6 es la que menos se sobreajusta (brecha 0.04) y acierta las 6 \emph{Mala}. El tama\~no es relativo (Spearman 0.26).
+\item El sistema es un apoyo a la decisi\'on, no un control de inocuidad.
 \end{enumerate}
-\textbf{Trabajo futuro, derivado de los errores medidos:} m\'as fotos propias de \emph{Regular} y \emph{Mala} sobre superficie y sin mano, y entrenar con parte de ellas; sobremuestrear \emph{Regular}; evaluar el transfer learning con una prueba nueva; un dataset con nivel intermedio; un umbral de decisi\'on conservador; medir la energ\'ia con un vat\'imetro; y probar otras c\'amaras e iluminaci\'on.
+\textbf{Trabajo futuro, derivado de los errores medidos:} m\'as fotos propias de \emph{Regular} y \emph{Mala} sobre superficie y sin mano, y entrenar con parte de ellas; sobremuestrear \emph{Regular}; evaluar el transfer learning con una prueba nueva; un dataset con nivel intermedio; un umbral de decisi\'on conservador; y probar otras c\'amaras e iluminaci\'on.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
