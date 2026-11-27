@@ -8,7 +8,7 @@ Entrega: **jueves 26 de noviembre de 2026, en la mañana.** Este documento dice 
 |---|---|---|
 | Ximena Gómez Gómez | @Ximenagg234 | Integra el repositorio (revisa y mezcla los PR); datos, modelos y app |
 | Natalia Delgado | @ndelgadoar | Informe y referencias; etiquetado |
-| Juan Pablo Bello | _por confirmar_ | Diagrama, video y revisión; etiquetado |
+| Juan Pablo Bello | @Bellito29 | Diagrama, video y revisión; etiquetado |
 
 Los tres saben hacer de todo: el reparto es por **carga de trabajo**, no por habilidad, y cualquiera puede cambiar de frente si lo avisa. Cada entregable tiene **un responsable** (lo escribe) y **un revisor** (lo califica con la rúbrica sin haberlo escrito).
 
@@ -19,12 +19,12 @@ Los tres saben hacer de todo: el reparto es por **carga de trabajo**, no por hab
 | A | Fotos propias, `object_id` y medidas con regla | datos | Ximena | Natalia | ✅ hecho (69 fotos en `data/own_photos/annotations.csv`) |
 | B | Etiquetado independiente de *Mixed* (dos rondas) y de las fotos propias | 1, 6 | Natalia, Juan Pablo y Ximena | Ximena | ✅ hecho (760 recortes; kappa 0.607 y 0.606; fotos propias por consenso) |
 | C | Clase *Regular*, CNN, tabla de experimentos y evaluación final (prueba **una sola vez**) | 4, 5, 6 | Ximena | Juan Pablo | ✅ hecho (`04_modelado/`, `ANALISIS_ERRORES.md`) |
-| D | App Streamlit con la CNN de tres clases; **probar la cámara en un computador real** | 8 | Ximena (app); **Juan Pablo** (cámara) | Natalia | app ✅; **cámara: miércoles** |
-| E | **Informe IEEE** de máximo 7 páginas y `report/refs.bib` (cada referencia verificada) | 3, 4, 5, 6, 7, 8 | **Natalia** | Juan Pablo | borrador: miércoles en la mañana; final: miércoles en la noche |
-| F | **Diagrama de flujo CRISP-DM** personalizado (SVG): revisar el que está regenerado y afinarlo | 8 | **Juan Pablo** | Natalia | miércoles |
-| G | **Video** de máximo 10 minutos (guion y grabación) | 8 | **Juan Pablo** (con los tres frente a cámara si quieren) | Natalia | guion: miércoles; video: miércoles en la noche |
-| H | Ética e impactos: revisar las tablas ya redactadas (v2/v3) y llevarlas al informe | 1, 2 | **Natalia y Juan Pablo** | Ximena | miércoles |
-| I | **Auditoría final** criterio por criterio (revisión cruzada) | todos | los tres | — | miércoles en la noche – jueves en la mañana |
+| D | App Streamlit con la CNN de tres clases; **probar la cámara en un computador real** | 8 | Ximena (app); **Juan Pablo** (cámara) | Natalia | ✅ hecho (`docs/prueba_camara.md`) |
+| E | **Informe IEEE** de máximo 7 páginas y `report/refs.bib` (cada referencia verificada) | 3, 4, 5, 6, 7, 8 | **Natalia** | Juan Pablo | ✅ hecho (`report/informe.pdf`) |
+| F | **Diagrama de flujo CRISP-DM** personalizado | 8 | **Juan Pablo** | Natalia | ✅ hecho (`docs/diagrama_crispdm.pdf`) |
+| G | **Video** de máximo 10 minutos (guion y grabación) | 8 | **Juan Pablo** (con los tres frente a cámara si quieren) | Natalia | ✅ hecho (7:17, `video/README.md`) |
+| H | Ética e impactos: tablas y su resumen en el informe | 1, 2 | **Natalia y Juan Pablo** | Ximena | ✅ hecho (Tablas III y IV); E8 pendiente |
+| I | **Auditoría final** criterio por criterio (revisión cruzada) | todos | los tres | — | ✅ matriz revisada (`RUBRICA_TRAZABILIDAD.md`) |
 
 Pendientes que **decide Ximena** y no se tocan sin hablar con ella: la fila E8 de `etica_tabla.md` (declaración del uso de herramientas) y la política del curso al respecto.
 

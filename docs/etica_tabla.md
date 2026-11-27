@@ -1,6 +1,6 @@
 # Dilemas éticos y decisiones adoptadas (rúbrica 1 · PI1)
 
-> **Estado: BORRADOR v1.** Cada fila separa lo que **ya está verificado** de lo que está **planeado**. No se debe presentar como implementado en el informe nada que esté en ⬜ o 🟡 el día de la entrega.
+> **Estado: versión final para E1 a E7; E8 pendiente.** Cada fila indica la evidencia de la medida adoptada.
 > Estados: ✅ verificado · 🟡 parcial · ⬜ pendiente.
 
 ## Alcance del sistema (para situar los dilemas)
@@ -31,5 +31,5 @@ Sistema que recibe una **fotografía estática** de una fruta de varias especies
 
 ## Pendientes para llegar al nivel "Outstanding"
 1. ~~Que cada medida marcada 🟡/⬜ tenga evidencia enlazada~~ **hecho** para E1 a E7; E8 la decide Ximena.
-2. Confirmar la política de IA del curso (E8) y las citas de los códigos de ética (versión 2018 de la ACM).
-3. Llevar esta tabla (resumida) al informe: la rúbrica pide una tabla o sección con las decisiones éticas clave y su relación con el código de ética.
+2. Confirmar la política de IA del curso (E8). Los códigos de ética del IEEE y de la ACM (2018) ya están citados en el informe.
+3. ~~Llevar esta tabla al informe~~ **hecho** (`report/informe.pdf`, Tabla III).

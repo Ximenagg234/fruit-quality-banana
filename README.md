@@ -2,12 +2,17 @@
 
 Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación de **tamaño** de frutas de varias especies (manzana, banano, guayaba, lima, naranja y granada) a partir de imágenes estáticas, con una app en Streamlit (carga de imagen o cámara), para el proyecto final de **Algoritmos y Programación III (2026-2)**, Universidad Icesi. Metodología: **CRISP-DM**.
 
+## Entregables
+- **Informe IEEE (7 páginas):** [`report/informe.pdf`](report/informe.pdf)
+- **Video (7:17):** https://drive.google.com/file/d/1tPYpLZFJcIF8_H9Ii96Xt_JxhAxQ07Hp/view?usp=sharing
+- **App:** [`06_despliegue/`](06_despliegue/README.md)
+
 ## Equipo
 | Integrante | GitHub | Rol principal |
 |---|---|---|
 | Ximena Gómez Gómez | @Ximenagg234 | Integra el repositorio; datos, modelos y app |
 | Natalia Delgado | @ndelgadoar | Informe y referencias; etiquetado |
-| Juan Pablo Bello | _por confirmar_ | Diagrama, video y revisión; etiquetado |
+| Juan Pablo Bello | @Bellito29 | Diagrama, video y revisión; etiquetado |
 
 ## Estructura (por fases de CRISP-DM)
 | Carpeta | Contenido |
@@ -22,7 +27,7 @@ Sistema de clasificación de **calidad** (Buena / Regular / Mala) y estimación 
 | `data/` | instrucciones de descarga, fotos propias, anotaciones |
 | `report/` | informe IEEE (LaTeX) |
 | `docs/` | formulación matemática, ética, impactos, trazabilidad de la rúbrica |
-| `video/` | enlace y guion del video |
+| `video/` | enlace del video |
 
 ## Documentos clave
 - [Formulación matemática](docs/formulacion_matematica.md)

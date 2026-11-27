@@ -1,6 +1,6 @@
 # Definición operacional de clases y protocolo de fotografía
 
-> Estado: **propuesta, umbrales por validar con las fotos propias y los datos medidos en el EDA.** Todo cambio a esta tabla se debe reflejar en `docs/formulacion_matematica.md` §3.2.
+> Estado: **definición usada para etiquetar.** Los umbrales de superficie con defecto (10 % y 40 %) son un criterio del equipo aplicado a ojo; no se validaron con una medición automática. Todo cambio a esta tabla se debe reflejar en `docs/formulacion_matematica.md` §3.2.
 >
 > Alcance: frutas de varias especies (el dataset base trae manzana, banano, guayaba, lima, naranja y granada). Posibles verduras quedan fuera del núcleo.
 

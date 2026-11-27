@@ -16,9 +16,9 @@ Guía para quien etiqueta: ver `docs/REPARTO_TRABAJO.md` §5 y las reglas de cla
 
 La segmentación **no tiene verdad de terreno** y se valida a ojo: las frutas sobre pasto o los bananos sobre vegetación son los casos difíciles, y por eso la herramienta incluye el botón "Descartar".
 
-**Pendiente:** unir las etiquetas finales con las fotos propias para construir *Regular*; normalización y aumento de datos; manejo del desbalance (submuestreo por celda especie × clase y pesos de clase, ya usados en los modelos).
+**Clase *Regular* y preparación para el modelado:** `construir_tres_clases.py` une las etiquetas finales de *Mixed* con el resto de los datos y reserva las fotos propias como prueba; la normalización, el aumento de datos y el manejo del desbalance (submuestreo por celda especie × clase y pesos de clase) están en los modelos.
 **Alimenta rúbrica:** 3, 5 (normalización), 6.
-Estado: 🟡 (segmentación y herramientas listas; faltan las etiquetas)
+Estado: ✅ segmentación, etiquetado (760 recortes, dos anotadores) y construcción de las tres clases.
 
 ## Etiquetar las fotos propias con la misma herramienta
 

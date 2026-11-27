@@ -15,4 +15,4 @@
 **Resultados y hallazgos:** al final del notebook (sección 8). El notebook se sube **con salidas**, ejecutado con los datos reales.
 
 **Alimenta rúbrica:** 1 (sesgos), 6, 8.
-Estado: 🟡 ejecutado; falta medir la nitidez como parte de "calidad de imagen".
+Estado: ✅ ejecutado con los datos reales. La calidad de imagen se midió con resolución y escala de grises; la nitidez no se midió.
