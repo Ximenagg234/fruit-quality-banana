@@ -6,37 +6,37 @@
 
 ## Entregables
 - [ ] Informe final, **máximo 7 páginas**, formato IEEE (plantilla del profesor o Overleaf IEEE)
-- [ ] Repositorio en GitHub con estructura por fases de CRISP-DM (este repo)
-- [ ] Enlace del repo + integrantes reportados en el documento compartido por el profesor
-- [ ] Diagrama de flujo **personalizado** de CRISP-DM
-- [ ] Interfaz gráfica (Streamlit) **funcional**: cargar una imagen **o capturarla con la cámara** (§1.4 y §4.6) y mostrar la predicción de calidad y de tamaño
+- [x] Repositorio en GitHub con estructura por fases de CRISP-DM (este repo)
+- [x] Enlace del repo + integrantes reportados en el documento compartido por el profesor
+- [x] Diagrama de flujo **personalizado** de CRISP-DM
+- [x] Interfaz gráfica (Streamlit) **funcional**: cargar una imagen **o capturarla con la cámara** (§1.4 y §4.6) y mostrar la predicción de calidad y de tamaño
 - [ ] Video de **máximo 10 minutos** (contexto, técnicas, resultados, logros)
 
 ## Caso de estudio
-- [ ] Entrada: imagen estática de una fruta individual, fondo simple y uniforme
-- [ ] Salida 1: clase de calidad (≥ 3 categorías definidas por el grupo)
-- [ ] Salida 2: tamaño (pequeño/mediano/grande) o diámetro en píxeles normalizados
+- [x] Entrada: imagen estática de una fruta individual, fondo simple y uniforme
+- [x] Salida 1: clase de calidad (≥ 3 categorías definidas por el grupo)
+- [x] Salida 2: tamaño (pequeño/mediano/grande) o diámetro en píxeles normalizados
 
 ## Datos
-- [ ] Dataset base: Fruit Quality Classification (Kaggle, `ryandpark`), citado
-- [ ] Carpeta `mixed_quality`: segmentar cada fruta individual
-- [ ] **30 a 50 imágenes propias** con distintos estados de madurez, tamaños y defectos
-- [ ] Anotación manual de calidad y tamaño, coherente con `docs/definicion_clases.md`
-- [ ] Mecanismo acordado para compartir anotaciones con toda la clase
+- [x] Dataset base: Fruit Quality Classification (Kaggle, `ryandpark`), citado
+- [x] Carpeta `mixed_quality`: segmentar cada fruta individual
+- [x] **30 a 50 imágenes propias** con distintos estados de madurez, tamaños y defectos
+- [x] Anotación manual de calidad y tamaño, coherente con `docs/definicion_clases.md`
+- [x] Mecanismo acordado para compartir anotaciones con toda la clase
 
 ## Modelos
-- [ ] **≥ 2 modelos de ML tradicional** distintos (LogReg, KNN, SVM, Bagging, árboles, RF, XGBoost)
-- [ ] **≥ 1 modelo de deep learning** (CNN pequeña; se recomienda desde cero)
-- [ ] Hiperparámetros ajustados por validación cruzada o búsqueda en rejilla
-- [ ] Comparación contra una línea base
+- [x] **≥ 2 modelos de ML tradicional** distintos (LogReg, KNN, SVM, Bagging, árboles, RF, XGBoost)
+- [x] **≥ 1 modelo de deep learning** (CNN pequeña; se recomienda desde cero)
+- [x] Hiperparámetros ajustados por validación cruzada o búsqueda en rejilla
+- [x] Comparación contra una línea base
 
 ## CRISP-DM con evidencia en cada fase
-- [ ] 1. Comprensión del negocio (impacto económico/social)
-- [ ] 2. Comprensión de los datos (distribución de clases, desbalance, calidad de imagen, variabilidad)
-- [ ] 3. Preparación (procesamiento, manejo de desbalance)
-- [ ] 4. Modelado (entrenamiento, hiperparámetros, selección)
-- [ ] 5. Evaluación (métricas en test, análisis de errores, comparación con línea base)
-- [ ] 6. Despliegue (GUI)
+- [x] 1. Comprensión del negocio (impacto económico/social)
+- [x] 2. Comprensión de los datos (distribución de clases, desbalance, calidad de imagen, variabilidad)
+- [x] 3. Preparación (procesamiento, manejo de desbalance)
+- [x] 4. Modelado (entrenamiento, hiperparámetros, selección)
+- [x] 5. Evaluación (métricas en test, análisis de errores, comparación con línea base)
+- [x] 6. Despliegue (GUI)
 
 ## Informe: estructura obligatoria
 - [ ] Título · [ ] Resumen · [ ] Introducción · [ ] Fundamentos teóricos (sin generalidades)
@@ -52,4 +52,4 @@
 ## Reglas de integridad
 - [ ] Todo dato o código de terceros referenciado explícitamente (si no, cuenta como fraude)
 - [ ] Gráficos de calidad vectorial
-- [ ] Código bien documentado
+- [x] Código bien documentado
