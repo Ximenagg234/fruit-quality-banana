@@ -2,12 +2,10 @@
 
 **Entrega: jueves 26 de noviembre de 2026, en la mañana.** Grupo de 3 estudiantes.
 
-Una casilla marcada tiene evidencia enlazada en `RUBRICA_TRAZABILIDAD.md`. Quedan sin marcar: el video (falta el enlace) y las referencias de terceros (faltan TensorFlow/Keras y Streamlit en el informe).
-
 **Alcance (confirmado por el profesor):** el sistema debe cubrir variedad de frutas (posiblemente también verduras), no una sola especie. Especies del dataset base: manzana, banano, guayaba, lima, naranja y granada.
 
 ## Entregables
-- [x] Informe final, **máximo 7 páginas**, formato IEEE (plantilla del profesor o Overleaf IEEE)
+- [ ] Informe final, **máximo 7 páginas**, formato IEEE (plantilla del profesor o Overleaf IEEE)
 - [x] Repositorio en GitHub con estructura por fases de CRISP-DM (este repo)
 - [x] Enlace del repo + integrantes reportados en el documento compartido por el profesor
 - [x] Diagrama de flujo **personalizado** de CRISP-DM
@@ -41,17 +39,17 @@ Una casilla marcada tiene evidencia enlazada en `RUBRICA_TRAZABILIDAD.md`. Queda
 - [x] 6. Despliegue (GUI)
 
 ## Informe: estructura obligatoria
-- [x] Título · [x] Resumen · [x] Introducción · [x] Fundamentos teóricos (sin generalidades)
-- [x] Metodología (no copiar el diagrama CRISP-DM tal cual) · [x] Resultados
-- [x] Análisis de resultados (generalización, sobreajuste, qué falla, comparación con la literatura)
-- [x] Conclusiones y trabajo futuro · [x] Referencias IEEE (solo las leídas y usadas)
+- [ ] Título · [ ] Resumen · [ ] Introducción · [ ] Fundamentos teóricos (sin generalidades)
+- [ ] Metodología (no copiar el diagrama CRISP-DM tal cual) · [ ] Resultados
+- [ ] Análisis de resultados (generalización, sobreajuste, qué falla, comparación con la literatura)
+- [ ] Conclusiones y trabajo futuro · [ ] Referencias IEEE (solo las leídas y usadas)
 
 ## Competencias (`1_competencias_consigna_Actualizada.pdf`)
-- [x] Tabla/sección de dilemas éticos ↔ código de ética (PI1)
-- [x] Matriz de impactos social, económico, ambiental, global + mitigaciones (PI2)
-- [x] Formulación, estrategia, fundamentos matemáticos, análisis y conclusiones (PI3)
+- [ ] Tabla/sección de dilemas éticos ↔ código de ética (PI1)
+- [ ] Matriz de impactos social, económico, ambiental, global + mitigaciones (PI2)
+- [ ] Formulación, estrategia, fundamentos matemáticos, análisis y conclusiones (PI3)
 
 ## Reglas de integridad
 - [ ] Todo dato o código de terceros referenciado explícitamente (si no, cuenta como fraude)
-- [x] Gráficos de calidad vectorial
+- [ ] Gráficos de calidad vectorial
 - [x] Código bien documentado
