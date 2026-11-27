@@ -40,7 +40,7 @@ Estados: ⬜ sin empezar · 🟡 en progreso / incompleto · ✅ completo y veri
 
 | Pieza | Evidencia | Estado |
 |---|---|---|
-| Tabla de alternativas (modelo, ventaja, límite, decisión) | `docs/estrategia_solucion.md` (v3: 10 decisiones con alternativas, límites, evidencia medida y trabajo futuro declarado; la decisión 10 cubre tres clases, el desbalance, la selección del modelo y la prueba) | ✅ |
+| Tabla de alternativas (modelo, ventaja, límite, decisión) | `docs/estrategia_solucion.md` (v3: 10 decisiones con alternativas, límites, evidencia medida y trabajo futuro declarado; la decisión 10 cubre tres clases, el desbalance, la selección del modelo y la prueba); incluye transfer learning con MobileNetV2 probado como exploración posterior a la prueba, solo en validación (04_modelado/experimento_transfer.py) | ✅ |
 | La elección se apoya en resultados (baseline vs. modelos) | `04_modelado/resultados_modelos_clasicos.csv` (dos clases) y `resultados_tres_clases.csv` / `resultados_tres_clases_test.csv` (tres clases): cada modelo frente a la línea base mayoritaria y al control solo borde; el modelo de la app (CNN T6) se eligió con la validación, antes de ver la prueba | ✅ |
 
 ### 5. Fundamentos matemáticos aplicados

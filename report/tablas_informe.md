@@ -97,3 +97,13 @@ Fuente: `05_evaluacion/`. Equipo: 12th Gen Intel(R) Core(TM) i7-1255U, 10 núcle
 | CNN T6: reducir a 96 px + predicción | 73 ms (p95 86 ms) |
 | tamaño: segmentar y medir la longitud normalizada | 43 ms (p95 52 ms) |
 | flujo completo de la app (CNN T6 + tamaño) | 116 ms (p95 128 ms) |
+
+## Tabla 8. Exploración: transfer learning (solo validación)
+
+Fuente: `04_modelado/resultados_transfer_validacion.csv`. Se hizo **después** de usar la prueba, así que solo se mide en validación (35 *Regular*; la diferencia no es concluyente). No cambia el modelo de la app.
+
+| Modelo | F1 macro | Recall *Regular* | F1 *Regular* | F1 macro en *Mixed* |
+|---|---|---|---|---|
+| CNN propia (la de la app) | 0.725 | 0.60 | 0.339 | 0.350 |
+| MobileNetV2 congelada | 0.760 | 0.49 | 0.391 | 0.491 |
+| MobileNetV2 con ajuste fino | 0.717 | 0.26 | 0.257 | 0.422 |

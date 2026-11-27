@@ -103,6 +103,19 @@ def main() -> None:
         ["Entrenamiento de todo el proyecto (procesos)", f"{costo_ent['segundos'].sum():.0f} s ({costo_ent['horas'].sum():.1f} h)"],
         ["Energía estimada de todo el proyecto", f"{costo_ent['kWh_estimado_min'].sum():.2f} a {costo_ent['kWh_estimado_max'].sum():.2f} kWh"],
     ] + [[r.paso, f"{r.mediana_ms:.0f} ms (p95 {r.p95_ms:.0f} ms)" if pd.notna(r.p95_ms) else f"{r.mediana_ms:.0f} ms"] for r in costo_inf.itertuples()]) + "\n")
+    tl = pd.read_csv(MOD / "resultados_transfer_validacion.csv")
+    base = val[(val["modelo"] == "cnn_T6")]
+    comp = pd.concat([base, tl])
+    nombres = {"cnn_T6": "CNN propia (la de la app)", "tl_congelada": "MobileNetV2 congelada", "tl_ajuste_fino": "MobileNetV2 con ajuste fino"}
+    filas = []
+    for m, nombre in nombres.items():
+        a = comp[(comp["modelo"] == m) & (comp["conjunto"] == "val")].iloc[0]
+        b = comp[(comp["modelo"] == m) & (comp["conjunto"] == "val_mixed")].iloc[0]
+        filas.append([nombre, f(a.F1_macro), f(a.recall_Regular, 2), f(a.F1_Regular), f(b.F1_macro)])
+    sal.append("## Tabla 8. Exploración: transfer learning (solo validación)\n")
+    sal.append("Fuente: `04_modelado/resultados_transfer_validacion.csv`. Se hizo **después** de usar la prueba, así que solo se mide en "
+               "validación (35 *Regular*; la diferencia no es concluyente). No cambia el modelo de la app.\n")
+    sal.append(tabla_md(["Modelo", "F1 macro", "Recall *Regular*", "F1 *Regular*", "F1 macro en *Mixed*"], filas) + "\n")
     (REPO / "report" / "tablas_informe.md").write_text("\n".join(sal), encoding="utf-8")
     print("report/tablas_informe.md generado")
 
